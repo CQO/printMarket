@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的地址 - 诚荟印沈阳</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            display: flex;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 左侧菜单栏 */
+        .sidebar {
+            width: 220px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            margin-right: 20px;
+        }
+        
+        .user-info {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+        
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .menu {
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .menu-item.active {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 24px;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* 右侧内容区 */
+        .main-content-r {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        /* 地址卡片 */
+        .address-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .address-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .address-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .address-card.default {
+            border-color: #3498db;
+            background-color: #f0f9ff;
+            border-width: 2px;
+        }
+        
+        .default-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .address-info {
+            margin-bottom: 15px;
+        }
+        
+        .address-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .address-phone {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .address-detail {
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .address-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .edit-btn {
+            background-color: #f8f9fa;
+            color: #555;
+            border-color: #ddd;
+        }
+        
+        .edit-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .delete-btn {
+            background-color: #ffeaea;
+            color: #e74c3c;
+            border-color: #f8d7da;
+        }
+        
+        .delete-btn:hover {
+            background-color: #f8d7da;
+        }
+        
+        .set-default-btn {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-color: #bde0ff;
+        }
+        
+        .set-default-btn:hover {
+            background-color: #d4ebff;
+        }
+        
+        /* 添加地址按钮 */
+        .add-address-section {
+            text-align: center;
+            padding: 20px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .add-address-section:hover {
+            border-color: #3498db;
+            background-color: #f0f9ff;
+        }
+        
+        .add-icon {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        .add-text {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        /* 模态框 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-label {
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+        }
+        
+        .cancel-btn {
+            background-color: #95a5a6;
+            color: white;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+        
+        .no-address {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+            grid-column: 1 / -1;
+        }
+        
+        .no-address i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .menu {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .menu-item {
+                flex-shrink: 0;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            
+            .menu-item.active {
+                border-left: none;
+                border-bottom-color: #3498db;
+            }
+            
+            .address-list {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content-r {
+                padding: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li class="active"><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 个人中心内容 -->
+    <div class="container">
+        <!-- 左侧菜单栏 -->
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name">张先生</div>
+                <div class="user-email">user@example.com</div>
+            </div>
+            
+            <div class="menu">
+                <a href="./order.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>我的订单</span>
+                </a>
+                <a href="./invoice.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>发票中心</span>
+                </a>
+                <a href="./recharge.html" class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>账户充值</span>
+                </a>
+                <a href="./address.html" class="menu-item active">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>我的地址</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="main-content-r">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    我的地址
+                </h1>
+            </div>
+            
+            <!-- 地址列表 -->
+            <div id="addressList" class="address-list">
+                <!-- 地址卡片将在这里动态加载 -->
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i><br>
+                    正在加载地址数据...
+                </div>
+            </div>
+            
+            <!-- 添加地址按钮 -->
+            <div class="add-address-section" onclick="openAddModal()">
+                <div class="add-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                <div class="add-text">添加新地址</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let currentEditId = null;
+        
+        // 页面加载时获取地址数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAddresses();
+        });
+        
+        // 加载地址数据
+        async function loadAddresses() {
+            const addressList = document.getElementById('addressList');
+            
+            try {
+                const response = await fetch('http://43.143.87.196:8070/api/address/list');
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    renderAddresses(result.addresses);
+                } else {
+                    addressList.innerHTML = `
+                        <div class="no-address">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <h3>加载失败</h3>
+                            <p>${result.error || '无法加载地址数据，请稍后重试'}</p>
+                            <button onclick="loadAddresses()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载地址数据错误:', error);
+                addressList.innerHTML = `
+                    <div class="no-address">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>网络错误</h3>
+                        <p>无法连接到服务器，请检查网络连接</p>
+                        <button onclick="loadAddresses()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // 渲染地址列表
+        function renderAddresses(addresses) {
+            const addressList = document.getElementById('addressList');
+            
+            if (!addresses || addresses.length === 0) {
+                addressList.innerHTML = `
+                    <div class="no-address">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>暂无地址</h3>
+                        <p>您还没有添加任何收货地址</p>
+                        <button onclick="openAddModal()" class="action-btn set-default-btn" style="margin-top: 10px;">添加地址</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            addressList.innerHTML = '';
+            
+            addresses.forEach(address => {
+                const addressCard = createAddressCard(address);
+                addressList.appendChild(addressCard);
+            });
+        }
+        
+        // 创建地址卡片
+        function createAddressCard(address) {
+            const card = document.createElement('div');
+            card.className = 'address-card';
+            if (address.is_default) {
+                card.classList.add('default');
+            }
+            
+            card.innerHTML = `
+                ${address.is_default ? '<div class="default-badge">默认地址</div>' : ''}
+                <div class="address-info">
+                    <div class="address-name">${address.receiver_name} ${address.phone}</div>
+                    <div class="address-phone"></div>
+                    <div class="address-detail">${address.province} ${address.city} ${address.district} ${address.detail_address}</div>
+                </div>
+                <div class="address-actions">
+                    <button class="action-btn edit-btn" onclick="openEditModal(${address.id})">
+                        编辑
+                    </button>
+                    ${!address.is_default ? `
+                        <button class="action-btn set-default-btn" onclick="setDefaultAddress(${address.id})">
+                            设为默认
+                        </button>
+                    ` : ''}
+                    <button class="action-btn delete-btn" onclick="deleteAddress(${address.id})">
+                        删除
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // 打开添加地址模态框
+        function openAddModal() {
+            currentEditId = null;
+            showAddressModal('添加地址');
+        }
+        
+        // 打开编辑地址模态框
+        async function openEditModal(addressId) {
+            currentEditId = addressId;
+            
+            try {
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}`);
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    showAddressModal('编辑地址', result.address);
+                } else {
+                    alert(`获取地址信息失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，请稍后重试');
+                console.error('获取地址信息错误:', error);
+            }
+        }
+        
+        // 显示地址模态框
+        function showAddressModal(title, address = null) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3 class="modal-title">${title}</h3>
+                    <form id="addressForm" onsubmit="return false;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">收货人</label>
+                                <input type="text" class="form-input" id="receiverName" 
+                                       value="${address ? address.receiver_name : ''}" 
+                                       placeholder="请输入收货人姓名" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">联系电话</label>
+                                <input type="tel" class="form-input" id="phone" 
+                                       value="${address ? address.phone : ''}" 
+                                       placeholder="请输入联系电话" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">省份</label>
+                                <select class="form-input" id="province" required>
+                                    <option value="">请选择省份</option>
+                                    <option value="北京" ${address && address.province === '北京' ? 'selected' : ''}>北京</option>
+                                    <option value="上海" ${address && address.province === '上海' ? 'selected' : ''}>上海</option>
+                                    <option value="广东" ${address && address.province === '广东' ? 'selected' : ''}>广东</option>
+                                    <option value="浙江" ${address && address.province === '浙江' ? 'selected' : ''}>浙江</option>
+                                    <option value="江苏" ${address && address.province === '江苏' ? 'selected' : ''}>江苏</option>
+                                    <option value="辽宁" ${address && address.province === '辽宁' ? 'selected' : ''}>辽宁</option>
+                                    <option value="山东" ${address && address.province === '山东' ? 'selected' : ''}>山东</option>
+                                    <option value="四川" ${address && address.province === '四川' ? 'selected' : ''}>四川</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">城市</label>
+                                <input type="text" class="form-input" id="city" 
+                                       value="${address ? address.city : ''}" 
+                                       placeholder="请输入城市" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">区/县</label>
+                                <input type="text" class="form-input" id="district" 
+                                       value="${address ? address.district : ''}" 
+                                       placeholder="请输入区/县">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">邮政编码</label>
+                                <input type="text" class="form-input" id="postalCode" 
+                                       value="${address ? address.postal_code : ''}" 
+                                       placeholder="请输入邮政编码">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">详细地址</label>
+                            <input type="text" class="form-input" id="detailAddress" 
+                                   value="${address ? address.detail_address : ''}" 
+                                   placeholder="请输入详细地址，如街道、小区、门牌号等" required>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="isDefault" ${address && address.is_default ? 'checked' : ''}>
+                            <label class="checkbox-label" for="isDefault">设为默认地址</label>
+                        </div>
+                    </form>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn cancel-btn" onclick="closeModal()">
+                            取消
+                        </button>
+                        <button type="button" class="modal-btn submit-btn" onclick="saveAddress()">
+                            ${currentEditId ? '保存修改' : '添加地址'}
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            const modal = document.querySelector('.modal-overlay');
+            if (modal) {
+                document.body.removeChild(modal);
+            }
+        }
+        
+        // 保存地址
+        async function saveAddress() {
+            const receiverName = document.getElementById('receiverName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const province = document.getElementById('province').value;
+            const city = document.getElementById('city').value.trim();
+            const district = document.getElementById('district').value.trim();
+            const postalCode = document.getElementById('postalCode').value.trim();
+            const detailAddress = document.getElementById('detailAddress').value.trim();
+            const isDefault = document.getElementById('isDefault').checked;
+            
+            // 简单验证
+            if (!receiverName || !phone || !province || !city || !detailAddress) {
+                alert('请填写必填字段：收货人、联系电话、省份、城市、详细地址');
+                return;
+            }
+            
+            const addressData = {
+                receiver_name: receiverName,
+                phone: phone,
+                province: province,
+                city: city,
+                district: district,
+                postal_code: postalCode,
+                detail_address: detailAddress,
+                is_default: isDefault
+            };
+            
+            try {
+                let response;
+                
+                if (currentEditId) {
+                    // 编辑地址
+                    response = await fetch(`http://43.143.87.196:8070/api/address/${currentEditId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(addressData)
+                    });
+                } else {
+                    // 添加地址
+                    response = await fetch('http://43.143.87.196:8070/api/address', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(addressData)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert(currentEditId ? '地址修改成功！' : '地址添加成功！');
+                    closeModal();
+                    loadAddresses(); // 重新加载地址列表
+                } else {
+                    alert(`操作失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，请稍后重试');
+                console.error('保存地址错误:', error);
+            }
+        }
+        
+        // 设置默认地址
+        async function setDefaultAddress(addressId) {
+            if (!confirm('确定要将此地址设为默认地址吗？')) return;
+            
+            try {
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/set-default`, {
+                    method: 'PUT'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert('默认地址设置成功！');
+                    loadAddresses(); // 重新加载地址列表
+                } else {
+                    alert(`设置失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，请稍后重试');
+                console.error('设置默认地址错误:', error);
+            }
+        }
+        
+        // 删除地址
+        async function deleteAddress(addressId) {
+            if (!confirm('确定要删除这个地址吗？此操作不可撤销。')) return;
+            
+            try {
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert('地址删除成功！');
+                    loadAddresses(); // 重新加载地址列表
+                } else {
+                    alert(`删除失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，请稍后重试');
+                console.error('删除地址错误:', error);
+            }
+        }
+    </script>
+</body>
+</html>

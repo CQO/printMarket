@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 诚荟印沈阳</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            display: flex;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 左侧菜单栏 */
+        .sidebar {
+            width: 220px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            margin-right: 20px;
+        }
+        
+        .user-info {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+        
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .menu {
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .menu-item.active {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 24px;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* 右侧内容区 */
+        .main-content-r {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .action-bar {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            width: 250px;
+            font-size: 1rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .export-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        /* 订单表格 */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .orders-table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .orders-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .orders-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        
+        .orders-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .orders-table tbody tr.unpaid {
+            background-color: #fff9e6;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .orders-table tbody tr.unpaid:hover {
+            background-color: #fff5d6;
+        }
+        
+        .orders-table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        .order-number {
+            font-weight: 600;
+            color: #3498db;
+        }
+        
+        .order-time {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .product-name {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .order-price {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-processing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid transparent;
+        }
+        
+        .pay-btn {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+        }
+        
+        .pay-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .download-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+        }
+        
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .no-orders {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+        
+        .no-orders i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #3498db;
+            font-size: 1.2rem;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .page-btn {
+            padding: 8px 15px;
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-info {
+            color: #555;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .menu {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .menu-item {
+                flex-shrink: 0;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            
+            .menu-item.active {
+                border-left: none;
+                border-bottom-color: #3498db;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .action-bar {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .search-input {
+                width: 200px;
+            }
+            
+            .orders-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .orders-table th,
+            .orders-table td {
+                white-space: nowrap;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li class="active"><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 个人中心内容 -->
+    <div class="container">
+        <!-- 左侧菜单栏 -->
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name">张先生</div>
+                <div class="user-email">user@example.com</div>
+            </div>
+            
+            <div class="menu">
+                <a href="./order.html" class="menu-item active">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>我的订单</span>
+                </a>
+                <a href="./fapiao.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>发票中心</span>
+                </a>
+                <a href="./chongzhi.html" class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>账户充值</span>
+                </a>
+                <a href="./address.html" class="menu-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>我的地址</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="main-content-r">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    我的订单
+                </h1>
+                
+                <div class="action-bar">
+                    <div class="search-box">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" class="search-input" placeholder="搜索订单号...">
+                    </div>
+                    
+                    <button id="exportBtn" class="export-btn">
+                        <i class="fas fa-file-export"></i>
+                        导出表格
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 订单表格 -->
+            <div class="orders-container">
+                <table class="orders-table" id="ordersTable">
+                    <thead>
+                        <tr>
+                            <th>订单编号</th>
+                            <th>下单时间</th>
+                            <th>商品名称</th>
+                            <th>价格</th>
+                            <th>数量</th>
+                            <th>支付状态</th>
+                            <th>文件下载</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersBody">
+                        <!-- 订单数据将在这里动态加载 -->
+                        <tr>
+                            <td colspan="8" class="loading">
+                                <i class="fas fa-spinner fa-spin"></i><br>
+                                正在加载订单数据...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- 分页区域 -->
+            <div id="pagination" class="pagination hidden">
+                <button id="prevPage" class="page-btn">
+                    <i class="fas fa-chevron-left"></i> 上一页
+                </button>
+                <span class="page-info">第 <span id="currentPage">1</span> 页 / 共 <span id="totalPages">1</span> 页</span>
+                <button id="nextPage" class="page-btn">
+                    下一页 <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let currentPage = 1;
+        let pageSize = 15;
+        let totalPages = 1;
+        
+        // DOM元素
+        const ordersBody = document.getElementById('ordersBody');
+        const pagination = document.getElementById('pagination');
+        const currentPageSpan = document.getElementById('currentPage');
+        const totalPagesSpan = document.getElementById('totalPages');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const searchInput = document.getElementById('searchInput');
+        const exportBtn = document.getElementById('exportBtn');
+        
+        // 页面加载时获取订单数据
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            
+            // 绑定搜索输入框事件
+            let searchTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    currentPage = 1;
+                    loadOrders();
+                }, 500);
+            });
+            
+            // 绑定导出按钮事件
+            exportBtn.addEventListener('click', function() {
+                exportToExcel();
+            });
+            
+            // 绑定分页按钮事件
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadOrders();
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadOrders();
+                }
+            });
+        });
+        
+        // 加载订单数据
+        async function loadOrders() {
+            // 显示加载状态
+            ordersBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i><br>
+                        正在加载订单数据...
+                    </td>
+                </tr>
+            `;
+            
+            try {
+                // 构建查询参数
+                let url = `http://43.143.87.196:8070/api/personal/orders?page=${currentPage}&page_size=${pageSize}`;
+                
+                const searchText = searchInput.value.trim();
+                if (searchText) {
+                    url += `&search=${encodeURIComponent(searchText)}`;
+                }
+                
+                // 发送请求获取订单数据
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // 清空订单表格
+                    ordersBody.innerHTML = '';
+                    
+                    // 更新分页信息
+                    totalPages = Math.ceil(result.total / pageSize) || 1;
+                    currentPageSpan.textContent = currentPage;
+                    totalPagesSpan.textContent = totalPages;
+                    
+                    // 显示分页区域
+                    if (totalPages > 1) {
+                        pagination.classList.remove('hidden');
+                        prevPageBtn.disabled = currentPage === 1;
+                        nextPageBtn.disabled = currentPage === totalPages;
+                    } else {
+                        pagination.classList.add('hidden');
+                    }
+                    
+                    // 如果没有订单数据
+                    if (result.orders.length === 0) {
+                        ordersBody.innerHTML = `
+                            <tr>
+                                <td colspan="8" class="no-orders">
+                                    <i class="fas fa-clipboard"></i>
+                                    <h3>暂无订单</h3>
+                                    <p>${searchText ? '没有找到符合条件的订单' : '您还没有创建任何订单'}</p>
+                                    ${searchText ? 
+                                        '<button onclick="clearSearch()" class="action-btn" style="margin-top: 10px;">清除搜索</button>' : 
+                                        '<a href="./scys.html" class="action-btn" style="margin-top: 10px; display: inline-block;">去创建订单</a>'}
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    // 渲染订单数据
+                    result.orders.forEach(order => {
+                        const orderRow = createOrderRow(order);
+                        ordersBody.appendChild(orderRow);
+                    });
+                } else {
+                    ordersBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="no-orders">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>加载失败</h3>
+                                <p>${result.error || '无法加载订单数据，请稍后重试'}</p>
+                                <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            } catch (error) {
+                console.error('加载订单数据错误:', error);
+                ordersBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="no-orders">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>网络错误</h3>
+                            <p>无法连接到服务器，请检查网络连接</p>
+                            <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // 创建订单行
+        function createOrderRow(order) {
+            const row = document.createElement('tr');
+            if (order.payment_status === 'pending') {
+                row.className = 'unpaid';
+            }
+            
+            // 格式化时间
+            const orderTime = new Date(order.created_at).toLocaleString('zh-CN');
+            
+            // 获取支付状态显示文本和样式
+            const paymentInfo = getPaymentInfo(order.payment_status);
+            
+            // 获取商品名称（如果是多个商品，显示第一个+...）
+            let productName = order.first_product || '多款商品';
+            if (productName.length > 20) {
+                productName = productName.substring(0, 20) + '...';
+            }
+            
+            // 检查是否有文件
+            const hasFiles = order.file_count > 0;
+            
+            row.innerHTML = `
+                <td>
+                    <div class="order-number">${order.order_number}</div>
+                </td>
+                <td>
+                    <div class="order-time">${orderTime}</div>
+                </td>
+                <td>
+                    <div class="product-name" title="${order.first_product || ''}">${productName}</div>
+                </td>
+                <td>
+                    <div class="order-price">¥${order.total_amount}</div>
+                </td>
+                <td>${order.item_count || 1}</td>
+                <td>
+                    <span class="status-badge ${paymentInfo.class}">${paymentInfo.text}</span>
+                </td>
+                <td>
+                    ${hasFiles ? 
+                        `<button class="action-btn download-btn" onclick="downloadFiles('${order.order_number}')">
+                            下载(${order.file_count})
+                        </button>` : 
+                        '<span style="color:#95a5a6;">无文件</span>'}
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        ${order.payment_status === 'pending' ? 
+                            `<button class="action-btn pay-btn" onclick="payOrder('${order.order_number}')">
+                                去支付
+                            </button>` : ''}
+                    </div>
+                </td>
+            `;
+            
+            return row;
+        }
+        
+        // 获取支付状态信息
+        function getPaymentInfo(paymentStatus) {
+            const paymentMap = {
+                'pending': { text: '待支付', class: 'status-pending' },
+                'paid': { text: '已支付', class: 'status-paid' },
+                'processing': { text: '处理中', class: 'status-processing' },
+                'refunded': { text: '已退款', class: 'status-pending' }
+            };
+            
+            return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
+        }
+        
+        // 查看订单详情
+        function viewOrderDetail(orderNumber) {
+            alert(`查看订单 ${orderNumber} 的详情\n实际开发中这里会跳转到订单详情页面`);
+            // window.location.href = `/order-detail.html?order_number=${orderNumber}`;
+        }
+        
+        // 支付订单
+        async function payOrder(orderNumber) {
+            if (!confirm(`确定要支付订单 ${orderNumber} 吗？`)) return;
+            
+            try {
+                const response = await fetch(`http://43.143.87.196:8070/api/order/${orderNumber}/pay`, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert(`订单 ${orderNumber} 支付成功！`);
+                    loadOrders(); // 重新加载订单数据
+                } else {
+                    alert(`支付失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，支付失败');
+                console.error('支付错误:', error);
+            }
+        }
+        
+        // 下载文件
+        function downloadFiles(orderNumber) {
+            alert(`开始下载订单 ${orderNumber} 的文件\n实际开发中这里会打包下载所有文件`);
+            // window.location.href = `/api/order/${orderNumber}/download`;
+        }
+        
+        // 清除搜索
+        function clearSearch() {
+            searchInput.value = '';
+            currentPage = 1;
+            loadOrders();
+        }
+        
+        // 导出到Excel
+        function exportToExcel() {
+            alert('开始导出订单数据...\n实际开发中这里会生成Excel文件并下载');
+            
+            // 模拟导出过程
+            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 导出中...';
+            exportBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert('导出完成！已生成Excel文件并开始下载。');
+                exportBtn.innerHTML = '<i class="fas fa-file-export"></i> 导出表格';
+                exportBtn.disabled = false;
+                
+                // 实际开发中可以这样实现：
+                // 1. 调用后端导出接口
+                // 2. 后端生成Excel文件
+                // 3. 前端下载文件
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账户充值 - 诚荟印沈阳</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            display: flex;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 左侧菜单栏 */
+        .sidebar {
+            width: 220px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            margin-right: 20px;
+        }
+        
+        .user-info {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+        
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .menu {
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .menu-item.active {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 24px;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* 右侧内容区 */
+        .main-content-r {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        /* 余额卡片 */
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+        
+        .balance-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        
+        .balance-info {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* 充值方式 */
+        .recharge-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .recharge-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .method-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .method-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transform: translateY(-3px);
+        }
+        
+        .method-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .alipay-icon {
+            color: #1296db;
+        }
+        
+        .wechat-icon {
+            color: #07c160;
+        }
+        
+        .method-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .method-desc {
+            color: #6c757d;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        .recharge-btn {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        
+        .alipay-btn {
+            background-color: #1296db;
+            color: white;
+        }
+        
+        .alipay-btn:hover {
+            background-color: #0d7bb8;
+        }
+        
+        .wechat-btn {
+            background-color: #07c160;
+            color: white;
+        }
+        
+        .wechat-btn:hover {
+            background-color: #06a952;
+        }
+        
+        /* 充值记录 */
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        
+        .records-table thead {
+            background-color: #f8f9fa;
+        }
+        
+        .records-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .records-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s;
+        }
+        
+        .records-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .records-table td {
+            padding: 15px;
+            vertical-align: middle;
+        }
+        
+        .record-time {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .record-amount {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
+        .record-amount.positive {
+            color: #2ecc71;
+        }
+        
+        .record-method {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        
+        .method-alipay {
+            background-color: #e8f4fc;
+            color: #1296db;
+        }
+        
+        .method-wechat {
+            background-color: #e8f7ef;
+            color: #07c160;
+        }
+        
+        .record-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .no-records {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+        
+        .no-records i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+        
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .menu {
+                display: flex;
+                overflow-x: auto;
+            }
+            
+            .menu-item {
+                flex-shrink: 0;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            
+            .menu-item.active {
+                border-left: none;
+                border-bottom-color: #3498db;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content-r {
+                padding: 15px;
+            }
+            
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+            
+            .recharge-methods {
+                grid-template-columns: 1fr;
+            }
+            
+            .records-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .records-table th,
+            .records-table td {
+                white-space: nowrap;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li class="active"><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 个人中心内容 -->
+    <div class="container">
+        <!-- 左侧菜单栏 -->
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name">张先生</div>
+                <div class="user-email">user@example.com</div>
+            </div>
+            
+            <div class="menu">
+                <a href="./order.html" class="menu-item active">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>我的订单</span>
+                </a>
+                <a href="./fapiao.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>发票中心</span>
+                </a>
+                <a href="./chongzhi.html" class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>账户充值</span>
+                </a>
+                <a href="./address.html" class="menu-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>我的地址</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="main-content-r">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-wallet"></i>
+                    账户充值
+                </h1>
+            </div>
+            
+            <!-- 余额卡片 -->
+            <div class="balance-card">
+                <div class="balance-label">账户余额</div>
+                <div class="balance-amount">¥ 1,250.50</div>
+                <div class="balance-info">充值后余额可用于支付订单，支持支付宝和微信充值</div>
+            </div>
+            
+            <!-- 充值方式 -->
+            <div class="recharge-section">
+                <h2 class="section-title">选择充值方式</h2>
+                
+                <div class="recharge-methods">
+                    <!-- 支付宝充值 -->
+                    <div class="method-card">
+                        <div class="method-icon alipay-icon">
+                            <i class="fab fa-alipay"></i>
+                        </div>
+                        <div class="method-name">支付宝充值</div>
+                        <div class="method-desc">支持支付宝余额、银行卡、花呗等多种支付方式</div>
+                        <button class="recharge-btn alipay-btn" onclick="showRechargeModal('alipay')">
+                            支付宝充值
+                        </button>
+                    </div>
+                    
+                    <!-- 微信充值 -->
+                    <div class="method-card">
+                        <div class="method-icon wechat-icon">
+                            <i class="fab fa-weixin"></i>
+                        </div>
+                        <div class="method-name">微信充值</div>
+                        <div class="method-desc">支持微信零钱、银行卡支付，即时到账</div>
+                        <button class="recharge-btn wechat-btn" onclick="showRechargeModal('wechat')">
+                            微信充值
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 充值记录 -->
+            <div class="recharge-section">
+                <h2 class="section-title">充值记录</h2>
+                
+                <table class="records-table">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>充值方式</th>
+                            <th>充值金额</th>
+                            <th>状态</th>
+                            <th>订单号</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 记录1 -->
+                        <tr>
+                            <td>
+                                <div>2025-01-15</div>
+                                <div class="record-time">14:30:25</div>
+                            </td>
+                            <td>
+                                <span class="record-method method-alipay">
+                                    <i class="fab fa-alipay"></i> 支付宝
+                                </span>
+                            </td>
+                            <td class="record-amount positive">+ ¥500.00</td>
+                            <td>
+                                <span class="record-status status-success">充值成功</span>
+                            </td>
+                            <td>CZ20250115143025</td>
+                        </tr>
+                        
+                        <!-- 记录2 -->
+                        <tr>
+                            <td>
+                                <div>2025-01-10</div>
+                                <div class="record-time">09:15:42</div>
+                            </td>
+                            <td>
+                                <span class="record-method method-wechat">
+                                    <i class="fab fa-weixin"></i> 微信
+                                </span>
+                            </td>
+                            <td class="record-amount positive">+ ¥300.00</td>
+                            <td>
+                                <span class="record-status status-success">充值成功</span>
+                            </td>
+                            <td>CZ20250110091542</td>
+                        </tr>
+                        
+                        <!-- 记录3 -->
+                        <tr>
+                            <td>
+                                <div>2025-01-05</div>
+                                <div class="record-time">16:20:18</div>
+                            </td>
+                            <td>
+                                <span class="record-method method-alipay">
+                                    <i class="fab fa-alipay"></i> 支付宝
+                                </span>
+                            </td>
+                            <td class="record-amount positive">+ ¥200.00</td>
+                            <td>
+                                <span class="record-status status-success">充值成功</span>
+                            </td>
+                            <td>CZ20250105162018</td>
+                        </tr>
+                        
+                        <!-- 记录4 -->
+                        <tr>
+                            <td>
+                                <div>2024-12-28</div>
+                                <div class="record-time">11:05:33</div>
+                            </td>
+                            <td>
+                                <span class="record-method method-wechat">
+                                    <i class="fab fa-weixin"></i> 微信
+                                </span>
+                            </td>
+                            <td class="record-amount positive">+ ¥1000.00</td>
+                            <td>
+                                <span class="record-status status-success">充值成功</span>
+                            </td>
+                            <td>CZ20241228110533</td>
+                        </tr>
+                        
+                        <!-- 记录5 -->
+                        <tr>
+                            <td>
+                                <div>2024-12-20</div>
+                                <div class="record-time">20:45:12</div>
+                            </td>
+                            <td>
+                                <span class="record-method method-alipay">
+                                    <i class="fab fa-alipay"></i> 支付宝
+                                </span>
+                            </td>
+                            <td class="record-amount positive">+ ¥250.50</td>
+                            <td>
+                                <span class="record-status status-success">充值成功</span>
+                            </td>
+                            <td>CZ20241220204512</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <!-- 如果没有记录 -->
+                <!--
+                <div class="no-records">
+                    <i class="fas fa-receipt"></i>
+                    <h3>暂无充值记录</h3>
+                    <p>您还没有进行过充值</p>
+                </div>
+                -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 简单的模态框展示（仅静态展示，无实际功能）
+        function showRechargeModal(method) {
+            const methodName = method === 'alipay' ? '支付宝' : '微信';
+            const methodIcon = method === 'alipay' ? '<i class="fab fa-alipay" style="color:#1296db;"></i>' : '<i class="fab fa-weixin" style="color:#07c160;"></i>';
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background-color: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">
+                            ${methodIcon}
+                        </div>
+                        <h3 style="margin-bottom: 5px; color: #2c3e50;">${methodName}充值</h3>
+                        <p style="color: #7f8c8d;">（此功能为静态展示）</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">充值金额</label>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px;">
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(50)">¥50</button>
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(100)">¥100</button>
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(200)">¥200</button>
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(300)">¥300</button>
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(500)">¥500</button>
+                            <button type="button" style="padding: 10px; border: 1px solid #bdc3c7; background-color: white; border-radius: 4px; cursor: pointer;" onclick="selectAmount(1000)">¥1000</button>
+                        </div>
+                        <input type="number" id="customAmount" placeholder="输入其他金额" style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;" min="1" step="0.01">
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; gap: 10px;">
+                        <button onclick="closeModal(this)" style="flex: 1; padding: 12px; background-color: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            取消
+                        </button>
+                        <button onclick="simulateRecharge('${method}')" style="flex: 2; padding: 12px; background-color: ${method === 'alipay' ? '#1296db' : '#07c160'}; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            立即充值
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 关闭模态框
+            window.closeModal = function(btn) {
+                document.body.removeChild(modal);
+            };
+        }
+        
+        function selectAmount(amount) {
+            const input = document.getElementById('customAmount');
+            if (input) {
+                input.value = amount;
+            }
+        }
+        
+        function simulateRecharge(method) {
+            const methodName = method === 'alipay' ? '支付宝' : '微信';
+            alert(`模拟${methodName}充值\n实际开发中这里会跳转到${methodName}支付页面`);
+            closeModal(null);
+        }
+    </script>
+</body>
+</html>

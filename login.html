@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - 诚荟印沈阳</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* 导航条 */
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            font-size: 2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* 登录容器 */
+        .login-container {
+            max-width: 450px;
+            margin: 80px auto 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .login-subtitle {
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        
+        /* 登录标签页 */
+        .login-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: #3498db;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #3498db;
+            border-radius: 3px 3px 0 0;
+        }
+        
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 1rem;
+        }
+        
+        .form-input {
+            padding: 12px 15px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .sms-group {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+        }
+        
+        .sms-input {
+            grid-column: 1;
+        }
+        
+        .sms-btn {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .sms-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .sms-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .login-btn {
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .login-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        /* 额外选项 */
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remember-checkbox {
+            cursor: pointer;
+        }
+        
+        .forgot-password {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        /* 第三方登录 */
+        .third-party-login {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+        }
+        
+        .third-party-title {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        
+        .third-party-title::before,
+        .third-party-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background-color: #e9ecef;
+        }
+        
+        .third-party-title::before {
+            left: 0;
+        }
+        
+        .third-party-title::after {
+            right: 0;
+        }
+        
+        .wechat-login-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #07c160;
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wechat-login-btn:hover {
+            background-color: #06a952;
+            transform: scale(1.05);
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        .register-link a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 40px 20px;
+                padding: 30px 25px;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .sms-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .sms-btn {
+                width: 100%;
+            }
+            
+            .login-options {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-title {
+                font-size: 1.7rem;
+            }
+            
+            .login-container {
+                padding: 25px 20px;
+            }
+            
+            .tab-btn {
+                padding: 12px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./personal.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div style="display: flex; align-items: center; background-color: #1a252f; padding: 10px 15px; border-radius: 4px;">
+                <i class="fas fa-phone-alt" style="margin-right: 8px; color: #3498db;"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 登录表单 -->
+    <div class="login-container">
+        <div class="login-header">
+            <h1 class="login-title">用户登录</h1>
+            <p class="login-subtitle">欢迎回来，请登录您的账户</p>
+        </div>
+        
+        <!-- 登录标签页 -->
+        <div class="login-tabs">
+            <button class="tab-btn active" data-tab="password">密码登录</button>
+            <button class="tab-btn" data-tab="sms">短信登录</button>
+        </div>
+        
+        <!-- 密码登录表单 -->
+        <form id="passwordLoginForm" class="login-form" style="display: block;">
+            <div class="form-group">
+                <label class="form-label">用户名/手机号</label>
+                <input type="text" class="form-input" id="passwordUsername" placeholder="请输入用户名或手机号" required>
+                <div class="error-message" id="passwordUsernameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">密码</label>
+                <input type="password" class="form-input" id="passwordPassword" placeholder="请输入密码" required>
+                <div class="error-message" id="passwordPasswordError"></div>
+            </div>
+            
+            <div class="login-options">
+                <div class="remember-me">
+                    <input type="checkbox" class="remember-checkbox" id="rememberMe">
+                    <label for="rememberMe">记住我</label>
+                </div>
+                <a href="#" class="forgot-password">忘记密码？</a>
+            </div>
+            
+            <button type="button" class="login-btn" id="passwordLoginBtn">登录</button>
+        </form>
+        
+        <!-- 短信登录表单 -->
+        <form id="smsLoginForm" class="login-form" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">手机号码</label>
+                <input type="tel" class="form-input" id="smsPhone" placeholder="请输入11位手机号码" required>
+                <div class="error-message" id="smsPhoneError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">短信验证码</label>
+                <div class="sms-group">
+                    <input type="text" class="form-input sms-input" id="smsCode" placeholder="请输入6位验证码" required>
+                    <button type="button" class="sms-btn" id="sendLoginSmsBtn">发送验证码</button>
+                </div>
+                <div class="error-message" id="smsCodeError"></div>
+            </div>
+            
+            <button type="button" class="login-btn" id="smsLoginBtn">登录</button>
+        </form>
+        
+        <!-- 成功消息 -->
+        <div class="success-message" id="successMessage">
+            登录成功！正在跳转...
+        </div>
+        
+        <!-- 第三方登录 -->
+        <div class="third-party-login">
+            <div class="third-party-title">其他方式登录</div>
+            <button class="wechat-login-btn" id="wechatLoginBtn">
+                <i class="fab fa-weixin"></i>
+            </button>
+        </div>
+        
+        <!-- 注册链接 -->
+        <div class="register-link">
+            还没有账号？
+            <a href="./register.html">立即注册</a>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // DOM元素
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const passwordLoginForm = document.getElementById('passwordLoginForm');
+        const smsLoginForm = document.getElementById('smsLoginForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        // 密码登录相关
+        const passwordUsernameInput = document.getElementById('passwordUsername');
+        const passwordPasswordInput = document.getElementById('passwordPassword');
+        const passwordLoginBtn = document.getElementById('passwordLoginBtn');
+        
+        // 短信登录相关
+        const smsPhoneInput = document.getElementById('smsPhone');
+        const smsCodeInput = document.getElementById('smsCode');
+        const sendLoginSmsBtn = document.getElementById('sendLoginSmsBtn');
+        const smsLoginBtn = document.getElementById('smsLoginBtn');
+        
+        // 错误信息元素
+        const passwordUsernameError = document.getElementById('passwordUsernameError');
+        const passwordPasswordError = document.getElementById('passwordPasswordError');
+        const smsPhoneError = document.getElementById('smsPhoneError');
+        const smsCodeError = document.getElementById('smsCodeError');
+        
+        // 微信登录按钮
+        const wechatLoginBtn = document.getElementById('wechatLoginBtn');
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从本地存储加载记住的用户名
+            const rememberedUsername = localStorage.getItem('remembered_username');
+            if (rememberedUsername) {
+                passwordUsernameInput.value = rememberedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+            
+            // 绑定标签页切换事件
+            tabButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 移除所有按钮的active类
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前点击的按钮添加active类
+                    this.classList.add('active');
+                    
+                    // 切换表单显示
+                    const tab = this.getAttribute('data-tab');
+                    if (tab === 'password') {
+                        passwordLoginForm.style.display = 'block';
+                        smsLoginForm.style.display = 'none';
+                    } else {
+                        passwordLoginForm.style.display = 'none';
+                        smsLoginForm.style.display = 'block';
+                    }
+                });
+            });
+            
+            // 绑定密码登录事件
+            passwordLoginBtn.addEventListener('click', passwordLogin);
+            
+            // 绑定短信登录事件
+            smsLoginBtn.addEventListener('click', smsLogin);
+            
+            // 绑定发送短信验证码事件
+            sendLoginSmsBtn.addEventListener('click', sendLoginSmsCode);
+            
+            // 绑定微信登录按钮事件
+            wechatLoginBtn.addEventListener('click', function() {
+                alert('微信登录功能为演示用途\n实际开发中需要接入微信开放平台');
+            });
+            
+            // 绑定回车键登录
+            document.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    const activeTab = document.querySelector('.tab-btn.active').getAttribute('data-tab');
+                    if (activeTab === 'password') {
+                        passwordLogin();
+                    } else {
+                        smsLogin();
+                    }
+                }
+            });
+        });
+        
+        // 密码登录
+        async function passwordLogin() {
+            // 获取输入值
+            const username = passwordUsernameInput.value.trim();
+            const password = passwordPasswordInput.value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // 简单验证
+            if (!username) {
+                showError(passwordUsernameError, '请输入用户名或手机号');
+                passwordUsernameInput.focus();
+                return;
+            } else {
+                hideError(passwordUsernameError);
+            }
+            
+            if (!password) {
+                showError(passwordPasswordError, '请输入密码');
+                passwordPasswordInput.focus();
+                return;
+            } else {
+                hideError(passwordPasswordError);
+            }
+            
+            // 如果勾选了"记住我"，保存用户名
+            if (rememberMe) {
+                localStorage.setItem('remembered_username', username);
+            } else {
+                localStorage.removeItem('remembered_username');
+            }
+            
+            // 显示加载状态
+            passwordLoginBtn.disabled = true;
+            passwordLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登录中...';
+            
+            try {
+                // 发送登录请求
+                const response = await fetch('http://43.143.87.196:8070/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'password',
+                        username: username,
+                        password: password
+                    }),
+                    credentials: 'include' // 重要：包含cookie
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // 登录成功
+                    showSuccessMessage('登录成功！正在跳转...');
+                    
+                    // 保存用户信息到本地存储（可选）
+                    if (result.user) {
+                        localStorage.setItem('user_info', JSON.stringify(result.user));
+                    }
+                    
+                    // 跳转到订单页面
+                    setTimeout(() => {
+                        window.location.href = './order.html';
+                    }, 1500);
+                    
+                } else {
+                    // 登录失败
+                    showError(passwordPasswordError, result.error || '登录失败，请检查用户名和密码');
+                    passwordLoginBtn.disabled = false;
+                    passwordLoginBtn.innerHTML = '登录';
+                }
+                
+            } catch (error) {
+                console.error('登录错误:', error);
+                showError(passwordPasswordError, '网络错误，请稍后重试');
+                passwordLoginBtn.disabled = false;
+                passwordLoginBtn.innerHTML = '登录';
+            }
+        }
+        
+        // 短信登录
+        async function smsLogin() {
+            // 获取输入值
+            const phone = smsPhoneInput.value.trim();
+            const code = smsCodeInput.value.trim();
+            
+            // 验证手机号格式
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showError(smsPhoneError, '请输入正确的11位手机号码');
+                smsPhoneInput.focus();
+                return;
+            } else {
+                hideError(smsPhoneError);
+            }
+            
+            if (!code) {
+                showError(smsCodeError, '请输入验证码');
+                smsCodeInput.focus();
+                return;
+            } else {
+                hideError(smsCodeError);
+            }
+            
+            // 显示加载状态
+            smsLoginBtn.disabled = true;
+            smsLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 登录中...';
+            
+            try {
+                // 发送短信登录请求
+                const response = await fetch('http://43.143.87.196:8070/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'sms',
+                        phone: phone,
+                        sms_code: code
+                    }),
+                    credentials: 'include' // 重要：包含cookie
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // 登录成功
+                    showSuccessMessage('登录成功！正在跳转...');
+                    
+                    // 保存用户信息到本地存储（可选）
+                    if (result.user) {
+                        localStorage.setItem('user_info', JSON.stringify(result.user));
+                    }
+                    
+                    // 跳转到订单页面
+                    setTimeout(() => {
+                        window.location.href = './order.html';
+                    }, 1500);
+                    
+                } else {
+                    // 登录失败
+                    showError(smsCodeError, result.error || '登录失败，请检查验证码');
+                    smsLoginBtn.disabled = false;
+                    smsLoginBtn.innerHTML = '登录';
+                }
+                
+            } catch (error) {
+                console.error('短信登录错误:', error);
+                showError(smsCodeError, '网络错误，请稍后重试');
+                smsLoginBtn.disabled = false;
+                smsLoginBtn.innerHTML = '登录';
+            }
+        }
+        
+        // 发送短信验证码
+        async function sendLoginSmsCode() {
+            const phone = smsPhoneInput.value.trim();
+            
+            // 验证手机号格式
+            const phoneRegex = /^1[3-9]\d{9}$/;
+            if (!phoneRegex.test(phone)) {
+                showError(smsPhoneError, '请输入正确的11位手机号码');
+                smsPhoneInput.focus();
+                return;
+            } else {
+                hideError(smsPhoneError);
+            }
+            
+            // 禁用按钮，开始倒计时
+            sendLoginSmsBtn.disabled = true;
+            sendLoginSmsBtn.innerHTML = '60秒后重发';
+            
+            let countdown = 60;
+            const timer = setInterval(() => {
+                countdown--;
+                sendLoginSmsBtn.innerHTML = countdown + '秒后重发';
+                
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    sendLoginSmsBtn.disabled = false;
+                    sendLoginSmsBtn.innerHTML = '发送验证码';
+                }
+            }, 1000);
+            
+            try {
+                // 发送短信验证码请求
+                const response = await fetch('http://43.143.87.196:8070/api/sms/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        phone: phone,
+                        type: 'login'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // 演示模式下显示验证码
+                    if (result.demo_mode && result.code) {
+                        alert(`演示验证码：${result.code}\n验证码已发送到 ${phone}（演示模式）`);
+                        smsCodeInput.value = result.code; // 自动填充验证码
+                    } else {
+                        alert(`验证码已发送到 ${phone}`);
+                    }
+                } else {
+                    alert(`发送失败：${result.error || '未知错误'}`);
+                    // 重置按钮状态
+                    clearInterval(timer);
+                    sendLoginSmsBtn.disabled = false;
+                    sendLoginSmsBtn.innerHTML = '发送验证码';
+                }
+                
+            } catch (error) {
+                console.error('发送验证码错误:', error);
+                alert('网络错误，请稍后重试');
+                // 重置按钮状态
+                clearInterval(timer);
+                sendLoginSmsBtn.disabled = false;
+                sendLoginSmsBtn.innerHTML = '发送验证码';
+            }
+        }
+        
+        // 显示成功消息
+        function showSuccessMessage(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+        }
+        
+        // 显示错误信息
+        function showError(errorElement, message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // 隐藏错误信息
+        function hideError(errorElement) {
+            errorElement.style.display = 'none';
+        }
+        
+        // 表单提交事件（防止默认提交）
+        document.querySelectorAll('.login-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>

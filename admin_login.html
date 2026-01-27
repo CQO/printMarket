@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统 - 登录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .login-wrapper {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 40px 35px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 装饰性元素 */
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c);
+        }
+        
+        /* 顶部装饰 */
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: #3498db;
+        }
+        
+        .login-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .login-subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+        
+        /* 登录表单 */
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-label i {
+            margin-right: 8px;
+            color: #3498db;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .form-input {
+            padding: 14px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background-color: #fafafa;
+            width: 100%;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        
+        .password-wrapper {
+            position: relative;
+        }
+        
+        /* 登录按钮 */
+        .login-btn {
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-btn:hover {
+            background: linear-gradient(135deg, #2980b9 0%, #1c5d87 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(41, 128, 185, 0.2);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .login-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .login-btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-loading {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* 错误信息 */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+            padding: 8px 12px;
+            background-color: #ffeaea;
+            border-radius: 4px;
+            border-left: 3px solid #e74c3c;
+        }
+        
+        /* 底部信息 */
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .version {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+            }
+            
+            .login-title {
+                font-size: 1.6rem;
+            }
+            
+            .logo {
+                font-size: 1.7rem;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .shake {
+            animation: shake 0.5s ease;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-print"></i>
+                    <span>诚荟印后台</span>
+                </div>
+                <h2 class="login-title">管理员登录</h2>
+                <p class="login-subtitle">请输入管理员账号密码登录系统</p>
+            </div>
+            
+            <form id="adminLoginForm" class="login-form" onsubmit="return false;">
+                <!-- 用户名 -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user"></i>
+                        管理员账号
+                    </label>
+                    <input type="text" class="form-input" id="adminUsername" 
+                           placeholder="请输入管理员账号" required autocomplete="username">
+                    <div class="error-message" id="usernameError"></div>
+                </div>
+                
+                <!-- 密码 -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i>
+                        密码
+                    </label>
+                    <div class="password-wrapper">
+                        <input type="password" class="form-input" id="adminPassword" 
+                               placeholder="请输入密码" required autocomplete="current-password">
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                
+                <!-- 登录按钮 -->
+                <button type="button" class="login-btn" id="adminLoginBtn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录系统
+                </button>
+                
+                <!-- 错误信息容器 -->
+                <div class="error-message" id="generalError" style="display: none;"></div>
+            </form>
+            
+            <div class="login-footer">
+                <div>诚荟印沈阳印刷有限公司 后台管理系统</div>
+                <div class="version">Version 2.0.1</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM元素
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const adminUsernameInput = document.getElementById('adminUsername');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const passwordToggle = document.getElementById('passwordToggle');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        
+        // 错误信息元素
+        const usernameError = document.getElementById('usernameError');
+        const passwordError = document.getElementById('passwordError');
+        const generalError = document.getElementById('generalError');
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 密码显示/隐藏切换
+            passwordToggle.addEventListener('click', function() {
+                const type = adminPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                adminPasswordInput.setAttribute('type', type);
+                
+                // 切换图标
+                this.innerHTML = type === 'password' ? 
+                    '<i class="fas fa-eye"></i>' : 
+                    '<i class="fas fa-eye-slash"></i>';
+            });
+            
+            // 绑定登录按钮事件
+            adminLoginBtn.addEventListener('click', adminLogin);
+            
+            // 绑定回车键登录
+            adminLoginForm.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    adminLogin();
+                }
+            });
+            
+            // 自动聚焦到用户名输入框
+            adminUsernameInput.focus();
+        });
+        
+        // 管理员登录函数
+        async function adminLogin() {
+            // 获取输入值
+            const username = adminUsernameInput.value.trim();
+            const password = adminPasswordInput.value;
+            
+            // 清除之前的错误信息
+            clearErrors();
+            
+            // 简单验证
+            if (!username) {
+                showError(usernameError, '请输入管理员账号');
+                adminUsernameInput.focus();
+                shakeElement(adminUsernameInput);
+                return;
+            }
+            
+            if (!password) {
+                showError(passwordError, '请输入密码');
+                adminPasswordInput.focus();
+                shakeElement(adminPasswordInput);
+                return;
+            }
+            
+            // 显示加载状态
+            adminLoginBtn.disabled = true;
+            adminLoginBtn.innerHTML = '<i class="fas fa-spinner fa-spin btn-loading"></i> 登录中...';
+            
+            try {
+                // 发送登录请求到后端
+                const response = await fetch('http://43.143.87.196:8070/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    }),
+                    credentials: 'include' // 包含cookie，用于session
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // 登录成功
+                    adminLoginBtn.innerHTML = '<i class="fas fa-check btn-loading"></i> 登录成功';
+                    
+                    // 延迟跳转，让用户看到成功反馈
+                    setTimeout(() => {
+                        window.location.href = './admin_orders.html';
+                    }, 800);
+                    
+                } else {
+                    // 登录失败
+                    const errorMsg = result.error || '登录失败，请检查账号密码';
+                    showError(generalError, errorMsg);
+                    
+                    // 添加抖动效果
+                    shakeElement(adminLoginForm);
+                    
+                    // 恢复按钮状态
+                    adminLoginBtn.disabled = false;
+                    adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登录系统';
+                    
+                    // 清空密码框
+                    adminPasswordInput.value = '';
+                    adminPasswordInput.focus();
+                }
+                
+            } catch (error) {
+                console.error('登录错误:', error);
+                showError(generalError, '网络错误，请检查连接或稍后重试');
+                
+                // 恢复按钮状态
+                adminLoginBtn.disabled = false;
+                adminLoginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> 登录系统';
+            }
+        }
+        
+        // 显示错误信息
+        function showError(errorElement, message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // 清除所有错误信息
+        function clearErrors() {
+            usernameError.style.display = 'none';
+            passwordError.style.display = 'none';
+            generalError.style.display = 'none';
+        }
+        
+        // 抖动效果
+        function shakeElement(element) {
+            element.classList.add('shake');
+            setTimeout(() => {
+                element.classList.remove('shake');
+            }, 500);
+        }
+        
+        // 防止表单默认提交
+        adminLoginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            adminLogin();
+        });
+        
+        // 添加输入框焦点效果
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                clearErrors();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>印刷品购买网站</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .section-title {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+        }
+        
+        .paste-section {
+            background-color: #e8f4fc;
+        }
+        
+        .warning {
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            background-color: #ffebee;
+            border-left: 4px solid #e74c3c;
+            border-radius: 4px;
+        }
+        
+        .paste-area {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        #pasteInput {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        #pasteInput:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button.delete-btn {
+            background-color: #e74c3c;
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+        
+        button.delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .example {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #2ecc71;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .order-items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .order-items th {
+            background-color: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .order-items td {
+            padding: 12px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .order-items tr:hover {
+            background-color: #f5f9ff;
+        }
+        
+        .order-items input {
+            padding: 6px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            width: 80px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            background-color: #e8f4fc;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area.processing {
+            background-color: #e8f4fc;
+            border-color: #2ecc71;
+        }
+        
+        .upload-area.error {
+            background-color: #ffeaea;
+            border-color: #e74c3c;
+        }
+        
+        #fileList {
+            margin-top: 15px;
+            list-style-type: none;
+        }
+        
+        #fileList li {
+            padding: 8px 12px;
+            background-color: #f1f8ff;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .file-progress {
+            width: 100px;
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-right: 10px;
+        }
+        
+        .file-progress-bar {
+            height: 100%;
+            background-color: #3498db;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .price-summary {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .address-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .address-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .address-field label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .address-field input, .address-field select {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto 0;
+            padding: 15px;
+            font-size: 1.1rem;
+            background-color: #2ecc71;
+        }
+        
+        .submit-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .total-section {
+            background-color: #e8f7ef;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: right;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-top: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #3498db;
+        }
+        
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #c3e6cb;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #f5c6cb;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .address-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .paste-area {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li class="active"><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    
+    <!-- 主要内容区 -->
+    <div class="container" style=" margin: 40px auto; ">
+        <h1><i class="fas fa-print"></i> 印刷订单系统</h1>
+        
+        <!-- 粘贴区域 -->
+        <div class="section paste-section">
+            <div class="section-title">
+                <i class="fas fa-paste"></i> 粘贴订单信息
+            </div>
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i> 温馨提示：不要改任何字包括一个标点符号，否则后台识别不到文件无法下单
+            </div>
+            
+            <div class="paste-area">
+                <textarea id="pasteInput" placeholder="请粘贴订单信息..."></textarea>
+                <button id="pasteBtn"><i class="fas fa-paste"></i> 粘贴</button>
+            </div>
+            
+            <div class="example">
+                <p><strong>示例1：</strong> 澜达单页-铜版纸200克-700X980MM-单面-广色域-10张-1款-货款28元-运费0元-合计28元-预计1月27日出货-[18:30截稿]</p>
+                <p><strong>示例2：</strong> 三折精品卡套-竖版高160X宽85MM-#封皮-157克铜版纸裱灰板-亮膜-固定刀版-磁吸扣-#内衬-铜版纸157克-固定刀版-底板颜色[白色]-亮膜-500个-货款1697元-运费0元-合计1697元-预计1月30日出货-[19:00截稿]</p>
+            </div>
+        </div>
+        
+        <!-- 确认订单区域 -->
+        <div id="orderSection" class="section hidden">
+            <div class="section-title">
+                <i class="fas fa-shopping-cart"></i> 确认订单
+            </div>
+            
+            <table class="order-items">
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <th>每款数量</th>
+                        <th>份数</th>
+                        <th>单价(元)</th>
+                        <th>小计(元)</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItems">
+                    <!-- 订单项将在这里动态添加 -->
+                </tbody>
+            </table>
+            
+            <div class="total-section">
+                商品小计: <span id="subtotal">0</span> 元
+            </div>
+        </div>
+        
+        <!-- 附件上传区域 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-file-upload"></i> 上传设计文件
+            </div>
+            <p>支持格式：CDR, AI, PSD, PDF, JPG, PNG, TIFF文件 (最大1GB)</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>点击或拖拽文件到此处上传</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">支持单个或多个文件同时上传</p>
+                <input type="file" id="fileInput" multiple accept=".cdr,.ai,.psd,.pdf,.jpg,.jpeg,.png,.tif,.tiff" style="display: none;">
+            </div>
+            
+            <ul id="fileList">
+                <!-- 文件列表将在这里显示 -->
+            </ul>
+        </div>
+        
+        <!-- 客户备注区域 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-edit"></i> 客户备注
+            </div>
+            <textarea id="customerNote" placeholder="请填写特殊要求、注意事项等..."></textarea>
+        </div>
+        
+        <!-- 金额总计 -->
+        <div class="total-section">
+            <div>商品金额总计: <span id="totalAmount">0</span> 元</div>
+        </div>
+        
+        <!-- 收货地址区域 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-map-marker-alt"></i> 收货地址
+            </div>
+            
+            <div class="address-section">
+                <div class="address-field">
+                    <label>收货人姓名</label>
+                    <input type="text" id="receiverName" value="张先生">
+                </div>
+                
+                <div class="address-field">
+                    <label>联系电话</label>
+                    <input type="tel" id="phone" value="13800138000">
+                </div>
+                
+                <div class="address-field">
+                    <label>省份</label>
+                    <select id="province">
+                        <option value="北京">北京</option>
+                        <option value="上海" selected>上海</option>
+                        <option value="广东">广东</option>
+                        <option value="浙江">浙江</option>
+                        <option value="江苏">江苏</option>
+                    </select>
+                </div>
+                
+                <div class="address-field">
+                    <label>城市</label>
+                    <input type="text" id="city" value="上海市">
+                </div>
+                
+                <div class="address-field" style="grid-column: span 2;">
+                    <label>详细地址</label>
+                    <input type="text" id="address" value="浦东新区张江高科技园区科技路123号创新大厦5楼">
+                </div>
+            </div>
+        </div>
+        
+        <!-- 提交按钮 -->
+        <button id="submitOrder" class="submit-btn"><i class="fas fa-paper-plane"></i> 提交订单</button>
+        
+        <!-- 加载和消息区域 -->
+        <div id="loading" class="loading hidden">
+            <i class="fas fa-spinner fa-spin"></i> 正在提交订单，请稍候...
+        </div>
+        
+        <div id="message" class="hidden"></div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 全局变量
+        let orderItems = [];
+        let uploadedFiles = [];
+        
+        // DOM元素
+        const pasteInput = document.getElementById('pasteInput');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const orderSection = document.getElementById('orderSection');
+        const orderItemsTable = document.getElementById('orderItems');
+        const subtotalElement = document.getElementById('subtotal');
+        const totalAmountElement = document.getElementById('totalAmount');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const customerNote = document.getElementById('customerNote');
+        const submitOrderBtn = document.getElementById('submitOrder');
+        const loadingElement = document.getElementById('loading');
+        const messageElement = document.getElementById('message');
+        
+        // 粘贴按钮点击事件
+        pasteBtn.addEventListener('click', function() {
+            const text = pasteInput.value.trim();
+            if (!text) {
+                alert('请输入订单信息');
+                return;
+            }
+            
+            // 解析订单信息
+            const orderItem = parseOrderText(text);
+            if (orderItem) {
+                // 添加到订单列表
+                orderItems.push(orderItem);
+                
+                // 显示订单区域
+                orderSection.classList.remove('hidden');
+                
+                // 更新订单表格
+                updateOrderTable();
+                
+                // 清空粘贴框
+                pasteInput.value = '';
+                
+                // 更新总金额
+                updateTotalAmount();
+            } else {
+                alert('无法解析订单信息，请检查格式是否正确');
+            }
+        });
+        
+        // 解析订单文本
+        function parseOrderText(text) {
+            // 尝试提取商品名称
+            let productName = '';
+            let quantity = 0;
+            let price = 0;
+            
+            // 匹配商品名称（从开头到第一个"-数字"之前）
+            const nameMatch = text.match(/^([^-]+(?:-[^-]+)*?)(?=-\d)/);
+            if (nameMatch) {
+                productName = nameMatch[1];
+            } else {
+                // 如果没有匹配到，使用第一个"-"之前的内容
+                const dashIndex = text.indexOf('-');
+                productName = dashIndex > 0 ? text.substring(0, dashIndex) : text;
+            }
+            
+            // 匹配数量（查找"X张"或"X个"模式）
+            const quantityMatch = text.match(/(\d+)[张个]/);
+            if (quantityMatch) {
+                quantity = parseInt(quantityMatch[1]);
+            }
+            
+            // 匹配货款金额（查找"货款XX元"模式）
+            const priceMatch = text.match(/货款(\d+(?:\.\d+)?)元/);
+            if (priceMatch) {
+                price = parseFloat(priceMatch[1]);
+            }
+            
+            if (productName && quantity > 0 && price > 0) {
+                return {
+                    id: Date.now() + Math.random(), // 生成唯一ID
+                    productName: productName,
+                    quantity: quantity,
+                    copies: 1,
+                    price: price,
+                    originalText: text
+                };
+            }
+            
+            return null;
+        }
+        
+        // 更新订单表格
+        function updateOrderTable() {
+            orderItemsTable.innerHTML = '';
+            
+            orderItems.forEach(item => {
+                const row = document.createElement('tr');
+                const subtotal = item.quantity * item.copies * item.price;
+                
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.quantity}</td>
+                    <td><input type="number" min="1" value="${item.copies}" data-id="${item.id}" class="copies-input"></td>
+                    <td>${item.price.toFixed(2)}</td>
+                    <td class="item-subtotal">${subtotal.toFixed(2)}</td>
+                    <td><button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> 删除</button></td>
+                `;
+                
+                orderItemsTable.appendChild(row);
+            });
+            
+            // 添加份数输入事件监听
+            document.querySelectorAll('.copies-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const id = this.getAttribute('data-id');
+                    const copies = parseInt(this.value) || 1;
+                    
+                    // 更新订单项
+                    const item = orderItems.find(item => item.id == id);
+                    if (item) {
+                        item.copies = copies;
+                        updateOrderTable();
+                        updateTotalAmount();
+                    }
+                });
+            });
+            
+            // 添加删除按钮事件监听
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    
+                    // 从数组中移除
+                    orderItems = orderItems.filter(item => item.id != id);
+                    
+                    // 如果订单为空，隐藏订单区域
+                    if (orderItems.length === 0) {
+                        orderSection.classList.add('hidden');
+                    } else {
+                        updateOrderTable();
+                    }
+                    
+                    updateTotalAmount();
+                });
+            });
+            
+            // 更新小计
+            updateSubtotal();
+        }
+        
+        // 更新小计
+        function updateSubtotal() {
+            let subtotal = 0;
+            
+            orderItems.forEach(item => {
+                subtotal += item.quantity * item.copies * item.price;
+            });
+            
+            subtotalElement.textContent = subtotal.toFixed(2);
+        }
+        
+        // 更新总金额
+        function updateTotalAmount() {
+            updateSubtotal();
+            totalAmountElement.textContent = subtotalElement.textContent;
+        }
+        
+        // 文件上传功能
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // 拖拽上传功能
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#e1f5fe';
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        // 处理文件
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // 检查文件大小（最大50MB）
+                if (file.size > 50 * 1024 * 1024) {
+                    alert(`文件 ${file.name} 超过50MB大小限制`);
+                    continue;
+                }
+                
+                // 检查文件类型
+                const fileExtension = file.name.split('.').pop().toLowerCase();
+                const allowedExtensions = ['cdr', 'ai', 'psd', 'pdf', 'jpg', 'jpeg', 'png', 'tif', 'tiff'];
+                
+                if (!allowedExtensions.includes(fileExtension)) {
+                    alert(`文件 ${file.name} 格式不支持，请上传CDR、AI、PSD、PDF、JPG、PNG或TIFF文件`);
+                    continue;
+                }
+                
+                // 为文件生成唯一ID
+                const fileId = Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // 添加到上传文件列表
+                uploadedFiles.push({
+                    id: fileId,
+                    name: file.name,
+                    size: file.size,
+                    file: file,
+                    uploaded: false,
+                    serverName: '',
+                    uploadProgress: 0
+                });
+                
+                // 添加到文件列表显示
+                const listItem = document.createElement('li');
+                listItem.id = `file-${fileId}`;
+                listItem.innerHTML = `
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; margin-bottom: 5px;">${file.name}</div>
+                        <div style="display: flex; align-items: center;">
+                            <div class="file-progress">
+                                <div class="file-progress-bar" id="progress-${fileId}"></div>
+                            </div>
+                            <span style="font-size: 0.9rem; color: #666;" id="progress-text-${fileId}">等待上传</span>
+                        </div>
+                    </div>
+                    <button class="delete-btn" data-file-id="${fileId}"><i class="fas fa-times"></i></button>
+                `;
+                fileList.appendChild(listItem);
+                
+                // 立即开始上传文件
+                uploadFile(fileId);
+                
+                // 添加删除按钮事件
+                listItem.querySelector('.delete-btn').addEventListener('click', function() {
+                    const fileId = this.getAttribute('data-file-id');
+                    const index = uploadedFiles.findIndex(file => file.id === fileId);
+                    if (index > -1) {
+                        uploadedFiles.splice(index, 1);
+                    }
+                    document.getElementById(`file-${fileId}`).remove();
+                });
+            }
+            
+            // 清空文件输入
+            fileInput.value = '';
+        }
+        
+        // 上传文件到服务器
+        async function uploadFile(fileId) {
+            const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+            if (fileIndex === -1) return;
+            
+            const fileData = uploadedFiles[fileIndex];
+            
+            // 更新上传状态
+            const progressBar = document.getElementById(`progress-${fileId}`);
+            const progressText = document.getElementById(`progress-text-${fileId}`);
+            
+            progressText.textContent = '上传中...';
+            
+            // 创建FormData对象
+            const formData = new FormData();
+            formData.append('file', fileData.file);
+            formData.append('fileName', fileData.name);
+            formData.append('fileSize', fileData.size);
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                
+                // 上传进度事件
+                xhr.upload.addEventListener('progress', function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progressBar.style.width = percentComplete + '%';
+                        uploadedFiles[fileIndex].uploadProgress = percentComplete;
+                        
+                        if (percentComplete < 100) {
+                            progressText.textContent = `上传中 ${Math.round(percentComplete)}%`;
+                        }
+                    }
+                });
+                
+                // 上传完成事件
+                xhr.addEventListener('load', function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            // 更新文件状态
+                            uploadedFiles[fileIndex].uploaded = true;
+                            uploadedFiles[fileIndex].serverName = response.file_name;
+                            uploadedFiles[fileIndex].serverPath = response.file_path;
+                            
+                            progressBar.style.backgroundColor = '#2ecc71';
+                            progressText.textContent = '上传完成';
+                            progressText.style.color = '#2ecc71';
+                        } else {
+                            uploadedFiles[fileIndex].uploaded = false;
+                            progressBar.style.backgroundColor = '#e74c3c';
+                            progressText.textContent = '上传失败: ' + response.error;
+                            progressText.style.color = '#e74c3c';
+                        }
+                    } else {
+                        uploadedFiles[fileIndex].uploaded = false;
+                        progressBar.style.backgroundColor = '#e74c3c';
+                        progressText.textContent = '上传失败: 服务器错误';
+                        progressText.style.color = '#e74c3c';
+                    }
+                });
+                
+                // 上传错误事件
+                xhr.addEventListener('error', function() {
+                    uploadedFiles[fileIndex].uploaded = false;
+                    progressBar.style.backgroundColor = '#e74c3c';
+                    progressText.textContent = '上传失败: 网络错误';
+                    progressText.style.color = '#e74c3c';
+                });
+                
+                // 开始上传
+                xhr.open('POST', 'http://43.143.87.196:8070/api/upload', true);
+                xhr.send(formData);
+                
+            } catch (error) {
+                console.error('上传文件错误:', error);
+                uploadedFiles[fileIndex].uploaded = false;
+                progressBar.style.backgroundColor = '#e74c3c';
+                progressText.textContent = '上传失败';
+                progressText.style.color = '#e74c3c';
+            }
+        }
+        
+        // 提交订单
+        submitOrderBtn.addEventListener('click', async function() {
+            // 验证订单
+            if (orderItems.length === 0) {
+                alert('请至少添加一个订单项');
+                return;
+            }
+            
+            // 检查是否有文件正在上传
+            const uploadingFiles = uploadedFiles.filter(file => !file.uploaded && file.uploadProgress < 100);
+            if (uploadingFiles.length > 0) {
+                alert('有文件正在上传，请等待上传完成后再提交订单');
+                return;
+            }
+            
+            // 验证收货信息
+            const receiverName = document.getElementById('receiverName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+            
+            if (!receiverName || !phone || !address) {
+                alert('请填写完整的收货信息');
+                return;
+            }
+            
+            // 准备订单数据
+            const orderData = {
+                items: orderItems.map(item => ({
+                    productName: item.productName,
+                    quantity: item.quantity,
+                    copies: item.copies,
+                    price: item.price,
+                    subtotal: item.quantity * item.copies * item.price,
+                    originalText: item.originalText
+                })),
+                files: uploadedFiles.filter(file => file.uploaded).map(file => ({
+                    original_name: file.name,
+                    server_name: file.serverName,
+                    file_path: file.serverPath,
+                    file_size: file.size
+                })),
+                customerNote: customerNote.value.trim(),
+                receiverName: receiverName,
+                phone: phone,
+                province: document.getElementById('province').value,
+                city: document.getElementById('city').value,
+                address: address,
+                totalAmount: parseFloat(totalAmountElement.textContent),
+                orderTime: new Date().toISOString()
+            };
+            
+            // 显示加载状态
+            loadingElement.classList.remove('hidden');
+            submitOrderBtn.disabled = true;
+            messageElement.classList.add('hidden');
+            
+            try {
+                // 发送数据到服务器
+                const response = await fetch('http://43.143.87.196:8070/api/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                
+                // 隐藏加载状态
+                loadingElement.classList.add('hidden');
+                submitOrderBtn.disabled = false;
+                
+                if (response.ok) {
+                    // 显示成功消息
+                    showMessage('订单提交成功！订单号：' + result.order_number, 'success');
+                    
+                    // 重置表单（可选）
+                    setTimeout(() => {
+                        resetForm();
+                    }, 3000);
+                } else {
+                    showMessage('提交失败：' + result.error, 'error');
+                }
+            } catch (error) {
+                // 隐藏加载状态
+                loadingElement.classList.add('hidden');
+                submitOrderBtn.disabled = false;
+                
+                showMessage('网络错误，请稍后重试', 'error');
+                console.error('提交订单错误:', error);
+            }
+        });
+        
+        // 显示消息
+        function showMessage(text, type) {
+            messageElement.textContent = text;
+            messageElement.className = type === 'success' ? 'success-message' : 'error-message';
+            messageElement.classList.remove('hidden');
+        }
+        
+        // 重置表单
+        function resetForm() {
+            orderItems = [];
+            uploadedFiles = [];
+            orderSection.classList.add('hidden');
+            fileList.innerHTML = '';
+            customerNote.value = '';
+            messageElement.classList.add('hidden');
+            totalAmountElement.textContent = '0';
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以添加一些初始化代码
+        });
+    </script>
+</body>
+</html>
