@@ -335,7 +335,7 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./static/all.min.css">
 </head>
 <body>
     <!-- 导航条 -->
@@ -366,52 +366,9 @@
     <div class="container" style=" margin: 40px auto; ">
         <h1><i class="fas fa-print"></i> 印刷订单系统</h1>
         
-        <!-- 粘贴区域 -->
-        <div class="section paste-section">
-            <div class="section-title">
-                <i class="fas fa-paste"></i> 粘贴订单信息
-            </div>
-            <div class="warning">
-                <i class="fas fa-exclamation-triangle"></i> 温馨提示：不要改任何字包括一个标点符号，否则后台识别不到文件无法下单
-            </div>
-            
-            <div class="paste-area">
-                <textarea id="pasteInput" placeholder="请粘贴订单信息..."></textarea>
-                <button id="pasteBtn"><i class="fas fa-paste"></i> 粘贴</button>
-            </div>
-            
-            <div class="example">
-                <p><strong>示例1：</strong> 澜达单页-铜版纸200克-700X980MM-单面-广色域-10张-1款-货款28元-运费0元-合计28元-预计1月27日出货-[18:30截稿]</p>
-                <p><strong>示例2：</strong> 三折精品卡套-竖版高160X宽85MM-#封皮-157克铜版纸裱灰板-亮膜-固定刀版-磁吸扣-#内衬-铜版纸157克-固定刀版-底板颜色[白色]-亮膜-500个-货款1697元-运费0元-合计1697元-预计1月30日出货-[19:00截稿]</p>
-            </div>
-        </div>
         
-        <!-- 确认订单区域 -->
-        <div id="orderSection" class="section hidden">
-            <div class="section-title">
-                <i class="fas fa-shopping-cart"></i> 确认订单
-            </div>
-            
-            <table class="order-items">
-                <thead>
-                    <tr>
-                        <th>商品名</th>
-                        <th>每款数量</th>
-                        <th>份数</th>
-                        <th>单价(元)</th>
-                        <th>小计(元)</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody id="orderItems">
-                    <!-- 订单项将在这里动态添加 -->
-                </tbody>
-            </table>
-            
-            <div class="total-section">
-                商品小计: <span id="subtotal">0</span> 元
-            </div>
-        </div>
+        
+        
         
         <!-- 附件上传区域 -->
         <div class="section">
@@ -439,48 +396,91 @@
             </div>
             <textarea id="customerNote" placeholder="请填写特殊要求、注意事项等..."></textarea>
         </div>
-        
-        <!-- 金额总计 -->
-        <div class="total-section">
-            <div>商品金额总计: <span id="totalAmount">0</span> 元</div>
+        <!-- 粘贴区域 -->
+        <div class="section paste-section">
+            <div class="section-title">
+                <i class="fas fa-paste"></i> 粘贴订单信息
+            </div>
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i> 温馨提示：不要改任何字包括一个标点符号，否则后台识别不到文件无法下单
+            </div>
+            
+            <div class="paste-area">
+                <textarea id="pasteInput" placeholder="请粘贴订单信息..."></textarea>
+                <button id="pasteBtn"><i class="fas fa-paste"></i> 粘贴</button>
+            </div>
+            
+            <div class="example">
+                <p><strong>示例1：</strong> 澜达单页-铜版纸200克-700X980MM-单面-广色域-10张-1款-货款28元-运费0元-合计28元-预计1月27日出货-[18:30截稿]</p>
+                <p><strong>示例2：</strong> 三折精品卡套-竖版高160X宽85MM-#封皮-157克铜版纸裱灰板-亮膜-固定刀版-磁吸扣-#内衬-铜版纸157克-固定刀版-底板颜色[白色]-亮膜-500个-货款1697元-运费0元-合计1697元-预计1月30日出货-[19:00截稿]</p>
+            </div>
         </div>
+        <!-- 确认订单区域 -->
+        <div id="orderSection" class="section hidden">
+            <div class="section-title">
+                <i class="fas fa-shopping-cart"></i> 确认订单
+            </div>
+            
+            <table class="order-items">
+                <thead>
+                    <tr>
+                        <th>商品名</th>
+                        <!-- <th>每款数量</th> -->
+                        <!-- <th>份数</th> -->
+                        <th>单价(元)</th>
+                        <th>小计(元)</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItems">
+                    <!-- 订单项将在这里动态添加 -->
+                </tbody>
+            </table>
+            <div class="example">
+                <p><strong>提示：</strong> 商品折扣以及优惠需要在提交订单后查看</p>
+            </div>
+            <div class="total-section">
+                商品小计: <span id="subtotal">0</span> 元
+            </div>
+            
+        </div>
+
         
         <!-- 收货地址区域 -->
         <div class="section">
             <div class="section-title">
                 <i class="fas fa-map-marker-alt"></i> 收货地址
             </div>
-            
+            <div class="address-field">
+                <label style=" font-weight: bold; ">选择地址模板</label>
+                
+                <select id="dzmb" style=" margin-bottom: 10px; " onchange="chageAddress(this.value)" >
+                </select>
+            </div>
             <div class="address-section">
                 <div class="address-field">
                     <label>收货人姓名</label>
-                    <input type="text" id="receiverName" value="张先生">
+                    <input type="text" id="receiverName" value="">
                 </div>
                 
                 <div class="address-field">
                     <label>联系电话</label>
-                    <input type="tel" id="phone" value="13800138000">
+                    <input type="tel" id="phone" value="">
                 </div>
                 
                 <div class="address-field">
                     <label>省份</label>
-                    <select id="province">
-                        <option value="北京">北京</option>
-                        <option value="上海" selected>上海</option>
-                        <option value="广东">广东</option>
-                        <option value="浙江">浙江</option>
-                        <option value="江苏">江苏</option>
-                    </select>
+                    <input type="text" id="province" value="">
                 </div>
                 
                 <div class="address-field">
                     <label>城市</label>
-                    <input type="text" id="city" value="上海市">
+                    <input type="text" id="city" value="">
                 </div>
                 
                 <div class="address-field" style="grid-column: span 2;">
                     <label>详细地址</label>
-                    <input type="text" id="address" value="浦东新区张江高科技园区科技路123号创新大厦5楼">
+                    <input type="text" id="address" value="">
                 </div>
             </div>
         </div>
@@ -529,7 +529,6 @@
         const orderSection = document.getElementById('orderSection');
         const orderItemsTable = document.getElementById('orderItems');
         const subtotalElement = document.getElementById('subtotal');
-        const totalAmountElement = document.getElementById('totalAmount');
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
         const fileList = document.getElementById('fileList');
@@ -561,8 +560,7 @@
                 // 清空粘贴框
                 pasteInput.value = '';
                 
-                // 更新总金额
-                updateTotalAmount();
+
             } else {
                 alert('无法解析订单信息，请检查格式是否正确');
             }
@@ -617,13 +615,11 @@
             
             orderItems.forEach(item => {
                 const row = document.createElement('tr');
-                const subtotal = item.quantity * item.copies * item.price;
+                const subtotal = item.quantity;
                 
                 row.innerHTML = `
                     <td>${item.productName}</td>
                     <td>${item.quantity}</td>
-                    <td><input type="number" min="1" value="${item.copies}" data-id="${item.id}" class="copies-input"></td>
-                    <td>${item.price.toFixed(2)}</td>
                     <td class="item-subtotal">${subtotal.toFixed(2)}</td>
                     <td><button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> 删除</button></td>
                 `;
@@ -642,7 +638,6 @@
                     if (item) {
                         item.copies = copies;
                         updateOrderTable();
-                        updateTotalAmount();
                     }
                 });
             });
@@ -662,7 +657,6 @@
                         updateOrderTable();
                     }
                     
-                    updateTotalAmount();
                 });
             });
             
@@ -675,17 +669,13 @@
             let subtotal = 0;
             
             orderItems.forEach(item => {
-                subtotal += item.quantity * item.copies * item.price;
+                subtotal += item.quantity;
             });
             
             subtotalElement.textContent = subtotal.toFixed(2);
         }
         
-        // 更新总金额
-        function updateTotalAmount() {
-            updateSubtotal();
-            totalAmountElement.textContent = subtotalElement.textContent;
-        }
+
         
         // 文件上传功能
         uploadArea.addEventListener('click', function() {
@@ -715,6 +705,16 @@
             handleFiles(this.files);
         });
         
+        function chageAddress(index) {
+            const element = window.addressList[parseInt(index)]
+            document.getElementById('receiverName').value = element.receiver_name;
+            document.getElementById('phone').value = element.phone;
+            document.getElementById('province').value = element.province;
+            document.getElementById('city').value = element.city;
+            document.getElementById('address').value = element.detail_address;
+
+        }
+
         // 处理文件
         function handleFiles(files) {
             for (let i = 0; i < files.length; i++) {
@@ -784,6 +784,40 @@
             fileInput.value = '';
         }
         
+        // 加载地址数据
+        async function loadAddresses() {
+            const addressList = document.getElementById('addressList');
+            
+            try {
+                const response = await fetch('http://43.143.87.196:8070/api/address/list');
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    console.log(result.addresses);
+                    let tempData = ``
+                    window.addressList = result.addresses
+                    for (let index = 0; index < result.addresses.length; index++) {
+                        const element = result.addresses[index];
+                        if (element.is_default) {
+                            document.getElementById('receiverName').value = element.receiver_name;
+                            document.getElementById('phone').value = element.phone;
+                            document.getElementById('province').value = element.province;
+                            document.getElementById('city').value = element.city;
+                            document.getElementById('address').value = element.detail_address;
+                            tempData += `<option value="${index}" selected>${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
+                        } else {
+                            tempData += `<option value="${index}">${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
+                        }
+                        document.querySelector('#dzmb').innerHTML = tempData;
+                    }
+                } else {
+                    console.error('加载地址数据失败:', result.error);
+                }
+            } catch (error) {
+                console.error('加载地址数据错误:', error);
+
+            }
+        }
         // 上传文件到服务器
         async function uploadFile(fileId) {
             const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
@@ -914,7 +948,7 @@
                 province: document.getElementById('province').value,
                 city: document.getElementById('city').value,
                 address: address,
-                totalAmount: parseFloat(totalAmountElement.textContent),
+                totalAmount: parseFloat(subtotalElement.textContent),
                 orderTime: new Date().toISOString()
             };
             
@@ -975,12 +1009,12 @@
             fileList.innerHTML = '';
             customerNote.value = '';
             messageElement.classList.add('hidden');
-            totalAmountElement.textContent = '0';
         }
         
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 可以添加一些初始化代码
+            loadAddresses();
         });
     </script>
 </body>
