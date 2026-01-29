@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>积分商城 - 印刷订单系统</title>
+    <link rel="stylesheet" href="./static/index.css">
+    <script src="./static/vue.js"></script>
+    <script src="./static/index.js"></script>
+    <script src="./static/axios.min.js"></script>
+    <link rel="stylesheet" href="./static/back.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .points-mall-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-points {
+            text-align: right;
+        }
+        
+        .points-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .points-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .user-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .category-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f5f7fa;
+            border: 1px solid #dcdfe6;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .category-tab:hover {
+            background-color: #ecf5ff;
+            border-color: #409EFF;
+            color: #409EFF;
+        }
+        
+        .category-tab.active {
+            background-color: #409EFF;
+            border-color: #409EFF;
+            color: white;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .points-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            height: 42px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .type-virtual {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+        
+        .type-physical {
+            background-color: #ecf5ff;
+            color: #409EFF;
+            border: 1px solid #d9ecff;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+        
+        .buy-button {
+            flex: 2;
+        }
+        
+        .delete-button {
+            flex: 1;
+        }
+        
+        .no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .no-products-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #c0c4cc;
+        }
+        
+        .add-product-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #ebeef5;
+        }
+        
+        .add-product-button {
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+        
+        .empty-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c0c4cc;
+            font-size: 48px;
+        }
+        
+        .product-form-dialog .el-dialog__body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .form-row {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            display: block;
+        }
+        
+        .form-required::after {
+            content: '*';
+            color: #f56c6c;
+            margin-left: 4px;
+        }
+        
+        .image-upload {
+            border: 2px dashed #dcdfe6;
+            border-radius: 6px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: #409EFF;
+        }
+        
+        .image-upload-icon {
+            font-size: 48px;
+            color: #c0c4cc;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        
+        .address-select-dialog .el-dialog__body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .address-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .address-item {
+            padding: 15px;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .address-item:hover {
+            border-color: #409EFF;
+            background-color: #f0f7ff;
+        }
+        
+        .address-item.active {
+            border-color: #409EFF;
+            background-color: #ecf5ff;
+        }
+        
+        .address-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .address-phone {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .address-detail {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .address-default {
+            display: inline-block;
+            padding: 1px 6px;
+            background-color: #409EFF;
+            color: white;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .no-address {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .purchase-confirm-dialog .el-dialog__body {
+            padding: 20px;
+        }
+        
+        .product-summary {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ebeef5;
+        }
+        
+        .product-summary-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .product-summary-info {
+            flex: 1;
+        }
+        
+        .product-summary-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .product-summary-points {
+            color: #e6a23c;
+            font-weight: 500;
+        }
+        
+        .purchase-details {
+            margin-bottom: 20px;
+        }
+        
+        .points-cost {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #f56c6c;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #fef0f0;
+            border-radius: 8px;
+        }
+        
+        .points-remaining {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .user-points {
+                text-align: left;
+            }
+            
+            .points-value {
+                font-size: 36px;
+            }
+            
+            .filter-item {
+                min-width: 100%;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 16px;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 后台顶部导航 -->
+    <header class="admin-header">
+        <div class="admin-nav-container">
+            <div class="admin-logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印后台管理</span>
+            </div>
+            
+            <ul class="admin-nav-links">
+                <li><a href="./admin_orders.html"><i class="fas fa-clipboard-list"></i> 订单管理</a></li>
+                <li><a href="./admin_user.html"><i class="fas fa-users"></i> 用户管理</a></li>
+                <li><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
+                <li><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
+                <li><a href="./admin-points-mall.html" class="active"><i class="fas fa-cog"></i> 积分商城</a></li>
+                <li><a href="./admin-points-order.html"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
+            </ul>
+            
+            <div class="admin-user-info">
+                <div class="admin-user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 500;">管理员</div>
+                    <div style="font-size: 0.85rem; opacity: 0.8;">admin@print.com</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="app" class="points-mall-container">
+        
+        
+        <!-- 筛选区域 -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <el-input
+                        v-model="searchKeyword"
+                        placeholder="搜索商品名称或描述"
+                        clearable
+                        @keyup.enter="loadProducts"
+                        @clear="loadProducts"
+                    >
+                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                    </el-input>
+                </div>
+                <div class="filter-item">
+                    <el-select
+                        v-model="productType"
+                        placeholder="商品类型"
+                        clearable
+                        style="width: 100%;"
+                        @change="loadProducts"
+                    >
+                        <el-option label="全部类型" value="all"></el-option>
+                        <el-option label="虚拟商品" value="virtual"></el-option>
+                        <el-option label="实物商品" value="physical"></el-option>
+                    </el-select>
+                </div>
+            </div>
+            
+            <!-- 分类标签 -->
+            <div v-if="categories.length > 0" class="category-tabs">
+                <span 
+                    class="category-tab"
+                    :class="{'active': selectedCategory === 'all'}"
+                    @click="selectCategory('all')"
+                >
+                    全部
+                </span>
+                <span 
+                    v-for="cat in categories" 
+                    :key="cat"
+                    class="category-tab"
+                    :class="{'active': selectedCategory === cat}"
+                    @click="selectCategory(cat)"
+                >
+                    {{ getCategoryText(cat) }}
+                </span>
+            </div>
+        </div>
+        
+        <!-- 商品网格 -->
+        <div v-if="loading" class="loading">
+            <i class="el-icon-loading" style="font-size: 24px;"></i>
+            <p>加载中...</p>
+        </div>
+        
+        <div v-else>
+            <div class="products-grid">
+                <div 
+                    v-for="product in products" 
+                    :key="product.id" 
+                    class="product-card"
+                >
+                    <!-- 商品图片 -->
+                    <div class="product-image">
+                        <div v-if="!product.image_url" class="empty-image">
+                            <i class="el-icon-picture-outline"></i>
+                        </div>
+                        <img v-else :src="'http://43.143.87.196:8070/api/' + product.image_url" :alt="product.product_name">
+                        
+                        <!-- 库存标签 -->
+                        <div v-if="product.stock_quantity >= 0" class="stock-badge">
+                            库存：{{ product.stock_quantity }}
+                        </div>
+                        
+                        <!-- 积分标签 -->
+                        <div class="points-badge">
+                            {{ formatNumber(product.points_required) }} 积分
+                        </div>
+                    </div>
+                    
+                    <!-- 商品信息 -->
+                    <div class="product-info">
+                        <div class="product-type" :class="'type-' + product.product_type">
+                            {{ product.product_type === 'virtual' ? '虚拟商品' : '实物商品' }}
+                        </div>
+                        
+                        <h3 class="product-name">{{ product.product_name }}</h3>
+                        <div class="product-description">
+                            {{ product.short_description || product.description || '暂无描述' }}
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="product-actions">
+                        <el-button 
+                            type="danger" 
+                            class="delete-button"
+                            icon="el-icon-delete"
+                            @click="handleDelete(product)"
+                        >删除商品</el-button>
+                    </div>
+                </div>
+                
+                <!-- 无商品提示 -->
+                <div v-if="products.length === 0" class="no-products">
+                    <i class="el-icon-shopping-bag-1 no-products-icon"></i>
+                    <p style="font-size: 18px; margin-bottom: 10px;">暂无商品</p>
+                    <p style="color: #999; margin-bottom: 20px;">去添加一些商品吧！</p>
+                </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div v-if="total > 0" class="pagination-container">
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[12, 24, 48, 96]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                >
+                </el-pagination>
+            </div>
+        </div>
+        
+        <!-- 添加商品按钮 -->
+        <div class="add-product-section">
+            <el-button 
+                type="success" 
+                class="add-product-button" 
+                icon="el-icon-plus"
+                @click="showAddProductDialog"
+            >
+                添加新商品
+            </el-button>
+        </div>
+        
+        <!-- 添加/编辑商品对话框 -->
+        <el-dialog
+            :title="productDialogTitle"
+            :visible.sync="productDialogVisible"
+            width="600px"
+            class="product-form-dialog"
+        >
+            <el-form :model="productForm" :rules="productRules" ref="productForm" label-width="100px">
+                <div class="form-row">
+                    <div class="form-label form-required">商品名称</div>
+                    <el-form-item prop="product_name">
+                        <el-input
+                            v-model="productForm.product_name"
+                            placeholder="请输入商品名称"
+                        ></el-input>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">简短描述</div>
+                    <el-form-item prop="short_description">
+                        <el-input
+                            v-model="productForm.short_description"
+                            placeholder="请输入简短描述"
+                            type="textarea"
+                            :rows="2"
+                        ></el-input>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">详细描述</div>
+                    <el-form-item prop="description">
+                        <el-input
+                            v-model="productForm.description"
+                            placeholder="请输入详细描述"
+                            type="textarea"
+                            :rows="3"
+                        ></el-input>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">商品图片</div>
+                    <el-form-item prop="image">
+                        <div class="image-upload" @click="$refs.imageInput.click()">
+                            <input 
+                                type="file" 
+                                ref="imageInput" 
+                                style="display: none;" 
+                                accept="image/*"
+                                @change="handleImageUpload"
+                            >
+                            
+                            <div v-if="!productForm.image_preview && !productForm.image_url" class="image-upload-icon">
+                                <i class="el-icon-picture-outline"></i>
+                            </div>
+                            
+                            <div v-if="productForm.image_preview || productForm.image_url">
+                                <img 
+                                    :src="productForm.image_preview || productForm.image_url" 
+                                    alt="预览" 
+                                    class="image-preview"
+                                >
+                            </div>
+                            
+                            <div v-if="!productForm.image_preview && !productForm.image_url">
+                                <p>点击上传图片</p>
+                                <p style="font-size: 12px; color: #999;">支持 JPG, PNG, GIF 格式</p>
+                            </div>
+                        </div>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label form-required">商品类型</div>
+                    <el-form-item prop="product_type">
+                        <el-select
+                            v-model="productForm.product_type"
+                            placeholder="请选择商品类型"
+                            style="width: 100%;"
+                        >
+                            <el-option label="实物商品" value="physical"></el-option>
+                            <el-option label="虚拟商品" value="virtual"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label form-required">商品分类</div>
+                    <el-form-item prop="category">
+                        <el-select
+                            v-model="productForm.category"
+                            placeholder="请选择商品分类"
+                            style="width: 100%;"
+                        >
+                            <el-option label="数码产品" value="digital"></el-option>
+                            <el-option label="日用品" value="daily"></el-option>
+                            <el-option label="优惠券" value="coupon"></el-option>
+                            <el-option label="其他" value="other"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label form-required">所需积分</div>
+                    <el-form-item prop="points_required">
+                        <el-input
+                            v-model="productForm.points_required"
+                            placeholder="请输入所需积分"
+                            type="number"
+                            min="1"
+                        >
+                            <template slot="append">积分</template>
+                        </el-input>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">库存数量</div>
+                    <el-form-item prop="stock_quantity">
+                        <el-input
+                            v-model="productForm.stock_quantity"
+                            placeholder="-1表示无限库存"
+                            type="number"
+                            min="-1"
+                        >
+                            <template slot="append">件</template>
+                        </el-input>
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                            输入 -1 表示无限库存
+                        </div>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">是否上架</div>
+                    <el-form-item prop="is_active">
+                        <el-switch
+                            v-model="productForm.is_active"
+                            active-text="是"
+                            inactive-text="否"
+                            :active-value="1"
+                            :inactive-value="0"
+                        ></el-switch>
+                    </el-form-item>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-label">排序</div>
+                    <el-form-item prop="sort_order">
+                        <el-input
+                            v-model="productForm.sort_order"
+                            placeholder="请输入排序数字"
+                            type="number"
+                        ></el-input>
+                        <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                            数字越大排序越靠前
+                        </div>
+                    </el-form-item>
+                </div>
+            </el-form>
+            
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="productDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="submitProduct" :loading="productSubmitLoading">
+                    {{ isProductEditMode ? '保存' : '创建' }}
+                </el-button>
+            </div>
+        </el-dialog>
+        
+
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    // 用户信息
+                    userPoints: 0,
+                    myOrders: [],
+                    pointsRecords: [],
+                    
+                    // 商品列表
+                    products: [],
+                    categories: [],
+                    loading: false,
+                    
+                    // 筛选条件
+                    searchKeyword: '',
+                    selectedCategory: 'all',
+                    productType: '',
+                    
+                    // 分页
+                    currentPage: 1,
+                    pageSize: 12,
+                    total: 0,
+                    
+                    // 对话框控制
+                    productDialogVisible: false,
+                    isProductEditMode: false,
+                    productDialogTitle: '添加新商品',
+                    productSubmitLoading: false,
+                    
+                    addressDialogVisible: false,
+                    purchaseDialogVisible: false,
+                    
+                    // 选中的商品和地址
+                    selectedProduct: {},
+                    selectedAddress: null,
+                    selectedAddressId: null,
+                    
+                    // 地址列表
+                    addresses: [],
+                    
+                    // 购买表单
+                    purchaseForm: {
+                        quantity: 1,
+                        notes: ''
+                    },
+                    purchaseRules: {
+                        quantity: [
+                            { required: true, message: '请输入兑换数量', trigger: 'blur' }
+                        ]
+                    },
+                    purchaseLoading: false,
+                    
+                    // 商品表单
+                    productForm: {
+                        product_name: '',
+                        description: '',
+                        short_description: '',
+                        image_file: null,
+                        image_preview: '',
+                        image_url: '',
+                        product_type: 'physical',
+                        category: 'daily',
+                        points_required: 100,
+                        stock_quantity: -1,
+                        is_active: 1,
+                        sort_order: 0
+                    },
+                    productRules: {
+                        product_name: [
+                            { required: true, message: '请输入商品名称', trigger: 'blur' }
+                        ],
+                        points_required: [
+                            { required: true, message: '请输入所需积分', trigger: 'blur' },
+                            { type: 'number', message: '积分必须是数字', trigger: 'blur' },
+                            { validator: this.validatePoints, trigger: 'blur' }
+                        ],
+                        category: [
+                            { required: true, message: '请选择商品分类', trigger: 'change' }
+                        ]
+                    }
+                };
+            },
+            mounted() {
+                this.loadProducts();
+            },
+            methods: {
+                // 格式化数字
+                formatNumber(num) {
+                    if (!num && num !== 0) return '0';
+                    return parseInt(num).toLocaleString('zh-CN');
+                },
+                
+                // 格式化日期
+                formatDate(date) {
+                    if (!date) return '';
+                    return new Date(date).toLocaleString('zh-CN');
+                },
+                
+                // 获取分类文本
+                getCategoryText(category) {
+                    const categoryMap = {
+                        'digital': '数码产品',
+                        'daily': '日用品',
+                        'coupon': '优惠券',
+                        'other': '其他'
+                    };
+                    return categoryMap[category] || category;
+                },
+                
+                // 获取订单状态文本
+                getOrderStatusText(status) {
+                    const statusMap = {
+                        'pending': '待处理',
+                        'processing': '处理中',
+                        'shipped': '已发货',
+                        'completed': '已完成',
+                        'cancelled': '已取消'
+                    };
+                    return statusMap[status] || status;
+                },
+                
+                // 获取订单状态类型
+                getOrderStatusType(status) {
+                    const typeMap = {
+                        'pending': 'warning',
+                        'processing': 'info',
+                        'shipped': '',
+                        'completed': 'success',
+                        'cancelled': 'danger'
+                    };
+                    return typeMap[status] || '';
+                },
+
+                
+                // 检查商品是否可用
+                isProductAvailable(product) {
+                    if (product.stock_quantity === 0) {
+                        return false;
+                    }
+                    if (product.is_active === 0) {
+                        return false;
+                    }
+                    return true;
+                },
+                
+                // 选择分类
+                selectCategory(category) {
+                    this.selectedCategory = category;
+                    this.loadProducts();
+                },
+                
+                // 分页大小改变
+                handleSizeChange(val) {
+                    this.pageSize = val;
+                    this.loadProducts();
+                },
+                
+                // 页码改变
+                handleCurrentChange(val) {
+                    this.currentPage = val;
+                    this.loadProducts();
+                },
+                
+                // 加载商品列表
+                async loadProducts() {
+                    this.loading = true;
+                    try {
+                        const params = {
+                            page: this.currentPage,
+                            page_size: this.pageSize
+                        };
+                        
+                        if (this.searchKeyword) {
+                            params.search = this.searchKeyword;
+                        }
+                        
+                        if (this.selectedCategory !== 'all') {
+                            params.category = this.selectedCategory;
+                        }
+                        
+                        const response = await axios.get('http://43.143.87.196:8070/api/points/products', { params });
+                        
+                        if (response.data.success) {
+                            this.products = response.data.products;
+                            this.categories = response.data.categories || [];
+                            this.userPoints = response.data.user_points;
+                            this.total = response.data.total;
+                        } else {
+                            this.$message.error(response.data.error || '加载商品列表失败');
+                        }
+                    } catch (error) {
+                        console.error('加载商品列表失败:', error);
+                        this.$message.error('网络错误，请稍后重试');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                
+                // 删除商品
+                handleDelete(product) {
+                    this.$confirm(`确定要删除商品 "${product.product_name}" 吗？`, '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(async () => {
+                        try {
+                            const response = await axios.delete(`http://43.143.87.196:8070/api/admin/points/product/${product.id}`);
+                            
+                            if (response.data.success) {
+                                this.$message.success('删除成功');
+                                this.loadProducts();
+                            } else {
+                                this.$message.error(response.data.error || '删除失败');
+                            }
+                        } catch (error) {
+                            console.error('删除商品失败:', error);
+                            this.$message.error('删除失败');
+                        }
+                    }).catch(() => {});
+                },
+                
+                // 显示添加商品对话框
+                showAddProductDialog() {
+                    this.isProductEditMode = false;
+                    this.productDialogTitle = '添加新商品';
+                    
+                    this.productForm = {
+                        product_name: '',
+                        description: '',
+                        short_description: '',
+                        image_file: null,
+                        image_preview: '',
+                        image_url: '',
+                        product_type: 'physical',
+                        category: 'daily',
+                        points_required: 100,
+                        stock_quantity: -1,
+                        is_active: 1,
+                        sort_order: 0
+                    };
+                    
+                    this.productDialogVisible = true;
+                    
+                    // 重置表单验证
+                    this.$nextTick(() => {
+                        if (this.$refs.productForm) {
+                            this.$refs.productForm.clearValidate();
+                        }
+                    });
+                },
+                
+                // 处理图片上传
+                handleImageUpload(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    // 检查文件类型
+                    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                        this.$message.warning('请上传图片文件（JPG、PNG、GIF、WebP格式）');
+                        return;
+                    }
+                    
+                    // 检查文件大小（限制5MB）
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.$message.warning('图片大小不能超过5MB');
+                        return;
+                    }
+                    
+                    // 创建预览
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.productForm.image_preview = e.target.result;
+                        this.productForm.image_file = file;
+                        this.productForm.image_url = '';
+                    };
+                    reader.readAsDataURL(file);
+                },
+                
+                // 提交商品
+                submitProduct() {
+                    this.$refs.productForm.validate(async (valid) => {
+                        if (valid) {
+                            this.productSubmitLoading = true;
+                            try {
+                                const formData = new FormData();
+                                
+                                // 添加表单数据
+                                formData.append('product_name', this.productForm.product_name);
+                                formData.append('description', this.productForm.description);
+                                formData.append('short_description', this.productForm.short_description);
+                                formData.append('product_type', this.productForm.product_type);
+                                formData.append('category', this.productForm.category);
+                                formData.append('points_required', this.productForm.points_required);
+                                formData.append('stock_quantity', this.productForm.stock_quantity);
+                                formData.append('is_active', this.productForm.is_active);
+                                formData.append('sort_order', this.productForm.sort_order);
+                                
+                                // 添加图片文件
+                                if (this.productForm.image_file) {
+                                    formData.append('image', this.productForm.image_file);
+                                }
+                                
+                                let response;
+                                if (this.isProductEditMode) {
+                                    // 编辑模式
+                                    response = await axios.put(`http://43.143.87.196:8070/api/admin/points/product/${this.selectedProduct.id}`, formData, {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data'
+                                        }
+                                    });
+                                } else {
+                                    // 添加模式
+                                    response = await axios.post('http://43.143.87.196:8070/api/admin/points/product', formData, {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data'
+                                        }
+                                    });
+                                }
+                                
+                                if (response.data.success) {
+                                    this.$message.success(this.isProductEditMode ? '保存成功' : '创建成功');
+                                    this.productDialogVisible = false;
+                                    this.loadProducts();
+                                } else {
+                                    this.$message.error(response.data.error || '操作失败');
+                                }
+                            } catch (error) {
+                                console.error('操作失败:', error);
+                                this.$message.error('操作失败');
+                            } finally {
+                                this.productSubmitLoading = false;
+                            }
+                        }
+                    });
+                },
+                
+            }
+        });
+    </script>
+</body>
+</html>

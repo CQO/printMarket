@@ -348,7 +348,7 @@
             
             <ul class="nav-links">
                 <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
-                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷报价</a></li>
                 <li class="active"><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
                 <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
                 <li><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
@@ -368,34 +368,6 @@
         
         
         
-        
-        
-        <!-- 附件上传区域 -->
-        <div class="section">
-            <div class="section-title">
-                <i class="fas fa-file-upload"></i> 上传设计文件
-            </div>
-            <p>支持格式：CDR, AI, PSD, PDF, JPG, PNG, TIFF文件 (最大1GB)</p>
-            
-            <div class="upload-area" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p>点击或拖拽文件到此处上传</p>
-                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">支持单个或多个文件同时上传</p>
-                <input type="file" id="fileInput" multiple accept=".cdr,.ai,.psd,.pdf,.jpg,.jpeg,.png,.tif,.tiff" style="display: none;">
-            </div>
-            
-            <ul id="fileList">
-                <!-- 文件列表将在这里显示 -->
-            </ul>
-        </div>
-        
-        <!-- 客户备注区域 -->
-        <div class="section">
-            <div class="section-title">
-                <i class="fas fa-edit"></i> 客户备注
-            </div>
-            <textarea id="customerNote" placeholder="请填写特殊要求、注意事项等..."></textarea>
-        </div>
         <!-- 粘贴区域 -->
         <div class="section paste-section">
             <div class="section-title">
@@ -444,6 +416,34 @@
             </div>
             
         </div>
+        
+        <!-- 附件上传区域 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-file-upload"></i> 上传设计文件
+            </div>
+            <p>支持格式：CDR, AI, PSD, PDF, JPG, PNG, TIFF文件 (最大1GB)</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>点击或拖拽文件到此处上传</p>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">支持单个或多个文件同时上传</p>
+                <input type="file" id="fileInput" multiple accept=".cdr,.ai,.psd,.pdf,.jpg,.jpeg,.png,.tif,.tiff" style="display: none;">
+            </div>
+            
+            <ul id="fileList">
+                <!-- 文件列表将在这里显示 -->
+            </ul>
+        </div>
+        
+        <!-- 客户备注区域 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-edit"></i> 客户备注
+            </div>
+            <textarea id="customerNote" placeholder="请填写特殊要求、注意事项等..."></textarea>
+        </div>
+        
 
         
         <!-- 收货地址区域 -->

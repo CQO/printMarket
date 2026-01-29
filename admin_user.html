@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - 印刷订单系统后台</title>
+    <link rel="stylesheet" href="./static/index.css">
+    <script src="./static/vue.js"></script>
+    <script src="./static/index.js"></script>
+    <script src="./static/axios.min.js"></script>
+    <link rel="stylesheet" href="./static/back.css">
+    <link rel="stylesheet" href="./static/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .admin-container {
+            min-height: 100vh;
+            background-color: #f5f7fa;
+        }
+
+
+        
+        .content {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .search-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .search-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .user-list-table {
+            width: 100%;
+        }
+        
+        .status-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+        
+        .status-inactive {
+            background-color: #fef0f0;
+            color: #f56c6c;
+            border: 1px solid #fde2e2;
+        }
+        
+        .status-banned {
+            background-color: #fef0f0;
+            color: #f56c6c;
+            border: 1px solid #fde2e2;
+        }
+        
+        .user-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: #ecf5ff;
+            color: #409EFF;
+            border: 1px solid #d9ecff;
+        }
+        
+        .user-type-admin {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+        
+        .balance-amount {
+            font-weight: 600;
+            color: #e6a23c;
+        }
+        
+        .operation-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .user-detail-dialog .el-dialog__body {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .detail-section {
+            margin-bottom: 30px;
+        }
+        
+        .detail-section h3 {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e4e7ed;
+            color: #409EFF;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .info-label {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .info-value {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #409EFF;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .order-table {
+            width: 100%;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+        
+        .balance-history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .balance-history-item:last-child {
+            border-bottom: none;
+        }
+        
+        .history-time {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .history-amount {
+            font-weight: 600;
+            margin: 5px 0;
+        }
+        
+        .amount-positive {
+            color: #67c23a;
+        }
+        
+        .amount-negative {
+            color: #f56c6c;
+        }
+        
+        .history-note {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 10px;
+                margin-top: 70px;
+            }
+            
+            .search-item {
+                min-width: 100%;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="admin-container">
+        <!-- 后台顶部导航 -->
+        <header class="admin-header">
+            <div class="admin-nav-container">
+                <div class="admin-logo">
+                    <i class="fas fa-print"></i>
+                    <span>诚荟印后台管理</span>
+                </div>
+                
+                <ul class="admin-nav-links">
+                    <li><a href="./admin_orders.html"><i class="fas fa-clipboard-list"></i> 订单管理</a></li>
+                    <li><a href="./admin_user.html" class="active"><i class="fas fa-users"></i> 用户管理</a></li>
+                    <li><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
+                    <li><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
+                    <li><a href="./admin-points-mall.html"><i class="fas fa-cog"></i> 积分商城</a></li>
+                <li><a href="./admin-points-order.html"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
+                </ul>
+                
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">管理员</div>
+                        <div style="font-size: 0.85rem; opacity: 0.8;">admin@print.com</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主要内容 -->
+        <div class="content">
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <h2 style="margin-bottom: 20px; color: #333;">用户管理</h2>
+                <div class="search-row">
+                    <div class="search-item">
+                        <el-input
+                            v-model="searchForm.phone"
+                            placeholder="按手机号搜索"
+                            clearable
+                            @keyup.enter="handleSearch"
+                        >
+                            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                        </el-input>
+                    </div>
+                    <div class="search-item">
+                        <el-input
+                            v-model="searchForm.username"
+                            placeholder="按用户名搜索"
+                            clearable
+                            @keyup.enter="handleSearch"
+                        >
+                            <i slot="prefix" class="el-input__icon el-icon-user"></i>
+                        </el-input>
+                    </div>
+                    <div class="search-item">
+                        <el-select
+                            v-model="searchForm.user_type"
+                            placeholder="用户类型"
+                            clearable
+                            style="width: 100%;"
+                        >
+                            <el-option label="全部" value="all"></el-option>
+                            <el-option label="普通用户" value="customer"></el-option>
+                            <el-option label="管理员" value="admin"></el-option>
+                        </el-select>
+                    </div>
+                    <div class="search-item">
+                        <el-select
+                            v-model="searchForm.status"
+                            placeholder="用户状态"
+                            clearable
+                            style="width: 100%;"
+                        >
+                            <el-option label="全部" value="all"></el-option>
+                            <el-option label="激活" value="active"></el-option>
+                            <el-option label="未激活" value="inactive"></el-option>
+                            <el-option label="禁用" value="banned"></el-option>
+                        </el-select>
+                    </div>
+                </div>
+                <div class="search-row">
+                    <div class="search-item">
+                        <el-date-picker
+                            v-model="searchForm.start_date"
+                            type="date"
+                            placeholder="注册开始日期"
+                            value-format="yyyy-MM-dd"
+                            style="width: 100%;"
+                        >
+                        </el-date-picker>
+                    </div>
+                    <div class="search-item">
+                        <el-date-picker
+                            v-model="searchForm.end_date"
+                            type="date"
+                            placeholder="注册结束日期"
+                            value-format="yyyy-MM-dd"
+                            style="width: 100%;"
+                        >
+                        </el-date-picker>
+                    </div>
+                    <div class="search-item">
+                        <div class="search-actions">
+                            <el-button type="primary" @click="handleSearch" icon="el-icon-search">搜索</el-button>
+                            <el-button @click="handleReset">重置</el-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 用户列表 -->
+            <div class="card">
+                <el-table
+                    :data="users"
+                    class="user-list-table"
+                    v-loading="loading"
+                >
+                    <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
+                    <el-table-column prop="username" label="用户名" min-width="120">
+                        <template slot-scope="scope">
+                            <div style="font-weight: 500;">{{ scope.row.username }}</div>
+                            <div style="font-size: 12px; color: #999;">{{ scope.row.phone }}</div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="real_name" label="真实姓名" width="100"></el-table-column>
+                    <el-table-column label="用户类型" width="100" align="center">
+                        <template slot-scope="scope">
+                            <span :class="['user-type', scope.row.user_type === 'admin' ? 'user-type-admin' : '']">
+                                {{ scope.row.user_type === 'admin' ? '管理员' : '普通用户' }}
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="状态" width="80" align="center">
+                        <template slot-scope="scope">
+                            <span :class="['status-tag', 'status-' + scope.row.status]">
+                                {{ getStatusText(scope.row.status) }}
+                            </span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="余额" width="120" align="right">
+                        <template slot-scope="scope">
+                            <span class="balance-amount">¥{{ formatNumber(scope.row.balance) }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="订单统计" width="140" align="center">
+                        <template slot-scope="scope">
+                            <div>
+                                <div style="font-size: 14px; font-weight: 500;">{{ scope.row.order_count || 0 }}</div>
+                                <div style="font-size: 12px; color: #999;">总消费 ¥{{ formatNumber(scope.row.total_consumption) }}</div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="created_time" label="注册时间" width="150"></el-table-column>
+                    <el-table-column prop="last_login_time" label="最后登录" width="150"></el-table-column>
+                    <el-table-column label="操作" width="220" fixed="right">
+                        <template slot-scope="scope">
+                            <div class="operation-buttons">
+                                <el-button
+                                    size="mini"
+                                    type="primary"
+                                    @click="handleViewDetail(scope.row)"
+                                >查看</el-button>
+                                <el-button
+                                    size="mini"
+                                    type="warning"
+                                    @click="handleEditBalance(scope.row)"
+                                >余额</el-button>
+                                <el-button
+                                    size="mini"
+                                    type="info"
+                                    @click="handleEditUser(scope.row)"
+                                >编辑</el-button>
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                
+                <!-- 分页 -->
+                <div class="pagination-container">
+                    <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
+                        :page-size="pageSize"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="total"
+                    >
+                    </el-pagination>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 用户详情对话框 -->
+        <el-dialog
+            title="用户详情"
+            :visible.sync="detailDialogVisible"
+            width="80%"
+            class="user-detail-dialog"
+        >
+            <div v-if="currentUser">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3>基本信息</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">用户ID</span>
+                            <span class="info-value">{{ currentUser.id }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">用户名</span>
+                            <span class="info-value">{{ currentUser.username }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">手机号</span>
+                            <span class="info-value">{{ currentUser.phone }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">邮箱</span>
+                            <span class="info-value">{{ currentUser.email || '未设置' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">真实姓名</span>
+                            <span class="info-value">{{ currentUser.real_name || '未设置' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">用户类型</span>
+                            <span class="info-value">
+                                <span :class="['user-type', currentUser.user_type === 'admin' ? 'user-type-admin' : '']">
+                                    {{ currentUser.user_type === 'admin' ? '管理员' : '普通用户' }}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">状态</span>
+                            <span class="info-value">
+                                <span :class="['status-tag', 'status-' + currentUser.status]">
+                                    {{ getStatusText(currentUser.status) }}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">注册时间</span>
+                            <span class="info-value">{{ currentUser.created_at }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">最后登录</span>
+                            <span class="info-value">{{ currentUser.last_login_at || '从未登录' }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 统计数据 -->
+                <div class="detail-section">
+                    <h3>用户统计</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">{{ currentUser.order_count || 0 }}</div>
+                            <div class="stat-label">总订单数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">¥{{ formatNumber(currentUser.total_consumption) }}</div>
+                            <div class="stat-label">总消费金额</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ currentUser.address_count || 0 }}</div>
+                            <div class="stat-label">收货地址数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ currentUser.invoice_count || 0 }}</div>
+                            <div class="stat-label">发票申请数</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">¥{{ formatNumber(currentUser.balance) }}</div>
+                            <div class="stat-label">账户余额</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">{{ currentUser.last_order_time ? '有订单' : '无订单' }}</div>
+                            <div class="stat-label">最近下单</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 最近订单 -->
+                <div class="detail-section">
+                    <h3>最近订单</h3>
+                    <el-table :data="currentUser.recent_orders" class="order-table" size="mini">
+                        <el-table-column prop="order_number" label="订单号"></el-table-column>
+                        <el-table-column prop="total_amount" label="金额" align="right">
+                            <template slot-scope="scope">
+                                ¥{{ formatNumber(scope.row.total_amount) }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="status" label="状态" width="100">
+                            <template slot-scope="scope">
+                                {{ getOrderStatusText(scope.row.status) }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="created_at" label="下单时间" width="180"></el-table-column>
+                    </el-table>
+                    <div v-if="!currentUser.recent_orders || currentUser.recent_orders.length === 0" class="no-data">
+                        暂无订单记录
+                    </div>
+                </div>
+                
+                <!-- 余额变动历史 -->
+                <div class="detail-section">
+                    <h3>余额变动历史</h3>
+                    <div v-if="balanceHistory.length > 0">
+                        <div v-for="item in balanceHistory" :key="item.id" class="balance-history-item">
+                            <div class="history-time">{{ formatTime(item.created_at) }}</div>
+                            <div class="history-amount" :class="item.change_amount > 0 ? 'amount-positive' : 'amount-negative'">
+                                {{ item.change_amount > 0 ? '+' : '' }}¥{{ formatNumber(item.change_amount) }}
+                            </div>
+                            <div class="history-note">
+                                <span>操作类型：{{ getOperationTypeText(item.operation_type) }}</span>
+                                <span v-if="item.note"> | 备注：{{ item.note }}</span>
+                                <span> | 操作人：{{ item.operator || '系统' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="no-data">
+                        暂无余额变动记录
+                    </div>
+                </div>
+            </div>
+        </el-dialog>
+        
+        <!-- 编辑余额对话框 -->
+        <el-dialog
+            title="编辑用户余额"
+            :visible.sync="balanceDialogVisible"
+            width="500px"
+        >
+            <div v-if="currentUser">
+                <el-form :model="balanceForm" :rules="balanceRules" ref="balanceForm" label-width="100px">
+                    <el-form-item label="当前余额">
+                        <el-input :value="formatNumber(currentUser.balance)" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="操作类型" prop="operation">
+                        <el-select v-model="balanceForm.operation" placeholder="请选择操作类型" style="width: 100%;">
+                            <el-option label="增加余额" value="add"></el-option>
+                            <el-option label="扣除余额" value="subtract"></el-option>
+                            <el-option label="设置余额" value="set"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="金额" prop="amount">
+                        <el-input v-model="balanceForm.amount" placeholder="请输入金额" type="number" min="0" step="0.01">
+                            <template slot="prepend">¥</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="备注" prop="note">
+                        <el-input
+                            v-model="balanceForm.note"
+                            type="textarea"
+                            :rows="3"
+                            placeholder="请输入备注信息"
+                        ></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="balanceDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="submitBalanceUpdate" :loading="balanceLoading">确定</el-button>
+                </div>
+            </div>
+        </el-dialog>
+        
+        <!-- 编辑用户信息对话框 -->
+        <el-dialog
+            title="编辑用户信息"
+            :visible.sync="editDialogVisible"
+            width="500px"
+        >
+            <div v-if="currentUser">
+                <el-form :model="editForm" :rules="editRules" ref="editForm" label-width="100px">
+                    <el-form-item label="用户名" prop="username">
+                        <el-input v-model="editForm.username" disabled></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="phone">
+                        <el-input v-model="editForm.phone" placeholder="请输入手机号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="editForm.email" placeholder="请输入邮箱"></el-input>
+                    </el-form-item>
+                    <el-form-item label="真实姓名" prop="real_name">
+                        <el-input v-model="editForm.real_name" placeholder="请输入真实姓名"></el-input>
+                    </el-form-item>
+                    <el-form-item label="用户类型" prop="user_type">
+                        <el-select v-model="editForm.user_type" placeholder="请选择用户类型" style="width: 100%;">
+                            <el-option label="普通用户" value="customer"></el-option>
+                            <el-option label="管理员" value="admin"></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="用户状态" prop="status">
+                        <el-select v-model="editForm.status" placeholder="请选择用户状态" style="width: 100%;">
+                            <el-option label="激活" value="active"></el-option>
+                            <el-option label="未激活" value="inactive"></el-option>
+                            <el-option label="禁用" value="banned"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="editDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="submitUserUpdate" :loading="editLoading">保存</el-button>
+                </div>
+            </div>
+        </el-dialog>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    // 搜索表单
+                    searchForm: {
+                        phone: '',
+                        username: '',
+                        user_type: '',
+                        status: '',
+                        start_date: '',
+                        end_date: ''
+                    },
+                    
+                    // 用户列表数据
+                    users: [],
+                    loading: false,
+                    currentPage: 1,
+                    pageSize: 20,
+                    total: 0,
+                    
+                    // 对话框控制
+                    detailDialogVisible: false,
+                    balanceDialogVisible: false,
+                    editDialogVisible: false,
+                    
+                    // 当前操作用户
+                    currentUser: null,
+                    
+                    // 余额表单
+                    balanceForm: {
+                        operation: 'add',
+                        amount: '',
+                        note: ''
+                    },
+                    balanceRules: {
+                        operation: [
+                            { required: true, message: '请选择操作类型', trigger: 'change' }
+                        ],
+                        amount: [
+                            { required: true, message: '请输入金额', trigger: 'blur' },
+                            { validator: this.validateAmount, trigger: 'blur' }
+                        ]
+                    },
+                    balanceLoading: false,
+                    
+                    // 编辑表单
+                    editForm: {
+                        username: '',
+                        phone: '',
+                        email: '',
+                        real_name: '',
+                        user_type: '',
+                        status: ''
+                    },
+                    editRules: {
+                        phone: [
+                            { required: true, message: '请输入手机号', trigger: 'blur' }
+                        ]
+                    },
+                    editLoading: false,
+                    
+                    // 余额历史
+                    balanceHistory: []
+                };
+            },
+            mounted() {
+                // 从URL参数获取手机号
+                const urlParams = new URLSearchParams(window.location.search);
+                const phoneParam = urlParams.get('phone');
+                if (phoneParam) {
+                    this.searchForm.phone = phoneParam;
+                }
+                
+                this.checkAdminLogin();
+                this.fetchUsers();
+            },
+            methods: {
+                // 检查管理员登录状态
+                checkAdminLogin() {
+                    // const token = localStorage.getItem('admin_token');
+                    // if (!token) {
+                    //     window.location.href = '/admin_login.html';
+                    // }
+                },
+                
+                // 格式化数字
+                formatNumber(num) {
+                    if (!num && num !== 0) return '0.00';
+                    return parseFloat(num).toFixed(2);
+                },
+                
+                // 格式化时间
+                formatTime(time) {
+                    if (!time) return '';
+                    return new Date(time).toLocaleString('zh-CN');
+                },
+                
+                // 获取状态文本
+                getStatusText(status) {
+                    const statusMap = {
+                        'active': '激活',
+                        'inactive': '未激活',
+                        'banned': '禁用'
+                    };
+                    return statusMap[status] || status;
+                },
+                
+                // 获取订单状态文本
+                getOrderStatusText(status) {
+                    const statusMap = {
+                        'pending': '待支付',
+                        'paid': '已支付',
+                        'downloaded': '已下载',
+                        'shipped': '已发货',
+                        'after_sale': '售后'
+                    };
+                    return statusMap[status] || status;
+                },
+                
+                // 获取操作类型文本
+                getOperationTypeText(type) {
+                    const typeMap = {
+                        'add': '增加余额',
+                        'subtract': '扣除余额',
+                        'set': '设置余额'
+                    };
+                    return typeMap[type] || type;
+                },
+                
+                // 验证金额
+                validateAmount(rule, value, callback) {
+                    if (!value) {
+                        callback(new Error('请输入金额'));
+                    } else if (isNaN(value) || parseFloat(value) < 0) {
+                        callback(new Error('请输入有效的金额'));
+                    } else {
+                        callback();
+                    }
+                },
+                
+                // 搜索用户
+                handleSearch() {
+                    this.currentPage = 1;
+                    this.fetchUsers();
+                },
+                
+                // 重置搜索
+                handleReset() {
+                    this.searchForm = {
+                        phone: '',
+                        username: '',
+                        user_type: '',
+                        status: '',
+                        start_date: '',
+                        end_date: ''
+                    };
+                    this.currentPage = 1;
+                    this.fetchUsers();
+                },
+                
+                // 分页大小改变
+                handleSizeChange(val) {
+                    this.pageSize = val;
+                    this.fetchUsers();
+                },
+                
+                // 页码改变
+                handleCurrentChange(val) {
+                    this.currentPage = val;
+                    this.fetchUsers();
+                },
+                
+                // 获取用户列表
+                async fetchUsers() {
+                    this.loading = true;
+                    try {
+                        const params = {
+                            page: this.currentPage,
+                            page_size: this.pageSize,
+                            ...this.searchForm
+                        };
+                        
+                        // 清理空参数
+                        Object.keys(params).forEach(key => {
+                            if (params[key] === '' || params[key] === null || params[key] === undefined) {
+                                delete params[key];
+                            }
+                        });
+                        
+                        const response = await axios.get('http://43.143.87.196:8070/api/admin/users', { params });
+                        
+                        if (response.data.success) {
+                            this.users = response.data.users;
+                            this.total = response.data.total;
+                        } else {
+                            this.$message.error(response.data.error || '获取用户列表失败');
+                        }
+                    } catch (error) {
+                        console.error('获取用户列表失败:', error);
+                        this.$message.error('网络错误，请稍后重试');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                // 查看用户详情
+                async handleViewDetail(user) {
+                    this.currentUser = user;
+                    this.detailDialogVisible = true;
+                    
+                    try {
+                        // 获取用户详情
+                        const response = await axios.get(`http://43.143.87.196:8070/api/admin/user/${user.id}`);
+                        if (response.data.success) {
+                            this.currentUser = {
+                                ...user,
+                                ...response.data.user,
+                                recent_orders: response.data.recent_orders,
+                                addresses: response.data.addresses,
+                                login_logs: response.data.login_logs
+                            };
+                        }
+                        
+                        // 获取余额历史
+                        const historyResponse = await axios.get(`http://43.143.87.196:8070/api/admin/user/${user.id}/balance/history`);
+                        if (historyResponse.data.success) {
+                            this.balanceHistory = historyResponse.data.history;
+                        }
+                    } catch (error) {
+                        console.error('获取用户详情失败:', error);
+                        this.$message.error('获取用户详情失败');
+                    }
+                },
+                
+                // 编辑余额
+                handleEditBalance(user) {
+                    this.currentUser = user;
+                    this.balanceForm = {
+                        operation: 'add',
+                        amount: '',
+                        note: ''
+                    };
+                    this.balanceDialogVisible = true;
+                    
+                    // 重置表单验证
+                    this.$nextTick(() => {
+                        if (this.$refs.balanceForm) {
+                            this.$refs.balanceForm.clearValidate();
+                        }
+                    });
+                },
+                
+                // 提交余额更新
+                submitBalanceUpdate() {
+                    this.$refs.balanceForm.validate(async (valid) => {
+                        if (valid) {
+                            this.balanceLoading = true;
+                            try {
+                                const response = await axios.put(`http://43.143.87.196:8070/api/admin/user/${this.currentUser.id}/balance`, this.balanceForm);
+                                
+                                if (response.data.success) {
+                                    this.$message.success('余额更新成功');
+                                    this.balanceDialogVisible = false;
+                                    
+                                    // 刷新用户列表
+                                    this.fetchUsers();
+                                    
+                                    // 如果详情对话框打开，重新加载详情
+                                    if (this.detailDialogVisible) {
+                                        this.handleViewDetail(this.currentUser);
+                                    }
+                                } else {
+                                    this.$message.error(response.data.error || '余额更新失败');
+                                }
+                            } catch (error) {
+                                console.error('更新余额失败:', error);
+                                this.$message.error('更新余额失败');
+                            } finally {
+                                this.balanceLoading = false;
+                            }
+                        }
+                    });
+                },
+                
+                // 编辑用户信息
+                handleEditUser(user) {
+                    this.currentUser = user;
+                    this.editForm = {
+                        username: user.username,
+                        phone: user.phone || '',
+                        email: user.email || '',
+                        real_name: user.real_name || '',
+                        user_type: user.user_type || 'customer',
+                        status: user.status || 'active'
+                    };
+                    this.editDialogVisible = true;
+                    
+                    // 重置表单验证
+                    this.$nextTick(() => {
+                        if (this.$refs.editForm) {
+                            this.$refs.editForm.clearValidate();
+                        }
+                    });
+                },
+                
+                // 提交用户信息更新
+                submitUserUpdate() {
+                    this.$refs.editForm.validate(async (valid) => {
+                        if (valid) {
+                            this.editLoading = true;
+                            try {
+                                const response = await axios.put(`http://43.143.87.196:8070/api/admin/user/${this.currentUser.id}`, this.editForm);
+                                
+                                if (response.data.success) {
+                                    this.$message.success('用户信息更新成功');
+                                    this.editDialogVisible = false;
+                                    
+                                    // 刷新用户列表
+                                    this.fetchUsers();
+                                } else {
+                                    this.$message.error(response.data.error || '用户信息更新失败');
+                                }
+                            } catch (error) {
+                                console.error('更新用户信息失败:', error);
+                                this.$message.error('更新用户信息失败');
+                            } finally {
+                                this.editLoading = false;
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

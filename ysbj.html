@@ -21,7 +21,7 @@
             
             <ul class="nav-links">
                 <li class="active"><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
-                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷商城</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷报价</a></li>
                 <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
                 <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
                 <li><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
@@ -39,11 +39,7 @@
         <div class="announcement">
             <h2><i class="fas fa-bullhorn"></i> 网站公告</h2>
             <div class="announcement-content">
-                <p>欢迎访问诚荟印沈阳！我们提供高质量的印刷品定制服务，包括名片、宣传册、海报、包装盒等各类印刷品。新用户注册即送100积分，可用于抵扣订单金额。</p>
-                
-                <div class="announcement-marquee">
-                    <p><strong>【最新消息】</strong> 即日起至12月31日，全场印刷品享受9折优惠！企业客户满2000元额外赠送200积分。</p>
-                </div>
+                <p id="wzgg">欢迎访问诚荟印沈阳！我们提供高质量的印刷品定制服务，包括名片、宣传册、海报、包装盒等各类印刷品。新用户注册即送100积分，可用于抵扣订单金额。</p>
             </div>
         </div>
     </div>
@@ -52,7 +48,7 @@
     <div class="container">
         <div class="main-content">
             <div class="content-placeholder" style="height: 1000px;">
-                <iframe src="http://www.yinshuajiazg.com/sl/F52FCV2X" frameborder="0" style="width: 100%;height: 100%;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                <iframe src="https://sf-proxy.xiaota.net/PrintingAbout/PrintingInstructions" frameborder="0"  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"></iframe>
             </div>
         </div>
     </div>
@@ -80,8 +76,24 @@
     </footer>
 
     <script>
-        // 简单交互功能：导航项点击效果
+        // 获取公告
+        const options = {
+        method: 'GET',
+        headers: {
+            Accept: '*/*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+            Connection: 'keep-alive'
+        }
+        };
 
+        fetch('http://43.143.87.196:8070/api/setting/site_description', options)
+        .then(response => response.json())
+        .then(response => {
+            console.log(response)
+            window.wzgg.innerText=response.value;
+        })
+        .catch(err => console.error(err));
     </script>
 </body>
 </html>

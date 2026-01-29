@@ -383,6 +383,7 @@
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
+                    console.log(result)
                     // 登录成功
                     adminLoginBtn.innerHTML = '<i class="fas fa-check btn-loading"></i> 登录成功';
                     

@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>积分商城 - 印刷订单系统</title>
+    <link rel="stylesheet" href="./static/index.css">
+    <script src="./static/vue.js"></script>
+    <script src="./static/index.js"></script>
+    <script src="./static/axios.min.js"></script>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .points-mall-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-points {
+            text-align: right;
+        }
+        
+        .points-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .points-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .user-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .category-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #f5f7fa;
+            border: 1px solid #dcdfe6;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .category-tab:hover {
+            background-color: #ecf5ff;
+            border-color: #409EFF;
+            color: #409EFF;
+        }
+        
+        .category-tab.active {
+            background-color: #409EFF;
+            border-color: #409EFF;
+            color: white;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+        
+        .stock-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .points-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .product-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            height: 42px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .product-type {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .type-virtual {
+            background-color: #f0f9eb;
+            color: #67c23a;
+            border: 1px solid #e1f3d8;
+        }
+        
+        .type-physical {
+            background-color: #ecf5ff;
+            color: #409EFF;
+            border: 1px solid #d9ecff;
+        }
+        
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            padding: 0 20px 20px;
+        }
+        
+        .buy-button {
+            flex: 2;
+        }
+        
+        .delete-button {
+            flex: 1;
+        }
+        
+        .no-products {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .no-products-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #c0c4cc;
+        }
+        
+        
+        .add-product-button {
+            padding: 12px 30px;
+            font-size: 16px;
+        }
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+        
+        .empty-image {
+            width: 100%;
+            height: 200px;
+            background-color: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c0c4cc;
+            font-size: 48px;
+        }
+        
+        .product-form-dialog .el-dialog__body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .form-row {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            display: block;
+        }
+        
+        .form-required::after {
+            content: '*';
+            color: #f56c6c;
+            margin-left: 4px;
+        }
+        
+        .image-upload {
+            border: 2px dashed #dcdfe6;
+            border-radius: 6px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: #409EFF;
+        }
+        
+        .image-upload-icon {
+            font-size: 48px;
+            color: #c0c4cc;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+        
+        .address-select-dialog .el-dialog__body {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .address-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .address-item {
+            padding: 15px;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .address-item:hover {
+            border-color: #409EFF;
+            background-color: #f0f7ff;
+        }
+        
+        .address-item.active {
+            border-color: #409EFF;
+            background-color: #ecf5ff;
+        }
+        
+        .address-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .address-phone {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .address-detail {
+            color: #999;
+            font-size: 13px;
+        }
+        
+        .address-default {
+            display: inline-block;
+            padding: 1px 6px;
+            background-color: #409EFF;
+            color: white;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .no-address {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .purchase-confirm-dialog .el-dialog__body {
+            padding: 20px;
+        }
+        
+        .product-summary {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ebeef5;
+        }
+        
+        .product-summary-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .product-summary-info {
+            flex: 1;
+        }
+        
+        .product-summary-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .product-summary-points {
+            color: #e6a23c;
+            font-weight: 500;
+        }
+        
+        .purchase-details {
+            margin-bottom: 20px;
+        }
+        
+        .points-cost {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #f56c6c;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #fef0f0;
+            border-radius: 8px;
+        }
+        
+        .points-remaining {
+            text-align: center;
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .user-points {
+                text-align: left;
+            }
+            
+            .points-value {
+                font-size: 36px;
+            }
+            
+            .filter-item {
+                min-width: 100%;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 16px;
+            }
+            
+            .product-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷报价</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li class="active"><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+    <div id="app" class="points-mall-container" style="margin-top: 20px;">
+        <!-- 用户积分信息 -->
+        <div class="header">
+            <div class="user-info">
+                <div>
+                    <h1 style="font-size: 24px; margin-bottom: 10px;">积分商城</h1>
+                    <p style="opacity: 0.9;">用积分兑换心仪商品</p>
+                    <div class="user-actions">
+                        <el-button type="success" icon="el-icon-s-order" @click="showMyOrders">我的兑换记录</el-button>
+                        <el-button type="info" icon="el-icon-tickets" @click="showPointsRecords">积分明细</el-button>
+                    </div>
+                </div>
+                <div class="user-points">
+                    <div class="points-value">{{ formatNumber(userPoints) }}</div>
+                    <div class="points-label">可用积分</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 筛选区域 -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <el-input
+                        v-model="searchKeyword"
+                        placeholder="搜索商品名称或描述"
+                        clearable
+                        @keyup.enter="loadProducts"
+                        @clear="loadProducts"
+                    >
+                        <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                    </el-input>
+                </div>
+                <div class="filter-item">
+                    <el-select
+                        v-model="productType"
+                        placeholder="商品类型"
+                        clearable
+                        style="width: 100%;"
+                        @change="loadProducts"
+                    >
+                        <el-option label="全部类型" value="all"></el-option>
+                        <el-option label="虚拟商品" value="virtual"></el-option>
+                        <el-option label="实物商品" value="physical"></el-option>
+                    </el-select>
+                </div>
+            </div>
+            
+            <!-- 分类标签 -->
+            <div v-if="categories.length > 0" class="category-tabs">
+                <span 
+                    class="category-tab"
+                    :class="{'active': selectedCategory === 'all'}"
+                    @click="selectCategory('all')"
+                >
+                    全部
+                </span>
+                <span 
+                    v-for="cat in categories" 
+                    :key="cat"
+                    class="category-tab"
+                    :class="{'active': selectedCategory === cat}"
+                    @click="selectCategory(cat)"
+                >
+                    {{ getCategoryText(cat) }}
+                </span>
+            </div>
+        </div>
+        
+        <!-- 商品网格 -->
+        <div v-if="loading" class="loading">
+            <i class="el-icon-loading" style="font-size: 24px;"></i>
+            <p>加载中...</p>
+        </div>
+        
+        <div v-else>
+            <div class="products-grid">
+                <div 
+                    v-for="product in products" 
+                    :key="product.id" 
+                    class="product-card"
+                >
+                    <!-- 商品图片 -->
+                    <div class="product-image">
+                        <div v-if="!product.image_url" class="empty-image">
+                            <i class="el-icon-picture-outline"></i>
+                        </div>
+                        <img v-else :src="'http://43.143.87.196:8070/api/' + product.image_url" :alt="product.product_name">
+                        
+                        <!-- 库存标签 -->
+                        <div v-if="product.stock_quantity >= 0" class="stock-badge">
+                            库存：{{ product.stock_quantity }}
+                        </div>
+                        
+                        <!-- 积分标签 -->
+                        <div class="points-badge">
+                            {{ formatNumber(product.points_required) }} 积分
+                        </div>
+                    </div>
+                    
+                    <!-- 商品信息 -->
+                    <div class="product-info">
+                        <div class="product-type" :class="'type-' + product.product_type">
+                            {{ product.product_type === 'virtual' ? '虚拟商品' : '实物商品' }}
+                        </div>
+                        
+                        <h3 class="product-name">{{ product.product_name }}</h3>
+                        <div class="product-description">
+                            {{ product.short_description || product.description || '暂无描述' }}
+                        </div>
+                    </div>
+                    
+                    <!-- 操作按钮 -->
+                    <div class="product-actions">
+                        <el-button 
+                            type="primary" 
+                            class="buy-button"
+                            :disabled="!isProductAvailable(product) || userPoints < product.points_required"
+                            @click="handlePurchase(product)"
+                        >
+                            {{ isProductAvailable(product) ? '立即兑换' : '已售罄' }}
+                        </el-button>
+                    </div>
+                </div>
+                
+                <!-- 无商品提示 -->
+                <div v-if="products.length === 0" class="no-products">
+                    <i class="el-icon-shopping-bag-1 no-products-icon"></i>
+                    <p style="font-size: 18px; margin-bottom: 10px;">暂无商品</p>
+                    <p style="color: #999; margin-bottom: 20px;">去添加一些商品吧！</p>
+                </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div v-if="total > 0" class="pagination-container">
+                <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="currentPage"
+                    :page-sizes="[12, 24, 48, 96]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total"
+                >
+                </el-pagination>
+            </div>
+        </div>
+        
+
+        <!-- 选择地址对话框 -->
+        <el-dialog
+            title="选择收货地址"
+            :visible.sync="addressDialogVisible"
+            width="500px"
+            class="address-select-dialog"
+        >
+            <div class="address-list">
+                <div 
+                    v-for="address in addresses" 
+                    :key="address.id"
+                    :class="['address-item', selectedAddressId === address.id ? 'active' : '']"
+                    @click="selectAddress(address)"
+                >
+                    <div class="address-name">
+                        {{ address.receiver_name }}
+                        <span v-if="address.is_default" class="address-default">默认</span>
+                    </div>
+                    <div class="address-phone">{{ address.phone }}</div>
+                    <div class="address-detail">
+                        {{ address.province }}{{ address.city }}{{ address.district }}{{ address.detail_address }}
+                    </div>
+                </div>
+                
+                <div v-if="addresses.length === 0" class="no-address">
+                    <i class="el-icon-location-information" style="font-size: 48px; margin-bottom: 10px;"></i>
+                    <p>暂无收货地址</p>
+                </div>
+            </div>
+            
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="addressDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmAddress" :disabled="!selectedAddressId">
+                    确定选择
+                </el-button>
+            </div>
+        </el-dialog>
+        
+        <!-- 确认兑换对话框 -->
+        <el-dialog
+            title="确认兑换"
+            :visible.sync="purchaseDialogVisible"
+            width="500px"
+            class="purchase-confirm-dialog"
+        >
+            <div class="product-summary">
+                <img 
+                    :src="selectedProduct.image_url || '/static/images/default-product.jpg'" 
+                    :alt="selectedProduct.product_name" 
+                    class="product-summary-image"
+                    @error="handleImageError"
+                >
+                <div class="product-summary-info">
+                    <div class="product-summary-name">{{ selectedProduct.product_name }}</div>
+                    <div class="product-summary-points">
+                        需要 {{ formatNumber(selectedProduct.points_required) }} 积分
+                    </div>
+                </div>
+            </div>
+            
+            <div class="purchase-details">
+                <el-form :model="purchaseForm" :rules="purchaseRules" ref="purchaseForm" label-width="100px">
+                    <el-form-item label="兑换数量" prop="quantity">
+                        <el-input-number
+                            v-model="purchaseForm.quantity"
+                            :min="1"
+                            :max="selectedProduct.stock_quantity >= 0 ? selectedProduct.stock_quantity : 999"
+                            label="兑换数量"
+                        ></el-input-number>
+                    </el-form-item>
+                    
+                    <el-form-item label="收货地址">
+                        <div v-if="selectedAddress">
+                            <div>{{ selectedAddress.receiver_name }} {{ selectedAddress.phone }}</div>
+                            <div style="color: #666; font-size: 14px;">
+                                {{ selectedAddress.province }}{{ selectedAddress.city }}{{ selectedAddress.district }}{{ selectedAddress.detail_address }}
+                            </div>
+                        </div>
+                        <div v-else style="color: #999;">未选择地址</div>
+                    </el-form-item>
+                    
+                    <el-form-item label="备注" prop="notes">
+                        <el-input
+                            v-model="purchaseForm.notes"
+                            type="textarea"
+                            :rows="2"
+                            placeholder="请输入备注信息"
+                        ></el-input>
+                    </el-form-item>
+                </el-form>
+                
+                <div class="points-cost">
+                    共需要 {{ formatNumber(purchaseForm.quantity * selectedProduct.points_required) }} 积分
+                </div>
+                
+                <div class="points-remaining">
+                    兑换后剩余积分：{{ formatNumber(userPoints - purchaseForm.quantity * selectedProduct.points_required) }}
+                </div>
+            </div>
+            
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="purchaseDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="confirmPurchase" :loading="purchaseLoading">
+                    确认兑换
+                </el-button>
+            </div>
+        </el-dialog>
+        
+        <!-- 我的兑换记录对话框 -->
+        <el-dialog
+            title="我的兑换记录"
+            :visible.sync="ordersDialogVisible"
+            width="800px"
+        >
+            <el-table :data="myOrders" style="width: 100%;">
+                <el-table-column prop="order_number" label="订单号" width="150"></el-table-column>
+                <el-table-column prop="product_name" label="商品名称" min-width="150"></el-table-column>
+                <el-table-column prop="points_used" label="消耗积分" width="100" align="right">
+                    <template slot-scope="scope">
+                        {{ formatNumber(scope.row.points_used) }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="quantity" label="数量" width="80" align="center"></el-table-column>
+                <el-table-column prop="status" label="状态" width="100">
+                    <template slot-scope="scope">
+                        <el-tag :type="getOrderStatusType(scope.row.status)" size="small">
+                            {{ getOrderStatusText(scope.row.status) }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="created_at" label="兑换时间" width="180">
+                    <template slot-scope="scope">
+                        {{ formatDate(scope.row.created_at) }}
+                    </template>
+                </el-table-column>
+            </el-table>
+            
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="ordersDialogVisible = false">关闭</el-button>
+            </div>
+        </el-dialog>
+        
+        <!-- 积分明细对话框 -->
+        <el-dialog
+            title="积分明细"
+            :visible.sync="recordsDialogVisible"
+            width="800px"
+        >
+            <el-table :data="pointsRecords" style="width: 100%;">
+                <el-table-column prop="description" label="描述"></el-table-column>
+                <el-table-column prop="change_points" label="变动积分" width="120" align="right">
+                    <template slot-scope="scope">
+                        <span :style="{color: scope.row.change_points > 0 ? '#67c23a' : '#f56c6c'}">
+                            {{ scope.row.change_points > 0 ? '+' : '' }}{{ formatNumber(scope.row.change_points) }}
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="current_points" label="当前积分" width="120" align="right">
+                    <template slot-scope="scope">
+                        {{ formatNumber(scope.row.current_points) }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="created_at" label="时间" width="180">
+                    <template slot-scope="scope">
+                        {{ formatDate(scope.row.created_at) }}
+                    </template>
+                </el-table-column>
+            </el-table>
+            
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="recordsDialogVisible = false">关闭</el-button>
+            </div>
+        </el-dialog>
+    </div>
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        new Vue({
+            el: '#app',
+            data() {
+                return {
+                    // 用户信息
+                    userPoints: 0,
+                    myOrders: [],
+                    pointsRecords: [],
+                    
+                    // 商品列表
+                    products: [],
+                    categories: [],
+                    loading: false,
+                    
+                    // 筛选条件
+                    searchKeyword: '',
+                    selectedCategory: 'all',
+                    productType: '',
+                    
+                    // 分页
+                    currentPage: 1,
+                    pageSize: 12,
+                    total: 0,
+                    
+                    // 对话框控制
+                    productDialogVisible: false,
+                    isProductEditMode: false,
+                    productSubmitLoading: false,
+                    
+                    addressDialogVisible: false,
+                    purchaseDialogVisible: false,
+                    ordersDialogVisible: false,
+                    recordsDialogVisible: false,
+                    
+                    // 选中的商品和地址
+                    selectedProduct: {},
+                    selectedAddress: null,
+                    selectedAddressId: null,
+                    
+                    // 地址列表
+                    addresses: [],
+                    
+                    // 购买表单
+                    purchaseForm: {
+                        quantity: 1,
+                        notes: ''
+                    },
+                    purchaseRules: {
+                        quantity: [
+                            { required: true, message: '请输入兑换数量', trigger: 'blur' }
+                        ]
+                    },
+                    purchaseLoading: false,
+                    
+                    productRules: {
+                        product_name: [
+                            { required: true, message: '请输入商品名称', trigger: 'blur' }
+                        ],
+                        points_required: [
+                            { required: true, message: '请输入所需积分', trigger: 'blur' },
+                            { type: 'number', message: '积分必须是数字', trigger: 'blur' },
+                            { validator: this.validatePoints, trigger: 'blur' }
+                        ],
+                        category: [
+                            { required: true, message: '请选择商品分类', trigger: 'change' }
+                        ]
+                    }
+                };
+            },
+            mounted() {
+                this.loadProducts();
+                this.loadUserPoints();
+                this.loadAddresses();
+            },
+            methods: {
+                // 格式化数字
+                formatNumber(num) {
+                    if (!num && num !== 0) return '0';
+                    return parseInt(num).toLocaleString('zh-CN');
+                },
+                
+                // 格式化日期
+                formatDate(date) {
+                    if (!date) return '';
+                    return new Date(date).toLocaleString('zh-CN');
+                },
+                
+                // 获取分类文本
+                getCategoryText(category) {
+                    const categoryMap = {
+                        'digital': '数码产品',
+                        'daily': '日用品',
+                        'coupon': '优惠券',
+                        'other': '其他'
+                    };
+                    return categoryMap[category] || category;
+                },
+                
+                // 获取订单状态文本
+                getOrderStatusText(status) {
+                    const statusMap = {
+                        'pending': '待处理',
+                        'processing': '处理中',
+                        'shipped': '已发货',
+                        'completed': '已完成',
+                        'cancelled': '已取消'
+                    };
+                    return statusMap[status] || status;
+                },
+                
+                // 获取订单状态类型
+                getOrderStatusType(status) {
+                    const typeMap = {
+                        'pending': 'warning',
+                        'processing': 'info',
+                        'shipped': '',
+                        'completed': 'success',
+                        'cancelled': 'danger'
+                    };
+                    return typeMap[status] || '';
+                },
+                
+                // 验证积分
+                validatePoints(rule, value, callback) {
+                    if (!value) {
+                        callback(new Error('请输入所需积分'));
+                    } else if (parseInt(value) <= 0) {
+                        callback(new Error('积分必须大于0'));
+                    } else {
+                        callback();
+                    }
+                },
+                
+                // 检查商品是否可用
+                isProductAvailable(product) {
+                    if (product.stock_quantity === 0) {
+                        return false;
+                    }
+                    if (product.is_active === 0) {
+                        return false;
+                    }
+                    return true;
+                },
+                
+                // 选择分类
+                selectCategory(category) {
+                    this.selectedCategory = category;
+                    this.loadProducts();
+                },
+                
+                // 分页大小改变
+                handleSizeChange(val) {
+                    this.pageSize = val;
+                    this.loadProducts();
+                },
+                
+                // 页码改变
+                handleCurrentChange(val) {
+                    this.currentPage = val;
+                    this.loadProducts();
+                },
+                
+                // 加载商品列表
+                async loadProducts() {
+                    this.loading = true;
+                    try {
+                        const params = {
+                            page: this.currentPage,
+                            page_size: this.pageSize
+                        };
+                        
+                        if (this.searchKeyword) {
+                            params.search = this.searchKeyword;
+                        }
+                        
+                        if (this.selectedCategory !== 'all') {
+                            params.category = this.selectedCategory;
+                        }
+                        
+                        const response = await axios.get('http://43.143.87.196:8070/api/points/products', { params });
+                        
+                        if (response.data.success) {
+                            this.products = response.data.products;
+                            this.categories = response.data.categories || [];
+                            this.userPoints = response.data.user_points;
+                            this.total = response.data.total;
+                        } else {
+                            this.$message.error(response.data.error || '加载商品列表失败');
+                        }
+                    } catch (error) {
+                        console.error('加载商品列表失败:', error);
+                        this.$message.error('网络错误，请稍后重试');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+                
+                // 加载用户积分
+                async loadUserPoints() {
+                    try {
+                        const response = await axios.get('http://43.143.87.196:8070/api/user/points');
+                        if (response.data.success) {
+                            this.userPoints = response.data.points;
+                        }
+                    } catch (error) {
+                        console.error('加载用户积分失败:', error);
+                    }
+                },
+                
+                // 加载地址列表
+                async loadAddresses() {
+                    try {
+                        const response = await axios.get('http://43.143.87.196:8070/api/address/list');
+                        if (response.data.success) {
+                            this.addresses = response.data.addresses;
+                        }
+                    } catch (error) {
+                        console.error('加载地址列表失败:', error);
+                    }
+                },
+                
+                // 处理兑换
+                handlePurchase(product) {
+                    if (this.userPoints < product.points_required) {
+                        this.$message.warning('积分不足，无法兑换');
+                        return;
+                    }
+                    
+                    if (!this.isProductAvailable(product)) {
+                        this.$message.warning('商品已下架或库存不足');
+                        return;
+                    }
+                    
+                    this.selectedProduct = product;
+                    
+                    // 如果是实物商品，需要选择地址
+                    if (product.product_type === 'physical') {
+                        if (this.addresses.length === 0) {
+                            this.$message.warning('请先添加收货地址');
+                            return;
+                        }
+                        this.addressDialogVisible = true;
+                        this.selectedAddressId = null;
+                        this.selectedAddress = null;
+                    } else {
+                        // 虚拟商品直接进入确认界面
+                        this.selectedAddressId = 0;
+                        this.selectedAddress = {
+                            receiver_name: '虚拟商品',
+                            phone: '无需收货',
+                            address: '无'
+                        };
+                        this.showPurchaseDialog();
+                    }
+                },
+                
+                // 选择地址
+                selectAddress(address) {
+                    this.selectedAddressId = address.id;
+                    this.selectedAddress = address;
+                },
+                
+                // 确认地址选择
+                confirmAddress() {
+                    if (!this.selectedAddressId) {
+                        this.$message.warning('请选择收货地址');
+                        return;
+                    }
+                    
+                    this.addressDialogVisible = false;
+                    this.showPurchaseDialog();
+                },
+                
+                // 显示购买确认对话框
+                showPurchaseDialog() {
+                    this.purchaseForm = {
+                        quantity: 1,
+                        notes: ''
+                    };
+                    
+                    // 如果是实物商品，检查库存
+                    if (this.selectedProduct.stock_quantity >= 0) {
+                        this.purchaseForm.quantity = Math.min(1, this.selectedProduct.stock_quantity);
+                    }
+                    
+                    this.purchaseDialogVisible = true;
+                },
+                
+                // 确认兑换
+                confirmPurchase() {
+                    this.$refs.purchaseForm.validate(async (valid) => {
+                        if (valid) {
+                            if (!this.selectedAddressId && this.selectedProduct.product_type === 'physical') {
+                                this.$message.warning('请选择收货地址');
+                                return;
+                            }
+                            
+                            this.purchaseLoading = true;
+                            try {
+                                const requestData = {
+                                    product_id: this.selectedProduct.id,
+                                    quantity: this.purchaseForm.quantity,
+                                    address_id: this.selectedAddressId,
+                                    notes: this.purchaseForm.notes
+                                };
+                                
+                                const response = await axios.post('http://43.143.87.196:8070/api/points/purchase', requestData);
+                                
+                                if (response.data.success) {
+                                    this.$message.success('兑换成功');
+                                    this.purchaseDialogVisible = false;
+                                    
+                                    // 刷新数据
+                                    this.loadProducts();
+                                    this.loadUserPoints();
+                                } else {
+                                    this.$message.error(response.data.error || '兑换失败');
+                                }
+                            } catch (error) {
+                                console.error('兑换失败:', error);
+                                this.$message.error('兑换失败');
+                            } finally {
+                                this.purchaseLoading = false;
+                            }
+                        }
+                    });
+                },
+                
+                // 显示我的兑换记录
+                async showMyOrders() {
+                    try {
+                        // 这里需要添加获取用户订单的API
+                        // 临时显示示例
+                        this.myOrders = [
+                            {
+                                order_number: 'PO202401150001',
+                                product_name: '星巴克咖啡券',
+                                points_used: 2000,
+                                quantity: 1,
+                                status: 'completed',
+                                created_at: new Date()
+                            },
+                            {
+                                order_number: 'PO202401140002',
+                                product_name: 'U盘 32G',
+                                points_used: 1000,
+                                quantity: 1,
+                                status: 'shipped',
+                                created_at: new Date(Date.now() - 86400000)
+                            }
+                        ];
+                        
+                        this.ordersDialogVisible = true;
+                    } catch (error) {
+                        console.error('获取订单记录失败:', error);
+                        this.$message.error('获取订单记录失败');
+                    }
+                },
+                
+                // 显示积分明细
+                async showPointsRecords() {
+                    try {
+                        const response = await axios.get('http://43.143.87.196:8070/api/user/points');
+                        if (response.data.success) {
+                            this.pointsRecords = response.data.recent_records;
+                            this.recordsDialogVisible = true;
+                        }
+                    } catch (error) {
+                        console.error('获取积分明细失败:', error);
+                        this.$message.error('获取积分明细失败');
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

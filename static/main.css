@@ -111,13 +111,6 @@ header {
     color: #555;
 }
 
-.announcement-marquee {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 6px;
-    border: 1px dashed #ddd;
-    margin-top: 15px;
-}
 
 /* 主要内容区样式 */
 .main-content {
