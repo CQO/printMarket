@@ -335,6 +335,161 @@
             }
         }
     </style>
+        <style>
+        /* 保持你原来的CSS样式不变 */
+        /* ... 你的CSS代码 ... */
+        
+        /* 新增的绑定选择弹窗样式 */
+        .bind-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .bind-dialog-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        
+        .bind-dialog-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .bind-options {
+            margin-bottom: 20px;
+        }
+        
+        .bind-option {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bind-option:hover {
+            border-color: #409EFF;
+            background-color: #f0f7ff;
+        }
+        
+        .bind-option.selected {
+            border-color: #409EFF;
+            background-color: #ecf5ff;
+        }
+        
+        .bind-option-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .bind-option-check {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bind-option-check.selected {
+            border-color: #409EFF;
+            background-color: #409EFF;
+        }
+        
+        .bind-option-check.selected:after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .bind-option-title {
+            font-weight: 500;
+        }
+        
+        .bind-option-desc {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .custom-bind-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .custom-bind-text {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .custom-bind-text:focus {
+            outline: none;
+            border-color: #409EFF;
+        }
+        
+        .bind-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .bind-file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .bind-file-icon {
+            color: #409EFF;
+            font-size: 24px;
+        }
+        
+        .bind-file-name {
+            font-weight: 500;
+        }
+        
+        .bind-file-size {
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
     <link rel="stylesheet" href="./static/all.min.css">
 </head>
 <body>
@@ -347,7 +502,7 @@
             </div>
             
             <ul class="nav-links">
-                <li><a href="./ysbj.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./index.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
                 <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷报价</a></li>
                 <li class="active"><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
                 <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
@@ -378,7 +533,7 @@
             </div>
             
             <div class="paste-area">
-                <textarea id="pasteInput" placeholder="请粘贴订单信息..."></textarea>
+                <textarea id="pasteInput" placeholder="请把印刷报价里的报价总结复制好后   黏贴进来  然后点   提交订单   方可上传文件付款"></textarea>
                 <button id="pasteBtn"><i class="fas fa-paste"></i> 粘贴</button>
             </div>
             
@@ -398,7 +553,7 @@
                     <tr>
                         <th>商品名</th>
                         <!-- <th>每款数量</th> -->
-                        <!-- <th>份数</th> -->
+                        <th>款数</th>
                         <th>单价(元)</th>
                         <th>小计(元)</th>
                         <th>操作</th>
@@ -495,7 +650,63 @@
         
         <div id="message" class="hidden"></div>
     </div>
-    
+    <div id="bindDialog" class="bind-dialog">
+        <div class="bind-dialog-content">
+            <div class="bind-dialog-title">
+                <i class="fas fa-link"></i> 请选择文件绑定
+            </div>
+            
+            <div id="bindFileInfo" class="bind-file-info">
+                <i class="fas fa-file-alt bind-file-icon"></i>
+                <div>
+                    <div id="bindFileName" class="bind-file-name"></div>
+                    <div id="bindFileSize" class="bind-file-size"></div>
+                </div>
+            </div>
+            
+            <div class="bind-options">
+                <div class="bind-option selected" style="cursor: default; background-color: #f0f7ff;">
+                    <div class="bind-option-header">
+                        <div class="bind-option-check selected"></div>
+                        <div class="bind-option-title">绑定到订单项</div>
+                    </div>
+                    <div class="bind-option-desc">请选择此文件属于哪个订单项</div>
+                    
+                    <div style="margin-top: 15px;">
+                        <select id="orderSelect" style="width: 100%; padding: 10px; border: 1px solid #409EFF; border-radius: 5px; font-size: 14px;">
+                            <option value="">请选择订单项...</option>
+                        </select>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px; padding-left: 5px;">
+                            每个文件都必须绑定到一个订单项
+                        </div>
+                    </div>
+                    
+                    <!-- 备注输入框 -->
+                    <div style="margin-top: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-size: 14px; color: #666;">
+                            文件备注（选填）：
+                        </label>
+                        <textarea 
+                            id="fileNote" 
+                            style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; resize: vertical;"
+                            rows="3" 
+                            placeholder="请输入文件备注，例如：最终版本、修改说明、特殊要求等..."
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bind-dialog-actions">
+                <button onclick="cancelBind()" style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 5px; background: yellowgreen; cursor: pointer;">
+                    取消上传
+                </button>
+                <button onclick="confirmBind()" style="padding: 8px 16px; border: none; border-radius: 5px; background: #409EFF; color: white; cursor: pointer;">
+                    确认并上传
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 版权信息 -->
     <footer>
         <div class="container footer-content">
@@ -522,6 +733,8 @@
         // 全局变量
         let orderItems = [];
         let uploadedFiles = [];
+        let currentFileId = null; // 当前正在绑定的文件ID
+        let selectedBindOption = 'none'; // 默认选择不绑定
         
         // DOM元素
         const pasteInput = document.getElementById('pasteInput');
@@ -537,7 +750,14 @@
         const loadingElement = document.getElementById('loading');
         const messageElement = document.getElementById('message');
         
-        // 粘贴按钮点击事件
+        // 绑定弹窗相关元素
+        const bindDialog = document.getElementById('bindDialog');
+        const bindFileName = document.getElementById('bindFileName');
+        const bindFileSize = document.getElementById('bindFileSize');
+        const orderSelect = document.getElementById('orderSelect');
+        const customBindText = document.getElementById('customBindText');
+        
+        // 修改后的粘贴按钮点击事件（保持不变）
         pasteBtn.addEventListener('click', function() {
             const text = pasteInput.value.trim();
             if (!text) {
@@ -560,162 +780,91 @@
                 // 清空粘贴框
                 pasteInput.value = '';
                 
-
+                // 检查是否有未绑定的文件，如果有且现在只有一个订单，自动绑定
+                updateUnboundFiles();
+                
             } else {
                 alert('无法解析订单信息，请检查格式是否正确');
             }
         });
-        
-        // 解析订单文本
-        function parseOrderText(text) {
-            // 尝试提取商品名称
-            let productName = '';
-            let quantity = 0;
-            let price = 0;
-            
-            // 匹配商品名称（从开头到第一个"-数字"之前）
-            const nameMatch = text.match(/^([^-]+(?:-[^-]+)*?)(?=-\d)/);
-            if (nameMatch) {
-                productName = nameMatch[1];
-            } else {
-                // 如果没有匹配到，使用第一个"-"之前的内容
-                const dashIndex = text.indexOf('-');
-                productName = dashIndex > 0 ? text.substring(0, dashIndex) : text;
-            }
-            
-            // 匹配数量（查找"X张"或"X个"模式）
-            const quantityMatch = text.match(/(\d+)[张个]/);
-            if (quantityMatch) {
-                quantity = parseInt(quantityMatch[1]);
-            }
-            
-            // 匹配货款金额（查找"货款XX元"模式）
-            const priceMatch = text.match(/货款(\d+(?:\.\d+)?)元/);
-            if (priceMatch) {
-                price = parseFloat(priceMatch[1]);
-            }
-            
-            if (productName && quantity > 0 && price > 0) {
-                return {
-                    id: Date.now() + Math.random(), // 生成唯一ID
-                    productName: productName,
-                    quantity: quantity,
-                    copies: 1,
-                    price: price,
-                    originalText: text
-                };
-            }
-            
-            return null;
-        }
-        
-        // 更新订单表格
-        function updateOrderTable() {
-            orderItemsTable.innerHTML = '';
-            
-            orderItems.forEach(item => {
-                const row = document.createElement('tr');
-                const subtotal = item.quantity;
-                
-                row.innerHTML = `
-                    <td>${item.productName}</td>
-                    <td>${item.quantity}</td>
-                    <td class="item-subtotal">${subtotal.toFixed(2)}</td>
-                    <td><button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> 删除</button></td>
-                `;
-                
-                orderItemsTable.appendChild(row);
-            });
-            
-            // 添加份数输入事件监听
-            document.querySelectorAll('.copies-input').forEach(input => {
-                input.addEventListener('change', function() {
-                    const id = this.getAttribute('data-id');
-                    const copies = parseInt(this.value) || 1;
-                    
-                    // 更新订单项
-                    const item = orderItems.find(item => item.id == id);
-                    if (item) {
-                        item.copies = copies;
-                        updateOrderTable();
+
+        function updateUnboundFiles() {
+            if (orderItems.length === 1) {
+                // 现在只有一个订单，自动绑定所有未绑定的文件
+                uploadedFiles.forEach(file => {
+                    if (!file.bindTo && !file.bindNote && !file.uploaded) {
+                        // 找到这个文件在列表中的元素
+                        const bindStatus = document.getElementById(`bind-status-${file.id}`);
+                        const progressText = document.getElementById(`progress-text-${file.id}`);
+                        
+                        if (bindStatus && bindStatus.textContent.includes('未绑定') || bindStatus.textContent.includes('等待处理')) {
+                            // 自动绑定到唯一订单
+                            file.bindTo = orderItems[0].id;
+                            bindStatus.textContent = `自动绑定: ${orderItems[0].productName.substring(0, 15)}...`;
+                            bindStatus.style.background = '#e1f3d8';
+                            bindStatus.style.color = '#67c23a';
+                            
+                            if (progressText) {
+                                progressText.textContent = '等待上传';
+                                progressText.style.color = '#666';
+                            }
+                            
+                            // 开始上传
+                            uploadFile(file.id);
+                        }
                     }
                 });
-            });
-            
-            // 添加删除按钮事件监听
-            document.querySelectorAll('.delete-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    
-                    // 从数组中移除
-                    orderItems = orderItems.filter(item => item.id != id);
-                    
-                    // 如果订单为空，隐藏订单区域
-                    if (orderItems.length === 0) {
-                        orderSection.classList.add('hidden');
-                    } else {
-                        updateOrderTable();
-                    }
-                    
-                });
-            });
-            
-            // 更新小计
-            updateSubtotal();
+            }
         }
         
-        // 更新小计
-        function updateSubtotal() {
-            let subtotal = 0;
+        // 自动绑定到唯一订单
+        function autoBindToOrder(fileId, fileName, fileSize) {
+            const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+            if (fileIndex === -1) return;
             
-            orderItems.forEach(item => {
-                subtotal += item.quantity;
-            });
+            // 获取第一个（也是唯一一个）订单
+            const orderItem = orderItems[0];
             
-            subtotalElement.textContent = subtotal.toFixed(2);
-        }
-        
-
-        
-        // 文件上传功能
-        uploadArea.addEventListener('click', function() {
-            fileInput.click();
-        });
-        
-        // 拖拽上传功能
-        uploadArea.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            uploadArea.style.backgroundColor = '#e1f5fe';
-        });
-        
-        uploadArea.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            uploadArea.style.backgroundColor = '';
-        });
-        
-        uploadArea.addEventListener('drop', function(e) {
-            e.preventDefault();
-            uploadArea.style.backgroundColor = '';
+            // 自动绑定到该订单
+            uploadedFiles[fileIndex].bindTo = orderItem.id;
+            uploadedFiles[fileIndex].fileNote = '';
             
-            const files = e.dataTransfer.files;
-            handleFiles(files);
-        });
-        
-        fileInput.addEventListener('change', function() {
-            handleFiles(this.files);
-        });
-        
-        function chageAddress(index) {
-            const element = window.addressList[parseInt(index)]
-            document.getElementById('receiverName').value = element.receiver_name;
-            document.getElementById('phone').value = element.phone;
-            document.getElementById('province').value = element.province;
-            document.getElementById('city').value = element.city;
-            document.getElementById('address').value = element.detail_address;
-
+            // 更新文件列表中的绑定状态
+            const bindStatus = document.getElementById(`bind-status-${fileId}`);
+            bindStatus.textContent = `已绑定: ${orderItem.productName.substring(0, 12)}...`;
+            bindStatus.style.background = '#e1f3d8';
+            bindStatus.style.color = '#67c23a';
+            
+            // 更新进度文本
+            const progressText = document.getElementById(`progress-text-${fileId}`);
+            progressText.textContent = '准备上传';
+            progressText.style.color = '#666';
+            
+            // 立即开始上传文件
+            uploadFile(fileId);
         }
 
-        // 处理文件
+        // 标记为未绑定（用于没有订单的情况）
+        function markAsUnbound(fileId) {
+            const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+            if (fileIndex === -1) return;
+            
+            uploadedFiles[fileIndex].bindTo = null;
+            uploadedFiles[fileIndex].bindNote = '';
+            
+            // 更新文件列表中的绑定状态
+            const bindStatus = document.getElementById(`bind-status-${fileId}`);
+            bindStatus.textContent = '未绑定';
+            bindStatus.style.background = '#f0f0f0';
+            bindStatus.style.color = '#666';
+            
+            // 显示未绑定提示
+            const progressText = document.getElementById(`progress-text-${fileId}`);
+            progressText.textContent = '请先添加订单';
+            progressText.style.color = '#e74c3c';
+        }
+
+        // 修改后的处理文件函数
         function handleFiles(files) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
@@ -738,7 +887,7 @@
                 // 为文件生成唯一ID
                 const fileId = Date.now() + '_' + i + '_' + Math.random().toString(36).substr(2, 9);
                 
-                // 添加到上传文件列表
+                // 先将文件添加到列表但不立即上传
                 uploadedFiles.push({
                     id: fileId,
                     name: file.name,
@@ -746,28 +895,60 @@
                     file: file,
                     uploaded: false,
                     serverName: '',
-                    uploadProgress: 0
+                    uploadProgress: 0,
+                    bindTo: null, // 绑定到的订单ID
+                    fileNote: '' // 文件备注
                 });
                 
-                // 添加到文件列表显示
+                // 添加到文件列表显示（初始状态）
                 const listItem = document.createElement('li');
                 listItem.id = `file-${fileId}`;
                 listItem.innerHTML = `
                     <div style="flex: 1;">
-                        <div style="font-weight: 500; margin-bottom: 5px;">${file.name}</div>
+                        <div style="font-weight: 500; margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
+                            ${file.name}
+                            <span id="bind-status-${fileId}" style="font-size: 0.8rem; background: #f0f0f0; padding: 2px 8px; border-radius: 10px;">
+                                等待绑定
+                            </span>
+                        </div>
                         <div style="display: flex; align-items: center;">
                             <div class="file-progress">
                                 <div class="file-progress-bar" id="progress-${fileId}"></div>
                             </div>
-                            <span style="font-size: 0.9rem; color: #666;" id="progress-text-${fileId}">等待上传</span>
+                            <span style="font-size: 0.9rem; color: #666;" id="progress-text-${fileId}">请选择绑定订单</span>
                         </div>
                     </div>
-                    <button class="delete-btn" data-file-id="${fileId}"><i class="fas fa-times"></i></button>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="bind-btn" data-file-id="${fileId}" style="padding: 5px 10px; background: #409EFF; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+                            <i class="fas fa-edit"></i> 设置
+                        </button>
+                        <button class="delete-btn" data-file-id="${fileId}" style="padding: 5px 10px; background: #f56c6c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                 `;
                 fileList.appendChild(listItem);
                 
-                // 立即开始上传文件
-                uploadFile(fileId);
+                // 处理绑定逻辑：只有一个订单时自动绑定，多个订单时弹出选择框
+                if (orderItems.length === 1) {
+                    // 只有一个订单，自动绑定到该订单
+                    autoBindToOrder(fileId, file.name, file.size);
+                } else if (orderItems.length > 1) {
+                    // 多个订单，弹出绑定选择框
+                    showBindDialog(fileId, file.name, file.size);
+                } else {
+                    // 没有订单，提示先添加订单
+                    markAsWaiting(fileId);
+                }
+                
+                // 添加绑定（设置）按钮事件
+                listItem.querySelector('.bind-btn').addEventListener('click', function() {
+                    const fileId = this.getAttribute('data-file-id');
+                    const file = uploadedFiles.find(f => f.id === fileId);
+                    if (file) {
+                        showBindDialog(fileId, file.name, file.size, file.bindTo, file.fileNote);
+                    }
+                });
                 
                 // 添加删除按钮事件
                 listItem.querySelector('.delete-btn').addEventListener('click', function() {
@@ -783,42 +964,159 @@
             // 清空文件输入
             fileInput.value = '';
         }
-        
-        // 加载地址数据
-        async function loadAddresses() {
-            const addressList = document.getElementById('addressList');
-            
-            try {
-                const response = await fetch('http://43.143.87.196:8070/api/address/list');
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    console.log(result.addresses);
-                    let tempData = ``
-                    window.addressList = result.addresses
-                    for (let index = 0; index < result.addresses.length; index++) {
-                        const element = result.addresses[index];
-                        if (element.is_default) {
-                            document.getElementById('receiverName').value = element.receiver_name;
-                            document.getElementById('phone').value = element.phone;
-                            document.getElementById('province').value = element.province;
-                            document.getElementById('city').value = element.city;
-                            document.getElementById('address').value = element.detail_address;
-                            tempData += `<option value="${index}" selected>${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
-                        } else {
-                            tempData += `<option value="${index}">${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
-                        }
-                        document.querySelector('#dzmb').innerHTML = tempData;
-                    }
-                } else {
-                    console.error('加载地址数据失败:', result.error);
-                }
-            } catch (error) {
-                console.error('加载地址数据错误:', error);
 
+        // 标记为等待状态（用于没有订单的情况）
+        function markAsWaiting(fileId) {
+            const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+            if (fileIndex === -1) return;
+            
+            // 更新文件列表中的绑定状态
+            const bindStatus = document.getElementById(`bind-status-${fileId}`);
+            bindStatus.textContent = '未绑定';
+            bindStatus.style.background = '#fdf6ec';
+            bindStatus.style.color = '#e6a23c';
+            
+            // 更新进度文本
+            const progressText = document.getElementById(`progress-text-${fileId}`);
+            progressText.textContent = '请先添加订单';
+            progressText.style.color = '#e74c3c';
+        }
+        
+        // 显示绑定弹窗
+        function showBindDialog(fileId, fileName, fileSize, currentBind = null, currentNote = '') {
+            currentFileId = fileId;
+            bindFileName.textContent = fileName;
+            bindFileSize.textContent = formatFileSize(fileSize);
+            
+            // 更新订单选择框
+            updateOrderSelect();
+            
+            // 文件备注输入框
+            const fileNoteInput = document.getElementById('fileNote');
+            fileNoteInput.value = currentNote || '';
+            
+            // 设置当前绑定状态
+            if (currentBind) {
+                // 如果已经绑定到订单项
+                orderSelect.value = currentBind;
+            } else {
+                // 默认选择第一个订单（如果有的话）
+                if (orderItems.length > 0) {
+                    orderSelect.value = orderItems[0].id;
+                }
+            }
+            
+            bindDialog.style.display = 'flex';
+        }
+        
+        // 更新订单选择框
+        function updateOrderSelect() {
+            orderSelect.innerHTML = '<option value="">请选择订单项...</option>';
+            
+            orderItems.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${index + 1}. ${item.productName} (${item.quantity}件)`;
+                orderSelect.appendChild(option);
+            });
+            
+            // 设置默认选择第一个订单
+            if (orderItems.length > 0 && orderSelect.value === '') {
+                orderSelect.value = orderItems[0].id;
             }
         }
-        // 上传文件到服务器
+        
+        // 选择绑定选项
+        function selectBindOption(option) {
+            selectedBindOption = option;
+            
+            // 更新UI显示
+            if (option === 'order') {
+                document.getElementById('orderCheck').classList.add('selected');
+                document.getElementById('noneCheck').classList.remove('selected');
+                document.getElementById('orderSelectSection').style.display = 'block';
+                document.getElementById('customBindSection').style.display = 'none';
+            } else {
+                document.getElementById('orderCheck').classList.remove('selected');
+                document.getElementById('noneCheck').classList.add('selected');
+                document.getElementById('orderSelectSection').style.display = 'none';
+                document.getElementById('customBindSection').style.display = 'block';
+            }
+        }
+        
+        // 取消绑定
+        function cancelBind() {
+            // 从上传文件列表中移除
+            const fileIndex = uploadedFiles.findIndex(file => file.id === currentFileId);
+            if (fileIndex > -1) {
+                uploadedFiles.splice(fileIndex, 1);
+            }
+            
+            // 从DOM中移除文件项
+            const fileElement = document.getElementById(`file-${currentFileId}`);
+            if (fileElement) {
+                fileElement.remove();
+            }
+            
+            // 关闭弹窗
+            bindDialog.style.display = 'none';
+            currentFileId = null;
+        }
+        
+        // 确认绑定
+        function confirmBind() {
+            const fileIndex = uploadedFiles.findIndex(file => file.id === currentFileId);
+            if (fileIndex === -1) return;
+            
+            // 获取选择的订单项
+            const selectedOrderId = orderSelect.value;
+            const fileNote = document.getElementById('fileNote').value.trim();
+            
+            // 验证必须选择订单项
+            if (!selectedOrderId) {
+                alert('必须选择一个订单项进行绑定');
+                orderSelect.focus();
+                orderSelect.style.borderColor = '#e74c3c';
+                return;
+            }
+            
+            // 恢复正常的边框颜色
+            orderSelect.style.borderColor = '#409EFF';
+            
+            // 绑定到订单项
+            uploadedFiles[fileIndex].bindTo = selectedOrderId;
+            uploadedFiles[fileIndex].fileNote = fileNote;
+            
+            // 更新文件列表中的绑定状态
+            const bindStatus = document.getElementById(`bind-status-${currentFileId}`);
+            const orderItem = orderItems.find(item => item.id == selectedOrderId);
+            if (orderItem) {
+                bindStatus.textContent = `已绑定: ${orderItem.productName.substring(0, 12)}...`;
+                bindStatus.style.background = '#e1f3d8';
+                bindStatus.style.color = '#67c23a';
+            }
+            
+            // 更新进度文本
+            const progressText = document.getElementById(`progress-text-${currentFileId}`);
+            progressText.textContent = '准备上传';
+            progressText.style.color = '#666';
+            
+            // 开始上传文件
+            uploadFile(currentFileId);
+            
+            // 关闭弹窗
+            bindDialog.style.display = 'none';
+            currentFileId = null;
+        }
+        
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+        
+        // 修改后的上传文件函数
         async function uploadFile(fileId) {
             const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
             if (fileIndex === -1) return;
@@ -830,12 +1128,7 @@
             const progressText = document.getElementById(`progress-text-${fileId}`);
             
             progressText.textContent = '上传中...';
-            
-            // 创建FormData对象
-            const formData = new FormData();
-            formData.append('file', fileData.file);
-            formData.append('fileName', fileData.name);
-            formData.append('fileSize', fileData.size);
+            progressText.style.color = '#666';
             
             try {
                 const xhr = new XMLHttpRequest();
@@ -890,6 +1183,23 @@
                 
                 // 开始上传
                 xhr.open('POST', 'http://43.143.87.196:8070/api/upload', true);
+                
+                // 创建FormData并添加文件绑定信息
+                const formData = new FormData();
+                formData.append('file', fileData.file);
+                formData.append('fileName', fileData.name);
+                formData.append('fileSize', fileData.size);
+                
+                // 添加绑定信息（必填）
+                if (fileData.bindTo) {
+                    formData.append('bindTo', fileData.bindTo);
+                }
+                
+                // 添加文件备注（选填）
+                if (fileData.fileNote) {
+                    formData.append('fileNote', fileData.fileNote);
+                }
+                
                 xhr.send(formData);
                 
             } catch (error) {
@@ -901,11 +1211,27 @@
             }
         }
         
-        // 提交订单
+        // 修改后的提交订单函数
         submitOrderBtn.addEventListener('click', async function() {
             // 验证订单
             if (orderItems.length === 0) {
                 alert('请至少添加一个订单项');
+                return;
+            }
+            
+            // 检查是否有文件未绑定
+            const unboundFiles = uploadedFiles.filter(file => !file.bindTo);
+            if (unboundFiles.length > 0) {
+                alert('有文件未绑定到订单项，请先完成绑定');
+                // 高亮显示未绑定的文件
+                unboundFiles.forEach(file => {
+                    const bindStatus = document.getElementById(`bind-status-${file.id}`);
+                    if (bindStatus) {
+                        bindStatus.style.background = '#fef0f0';
+                        bindStatus.style.color = '#f56c6c';
+                        bindStatus.textContent = '未绑定！';
+                    }
+                });
                 return;
             }
             
@@ -933,14 +1259,16 @@
                     quantity: item.quantity,
                     copies: item.copies,
                     price: item.price,
-                    subtotal: item.quantity * item.copies * item.price,
+                    subtotal: item.price,
                     originalText: item.originalText
                 })),
                 files: uploadedFiles.filter(file => file.uploaded).map(file => ({
                     original_name: file.name,
                     server_name: file.serverName,
                     file_path: file.serverPath,
-                    file_size: file.size
+                    file_size: file.size,
+                    bind_to: file.bindTo, // 必填：绑定的订单项ID
+                    file_note: file.fileNote // 选填：文件备注
                 })),
                 customerNote: customerNote.value.trim(),
                 receiverName: receiverName,
@@ -994,6 +1322,233 @@
             }
         });
         
+        // 解析订单文本
+        function parseOrderText(text) {
+            // 尝试提取商品名称
+            let productName = '';
+            let quantity = 0;
+            let price = 0;
+            let item = 0;
+
+            productName = text;
+            
+            // 匹配数量（查找"X张"或"X个"模式）
+            const quantityMatch = text.match(/(\d+)[张个盒]/);
+            if (quantityMatch) {
+                quantity = parseInt(quantityMatch[1]);
+            }
+
+            // 匹配数量（查找"X张"或"X个"模式）
+            const itemMatch = text.match(/(\d+)[款]/);
+            if (itemMatch) {
+                item = parseInt(itemMatch[1]);
+            }
+            
+            // 匹配货款金额（查找"货款XX元"模式）
+            let priceMatch = text.match(/货款(\d+(?:\.\d+)?)元/);
+            if (priceMatch) {
+                price = parseFloat(priceMatch[1]);
+            }
+            priceMatch = text.match(/总价(\d+(?:\.\d+)?)元/);
+            if (!price) {
+                price = parseFloat(priceMatch[1]);
+            }
+            console.log(productName, quantity, price)
+            if (productName && quantity > 0 && price > 0) {
+                return {
+                    id: Date.now() + Math.random(), // 生成唯一ID
+                    productName: productName,
+                    quantity: quantity,
+                    item: item,
+                    copies: 1,
+                    price: price,
+                    originalText: text
+                };
+            }
+            
+            return null;
+        }
+        
+        // 更新订单表格
+        function updateOrderTable() {
+            orderItemsTable.innerHTML = '';
+            
+            orderItems.forEach(item => {
+                const row = document.createElement('tr');
+                const subtotal = item.price;
+                console.log(item)
+                row.innerHTML = `
+                    <td>${item.productName}</td>
+                    <td>${item.item}</td>
+                    <td>${item.price}</td>
+                    <td class="item-subtotal">${subtotal.toFixed(2)}</td>
+                    <td><button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> 删除</button></td>
+                `;
+                
+                orderItemsTable.appendChild(row);
+            });
+            
+            // 添加份数输入事件监听
+            document.querySelectorAll('.copies-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const id = this.getAttribute('data-id');
+                    const copies = parseInt(this.value) || 1;
+                    
+                    // 更新订单项
+                    const item = orderItems.find(item => item.id == id);
+                    if (item) {
+                        item.copies = copies;
+                        updateOrderTable();
+                    }
+                });
+            });
+            
+            // 添加删除按钮事件监听
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    
+                    // 从数组中移除
+                    orderItems = orderItems.filter(item => item.id != id);
+                    
+                    // 如果订单为空，隐藏订单区域
+                    if (orderItems.length === 0) {
+                        orderSection.classList.add('hidden');
+                    } else {
+                        updateOrderTable();
+                    }
+                    
+                    // 检查文件绑定状态
+                    checkFileBindings();
+                });
+            });
+            
+            // 更新小计
+            updateSubtotal();
+        }
+
+        function checkFileBindings() {
+            uploadedFiles.forEach(file => {
+                if (file.bindTo) {
+                    // 检查绑定的订单是否还存在
+                    const orderExists = orderItems.some(item => item.id == file.bindTo);
+                    if (!orderExists) {
+                        // 绑定的订单已被删除，需要重新处理这个文件
+                        file.bindTo = null;
+                        file.bindNote = '';
+                        
+                        const bindStatus = document.getElementById(`bind-status-${file.id}`);
+                        if (bindStatus) {
+                            if (orderItems.length === 1) {
+                                // 重新绑定到唯一的订单
+                                file.bindTo = orderItems[0].id;
+                                bindStatus.textContent = `重新绑定: ${orderItems[0].productName.substring(0, 15)}...`;
+                                bindStatus.style.background = '#e1f3d8';
+                                bindStatus.style.color = '#67c23a';
+                            } else if (orderItems.length > 1) {
+                                // 多个订单，标记为需要重新绑定
+                                bindStatus.textContent = '需要重新绑定';
+                                bindStatus.style.background = '#fdf6ec';
+                                bindStatus.style.color = '#e6a23c';
+                            } else {
+                                // 没有订单了
+                                bindStatus.textContent = '未绑定';
+                                bindStatus.style.background = '#f0f0f0';
+                                bindStatus.style.color = '#666';
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 更新小计
+        function updateSubtotal() {
+            let subtotal = 0;
+            
+            orderItems.forEach(item => {
+                subtotal += item.price;
+            });
+            
+            subtotalElement.textContent = subtotal.toFixed(2);
+        }
+        
+
+        
+        // 文件上传功能
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        // 拖拽上传功能
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '#e1f5fe';
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+        
+        fileInput.addEventListener('change', function() {
+            handleFiles(this.files);
+        });
+        
+        function chageAddress(index) {
+            const element = window.addressList[parseInt(index)]
+            document.getElementById('receiverName').value = element.receiver_name;
+            document.getElementById('phone').value = element.phone;
+            document.getElementById('province').value = element.province;
+            document.getElementById('city').value = element.city;
+            document.getElementById('address').value = element.detail_address;
+
+        }
+
+        // 加载地址数据
+        async function loadAddresses() {
+            const addressList = document.getElementById('addressList');
+            
+            try {
+                const response = await fetch('http://43.143.87.196:8070/api/address/list');
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    console.log(result.addresses);
+                    let tempData = ``
+                    window.addressList = result.addresses
+                    for (let index = 0; index < result.addresses.length; index++) {
+                        const element = result.addresses[index];
+                        if (element.is_default) {
+                            document.getElementById('receiverName').value = element.receiver_name;
+                            document.getElementById('phone').value = element.phone;
+                            document.getElementById('province').value = element.province;
+                            document.getElementById('city').value = element.city;
+                            document.getElementById('address').value = element.detail_address;
+                            tempData += `<option value="${index}" selected>${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
+                        } else {
+                            tempData += `<option value="${index}">${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
+                        }
+                        document.querySelector('#dzmb').innerHTML = tempData;
+                    }
+                } else {
+                    console.error('加载地址数据失败:', result.error);
+                }
+            } catch (error) {
+                console.error('加载地址数据错误:', error);
+
+            }
+        }
+
+
         // 显示消息
         function showMessage(text, type) {
             messageElement.textContent = text;
