@@ -577,13 +577,13 @@
             <div class="section-title">
                 <i class="fas fa-file-upload"></i> 上传设计文件
             </div>
-            <p>支持格式：CDR, AI, PSD, PDF, JPG, PNG, TIFF文件 (最大1GB)</p>
+            <p>支持格式：CDR, AI, PDF, JPG, PNG, TIFF, zip, rar文件 (最大1GB)</p>
             
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <p>点击或拖拽文件到此处上传</p>
                 <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">支持单个或多个文件同时上传</p>
-                <input type="file" id="fileInput" multiple accept=".cdr,.ai,.psd,.pdf,.jpg,.jpeg,.png,.tif,.tiff" style="display: none;">
+                <input type="file" id="fileInput" multiple accept=".cdr,.ai,.zip,.rar,.pdf,.jpg,.jpeg,.png,.tif,.tiff" style="display: none;">
             </div>
             
             <ul id="fileList">
@@ -877,7 +877,7 @@
                 
                 // 检查文件类型
                 const fileExtension = file.name.split('.').pop().toLowerCase();
-                const allowedExtensions = ['cdr', 'ai', 'psd', 'pdf', 'jpg', 'jpeg', 'png', 'tif', 'tiff'];
+                const allowedExtensions = ['cdr', 'ai', 'zip', 'rar', 'pdf', 'jpg', 'jpeg', 'png', 'tif', 'tiff'];
                 
                 if (!allowedExtensions.includes(fileExtension)) {
                     alert(`文件 ${file.name} 格式不支持，请上传CDR、AI、PSD、PDF、JPG、PNG或TIFF文件`);
@@ -1019,11 +1019,8 @@
                 option.textContent = `${index + 1}. ${item.productName} (${item.quantity}件)`;
                 orderSelect.appendChild(option);
             });
+
             
-            // 设置默认选择第一个订单
-            if (orderItems.length > 0 && orderSelect.value === '') {
-                orderSelect.value = orderItems[0].id;
-            }
         }
         
         // 选择绑定选项
