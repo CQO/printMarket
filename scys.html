@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>印刷品购买网站</title>
     <link rel="stylesheet" href="./static/main.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -1284,7 +1285,7 @@
             
             try {
                 // 发送数据到服务器
-                const response = await fetch('http://43.143.87.196:8070/api/order', {
+                const response = await fetch(`http://43.143.87.196:8070/api/order/${window.userInfo.id}/${window.userInfo.session}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1515,7 +1516,8 @@
             const addressList = document.getElementById('addressList');
             
             try {
-                const response = await fetch('http://43.143.87.196:8070/api/address/list');
+                checkLogin()
+                const response = await fetch(`http://43.143.87.196:8070/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
                 const result = await response.json();
                 
                 if (response.ok && result.success) {

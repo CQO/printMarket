@@ -19,7 +19,10 @@
             line-height: 1.6;
         }
         
-        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
         
         /* 主内容区 */
         .admin-container {
@@ -664,10 +667,10 @@
                 <div class="stat-value" id="paidCount">0</div>
                 <div class="stat-label">已支付</div>
             </div>
-            <div class="stat-card stat-downloaded" data-status="downloaded">
+            <!-- <div class="stat-card stat-downloaded" data-status="downloaded">
                 <div class="stat-value" id="downloadedCount">0</div>
                 <div class="stat-label">已下载</div>
-            </div>
+            </div> -->
             <div class="stat-card stat-shipped" data-status="shipped">
                 <div class="stat-value" id="shippedCount">0</div>
                 <div class="stat-label">已发货</div>
@@ -675,6 +678,12 @@
             <div class="stat-card stat-after-sale" data-status="after_sale">
                 <div class="stat-value" id="afterSaleCount">0</div>
                 <div class="stat-label">售后</div>
+            </div>
+            <div class="stat-card stat-after-sale" data-status="after_sale">
+                <a href="./admin-points-order.html">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">积分商品</div>
+                </a>
             </div>
         </div>
         
@@ -1097,7 +1106,7 @@
             totalOrdersSpan.textContent = stats.total_orders || 0;
             pendingCountSpan.textContent = stats.pending_count || 0;
             paidCountSpan.textContent = stats.paid_count || 0;
-            downloadedCountSpan.textContent = stats.downloaded_count || 0;
+            // downloadedCountSpan.textContent = stats.downloaded_count || 0;
             shippedCountSpan.textContent = stats.shipped_count || 0;
             afterSaleCountSpan.textContent = stats.after_sale_count || 0;
         }

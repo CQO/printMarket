@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人中心 - 诚荟印沈阳</title>
     <link rel="stylesheet" href="./static/main.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -622,8 +623,9 @@
             `;
             
             try {
+                checkLogin()
                 // 构建查询参数
-                let url = `http://43.143.87.196:8070/api/personal/orders?page=${currentPage}&page_size=${pageSize}`;
+                let url = `http://43.143.87.196:8070/api/personal/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo.id}&session=${window.userInfo.session}&status=paid`;
                 
                 const searchText = searchInput.value.trim();
                 if (searchText) {

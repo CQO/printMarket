@@ -9,6 +9,7 @@
     <script src="./static/vue.js"></script>
     <script src="./static/index.js"></script>
     <script src="./static/axios.min.js"></script>
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -1014,9 +1015,10 @@
                 
                 // 加载开票地址
                 async loadInvoiceAddress() {
+                    checkLogin()
                     this.loading = true;
                     try {
-                        const response = await axios.get('http://43.143.87.196:8070/api/invoice/address');
+                        const response = await axios.get(`http://43.143.87.196:8070/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`);
                         
                         if (response.data.success) {
                             this.currentAddress = response.data.invoice_address;
@@ -1064,9 +1066,9 @@
                     this.$refs.form.validate(async (valid) => {
                         if (valid) {
                             this.submitting = true;
-                            
+                            checkLogin()
                             try {
-                                const response = await axios.post('http://43.143.87.196:8070/api/invoice/address', this.form);
+                                const response = await axios.post(`http://43.143.87.196:8070/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, this.form);
                                 
                                 if (response.data.success) {
                                     const operation = response.data.operation; // 'created' 或 'updated'

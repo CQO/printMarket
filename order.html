@@ -410,6 +410,7 @@
         }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
+    <script src="./static/user.js"></script>
 </head>
 <body>
     <!-- 导航条 -->
@@ -507,7 +508,6 @@
                             <th>价格</th>
                             <th>数量</th>
                             <th>支付状态</th>
-                            <th>文件下载</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -622,8 +622,9 @@
             `;
             
             try {
+                checkLogin()
                 // 构建查询参数
-                let url = `http://43.143.87.196:8070/api/personal/orders?page=${currentPage}&page_size=${pageSize}`;
+                let url = `http://43.143.87.196:8070/api/personal/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo.id}&session=${window.userInfo.session}&status=pending`;
                 
                 const searchText = searchInput.value.trim();
                 if (searchText) {
@@ -740,13 +741,7 @@
                 <td>
                     <span class="status-badge ${paymentInfo.class}">${paymentInfo.text}</span>
                 </td>
-                <td>
-                    ${hasFiles ? 
-                        `<button class="action-btn download-btn" onclick="downloadFiles('${order.order_number}')">
-                            下载(${order.file_count})
-                        </button>` : 
-                        '<span style="color:#95a5a6;">无文件</span>'}
-                </td>
+
                 <td>
                     <div class="action-buttons">
                         ${order.payment_status === 'pending' ? 

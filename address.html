@@ -440,6 +440,7 @@
         }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
+    <script src="./static/user.js"></script>
 </head>
 <body>
     <!-- 导航条 -->
@@ -570,10 +571,11 @@
         
         // 加载地址数据
         async function loadAddresses() {
+            checkLogin()
             const addressList = document.getElementById('addressList');
             
             try {
-                const response = await fetch('http://43.143.87.196:8070/api/address/list');
+                const response = await fetch(`http://43.143.87.196:8070/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
@@ -666,10 +668,11 @@
         
         // 打开编辑地址模态框
         async function openEditModal(addressId) {
+            checkLogin()
             currentEditId = addressId;
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}`);
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`);
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
@@ -810,10 +813,11 @@
             
             try {
                 let response;
-                
+                checkLogin()
                 if (currentEditId) {
+                    
                     // 编辑地址
-                    response = await fetch(`http://43.143.87.196:8070/api/address/${currentEditId}`, {
+                    response = await fetch(`http://43.143.87.196:8070/api/address/${currentEditId}/${window.userInfo.id}/${window.userInfo.session}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -822,7 +826,7 @@
                     });
                 } else {
                     // 添加地址
-                    response = await fetch('http://43.143.87.196:8070/api/address', {
+                    response = await fetch(`http://43.143.87.196:8070/api/address/${window.userInfo.id}/${window.userInfo.session}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -849,9 +853,9 @@
         // 设置默认地址
         async function setDefaultAddress(addressId) {
             if (!confirm('确定要将此地址设为默认地址吗？')) return;
-            
+            checkLogin()
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/set-default`, {
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/set-default/${window.userInfo.id}/${window.userInfo.session}`, {
                     method: 'PUT'
                 });
                 
@@ -872,9 +876,9 @@
         // 删除地址
         async function deleteAddress(addressId) {
             if (!confirm('确定要删除这个地址吗？此操作不可撤销。')) return;
-            
+            checkLogin()
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}`, {
+                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`, {
                     method: 'DELETE'
                 });
                 

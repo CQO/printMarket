@@ -9,6 +9,7 @@
     <script src="./static/index.js"></script>
     <script src="./static/axios.min.js"></script>
     <link rel="stylesheet" href="./static/main.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -1047,10 +1048,14 @@
                 
                 // 加载用户积分
                 async loadUserPoints() {
+                    checkLogin()
                     try {
-                        const response = await axios.get('http://43.143.87.196:8070/api/user/points');
+                        const response = await axios.get(`http://43.143.87.196:8070/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.userPoints = response.data.points;
+                        } else {
+                            alert('此页面需要登陆后访问!');
+                            location.href = './login.html';
                         }
                     } catch (error) {
                         console.error('加载用户积分失败:', error);
@@ -1059,8 +1064,9 @@
                 
                 // 加载地址列表
                 async loadAddresses() {
+                    checkLogin()
                     try {
-                        const response = await axios.get('http://43.143.87.196:8070/api/address/list');
+                        const response = await axios.get(`http://43.143.87.196:8070/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.addresses = response.data.addresses;
                         }
@@ -1209,8 +1215,9 @@
                 
                 // 显示积分明细
                 async showPointsRecords() {
+                    checkLogin()
                     try {
-                        const response = await axios.get('http://43.143.87.196:8070/api/user/points');
+                        const response = await axios.get(`http://43.143.87.196:8070/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.pointsRecords = response.data.recent_records;
                             this.recordsDialogVisible = true;

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>用户注册 - 诚荟印沈阳</title>
     <link rel="stylesheet" href="./static/main.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -595,6 +596,7 @@
                         
                         // 保存用户信息到本地存储（可选）
                         if (result.user_id && result.username) {
+                            console.log(result)
                             localStorage.setItem('user_info', JSON.stringify({
                                 id: result.user_id,
                                 username: result.username
@@ -602,7 +604,7 @@
                         }
                         
                         // 根据返回的跳转URL进行跳转
-                        const redirectUrl = result.redirect_url || './personal.html';
+                        const redirectUrl = result.redirect_url || './index.html';
                         
                         // 延迟跳转，让用户看到成功消息
                         setTimeout(() => {

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>发票中心 - 诚荟印沈阳</title>
     <link rel="stylesheet" href="./static/main.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -435,7 +436,7 @@
             </div>
             
             <div class="menu">
-                <a href="./order.html" class="menu-item active">
+                <a href="./order.html" class="menu-item">
                     <i class="fas fa-clipboard-list"></i>
                     <span>进行中的订单</span>
                 </a>
@@ -447,7 +448,7 @@
                     <i class="fas fa-file-invoice"></i>
                     <span>开票地址</span>
                 </a>
-                <a href="./fapiao.html" class="menu-item">
+                <a href="./fapiao.html" class="menu-item active">
                     <i class="fas fa-file-invoice"></i>
                     <span>发票中心</span>
                 </a>
@@ -582,8 +583,9 @@
             `;
             
             try {
+                checkLogin()
                 // 构建查询参数
-                const url = `http://43.143.87.196:8070/api/invoice/monthly?year=${currentYear}`;
+                const url = `http://43.143.87.196:8070/api/invoice/monthly?year=${currentYear}&user_id=${window.userInfo.id}&session=${window.userInfo.session}`;
                 
                 // 发送请求获取发票数据
                 const response = await fetch(url);
@@ -799,9 +801,9 @@
                 alert('请输入邮箱地址');
                 return;
             }
-            
+            checkLogin()
             try {
-                const response = await fetch('http://43.143.87.196:8070/api/invoice/apply', {
+                const response = await fetch(`http://43.143.87.196:8070/api/invoice/apply?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
