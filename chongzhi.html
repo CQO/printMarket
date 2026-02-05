@@ -525,102 +525,12 @@
                     <thead>
                         <tr>
                             <th>时间</th>
-                            <th>充值方式</th>
-                            <th>充值金额</th>
-                            <th>状态</th>
-                            <th>订单号</th>
+                            <th style="width: 150px;">充值金额</th>
+                            <th>信息</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <!-- 记录1 -->
-                        <tr>
-                            <td>
-                                <div>2025-01-15</div>
-                                <div class="record-time">14:30:25</div>
-                            </td>
-                            <td>
-                                <span class="record-method method-alipay">
-                                    <i class="fab fa-alipay"></i> 支付宝
-                                </span>
-                            </td>
-                            <td class="record-amount positive">+ ¥500.00</td>
-                            <td>
-                                <span class="record-status status-success">充值成功</span>
-                            </td>
-                            <td>CZ20250115143025</td>
-                        </tr>
-                        
-                        <!-- 记录2 -->
-                        <tr>
-                            <td>
-                                <div>2025-01-10</div>
-                                <div class="record-time">09:15:42</div>
-                            </td>
-                            <td>
-                                <span class="record-method method-wechat">
-                                    <i class="fab fa-weixin"></i> 微信
-                                </span>
-                            </td>
-                            <td class="record-amount positive">+ ¥300.00</td>
-                            <td>
-                                <span class="record-status status-success">充值成功</span>
-                            </td>
-                            <td>CZ20250110091542</td>
-                        </tr>
-                        
-                        <!-- 记录3 -->
-                        <tr>
-                            <td>
-                                <div>2025-01-05</div>
-                                <div class="record-time">16:20:18</div>
-                            </td>
-                            <td>
-                                <span class="record-method method-alipay">
-                                    <i class="fab fa-alipay"></i> 支付宝
-                                </span>
-                            </td>
-                            <td class="record-amount positive">+ ¥200.00</td>
-                            <td>
-                                <span class="record-status status-success">充值成功</span>
-                            </td>
-                            <td>CZ20250105162018</td>
-                        </tr>
-                        
-                        <!-- 记录4 -->
-                        <tr>
-                            <td>
-                                <div>2024-12-28</div>
-                                <div class="record-time">11:05:33</div>
-                            </td>
-                            <td>
-                                <span class="record-method method-wechat">
-                                    <i class="fab fa-weixin"></i> 微信
-                                </span>
-                            </td>
-                            <td class="record-amount positive">+ ¥1000.00</td>
-                            <td>
-                                <span class="record-status status-success">充值成功</span>
-                            </td>
-                            <td>CZ20241228110533</td>
-                        </tr>
-                        
-                        <!-- 记录5 -->
-                        <tr>
-                            <td>
-                                <div>2024-12-20</div>
-                                <div class="record-time">20:45:12</div>
-                            </td>
-                            <td>
-                                <span class="record-method method-alipay">
-                                    <i class="fab fa-alipay"></i> 支付宝
-                                </span>
-                            </td>
-                            <td class="record-amount positive">+ ¥250.50</td>
-                            <td>
-                                <span class="record-status status-success">充值成功</span>
-                            </td>
-                            <td>CZ20241220204512</td>
-                        </tr>
+                    <tbody id="czjl">
+
                     </tbody>
                 </table>
                 
@@ -657,7 +567,7 @@
             </div>
         </div>
     </footer>
-
+    <script src="./static/axios.min.js"></script>
     <script>
         // 简单的模态框展示（仅静态展示，无实际功能）
         function showRechargeModal(method) {
@@ -686,7 +596,6 @@
                             ${methodIcon}
                         </div>
                         <h3 style="margin-bottom: 5px; color: #2c3e50;">${methodName}充值</h3>
-                        <p style="color: #7f8c8d;">（此功能为静态展示）</p>
                     </div>
                     
                     <div style="margin-bottom: 25px;">
@@ -706,7 +615,7 @@
                         <button onclick="closeModal(this)" style="flex: 1; padding: 12px; background-color: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer;">
                             取消
                         </button>
-                        <button onclick="simulateRecharge('${method}')" style="flex: 2; padding: 12px; background-color: ${method === 'alipay' ? '#1296db' : '#07c160'}; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        <button onclick="rechargeNew('${method}')" style="flex: 2; padding: 12px; background-color: ${method === 'alipay' ? '#1296db' : '#07c160'}; color: white; border: none; border-radius: 4px; cursor: pointer;">
                             立即充值
                         </button>
                     </div>
@@ -733,6 +642,63 @@
             alert(`模拟${methodName}充值\n实际开发中这里会跳转到${methodName}支付页面`);
             closeModal(null);
         }
+        async function loadUserPoints() {
+            try {
+                const response = await axios.get(`http://43.143.87.196:8070/api/user/profile/${window.userInfo.id}`);
+                if (response.data.success) {
+                    console.log(response)
+                    document.querySelector('.balance-amount').innerText = '¥ ' + response.data.user.balance
+                    // this.userPoints = response.data.points;
+                }
+            } catch (error) {
+                console.error('加载用户积分失败:', error);
+            }
+        }
+        async function loadUserRecharge() {
+            try {
+                const response = await axios.get(`http://43.143.87.196:8070/api/user/recharge/${window.userInfo.id}/${window.userInfo.session}`);
+                if (response.data.success) {
+                    console.log(response.data)
+                    let czjlStr = ``
+                    response.data.records.forEach(element => {
+                        czjlStr += `<tr>
+                            <td>
+                                ${element.created_at}
+                            </td>
+                            <td>
+                                ${element.change_amount}
+                            </td>
+                            <td class="record-amount positive">${element.note}</td>
+                        </tr>`
+                    });
+                    window.czjl.innerHTML = czjlStr
+                    // this.userPoints = response.data.points;
+                }
+            } catch (error) {
+                console.error('加载用户积分失败:', error);
+            }
+        }
+        function rechargeNew() {
+            if (!window.customAmount.value) return
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow"
+            };
+            let payURL = `https://pay.lamp.run/aliPay/PC/11/${window.userInfo.id}/${window.customAmount.value * 100}`
+            // if (isMobile()) {
+            //     payURL = `https://pay.lamp.run/aliPay/H5/11/${window.userInfo.id}/${parseFloat(window.customAmount.value).toFixed(2)}`
+            // }
+            fetch(payURL, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                location.href = result
+            })
+            .catch((error) => console.error(error));
+        }
+        loadUserPoints()
+        setTimeout(() => {
+            loadUserRecharge()
+        }, 100);
     </script>
 </body>
 </html>

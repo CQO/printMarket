@@ -744,10 +744,12 @@
 
                 <td>
                     <div class="action-buttons">
-                        ${order.payment_status === 'pending' ? 
-                            `<button class="action-btn pay-btn" onclick="payOrder('${order.order_number}')">
-                                去支付
-                            </button>` : ''}
+                        <button class="action-btn pay-btn" onclick="payOrder('${order.order_number}')">
+                            去支付
+                        </button>
+                        <button class="action-btn pay-btn" onclick="deleteOrder('${order.order_number}')">
+                            删除
+                        </button>
                     </div>
                 </td>
             `;
@@ -778,14 +780,50 @@
             if (!confirm(`确定要支付订单 ${orderNumber} 吗？`)) return;
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/order/${orderNumber}/pay`, {
-                    method: 'POST'
+                const response = await fetch(`http://43.143.87.196:8070/api/pay/${orderNumber}/${window.userInfo.id}/${window.userInfo.session}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                    
                 });
                 
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
                     alert(`订单 ${orderNumber} 支付成功！`);
+                    location.href = './order2.html'
+                } else {
+                    if (result.error.includes('余额不足')) {
+                        const selectValue = confirm(result.error + "。是否立即充值?");
+                        if (selectValue) {
+                            location.href ='./chongzhi.html'
+                        }
+                        return
+                    }
+                    alert(`支付失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，支付失败');
+                console.error('支付错误:', error);
+            }
+        }
+
+        async function deleteOrder(orderNumber) {
+            if (!confirm(`确定要删除订单 ${orderNumber} 吗？`)) return;
+            
+            try {
+                const response = await fetch(`http://43.143.87.196:8070/api/order/${orderNumber}/delete`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert(`订单 ${orderNumber} 删除成功!`);
                     loadOrders(); // 重新加载订单数据
                 } else {
                     alert(`支付失败：${result.error || '未知错误'}`);

@@ -319,6 +319,8 @@
                         >
                             <el-option label="全部" value="all"></el-option>
                             <el-option label="普通用户" value="customer"></el-option>
+                            <el-option label="下载员" value="deloadperson"></el-option>
+                            <el-option label="业务员" value="salesperson"></el-option>
                             <el-option label="管理员" value="admin"></el-option>
                         </el-select>
                     </div>
@@ -384,7 +386,7 @@
                     <el-table-column label="用户类型" width="100" align="center">
                         <template slot-scope="scope">
                             <span :class="['user-type', scope.row.user_type === 'admin' ? 'user-type-admin' : '']">
-                                {{ scope.row.user_type === 'admin' ? '管理员' : '普通用户' }}
+                                {{ getUserText(scope.row.user_type) }}
                             </span>
                         </template>
                     </el-table-column>
@@ -485,7 +487,7 @@
                             <span class="info-label">用户类型</span>
                             <span class="info-value">
                                 <span :class="['user-type', currentUser.user_type === 'admin' ? 'user-type-admin' : '']">
-                                    {{ currentUser.user_type === 'admin' ? '管理员' : '普通用户' }}
+                                    {{ getUserText(currentUser.user_type) }}
                                 </span>
                             </span>
                         </div>
@@ -503,6 +505,10 @@
                         </div>
                         <div class="info-item">
                             <span class="info-label">最后登录</span>
+                            <span class="info-value">{{ currentUser.last_login_at || '从未登录' }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">默认地址</span>
                             <span class="info-value">{{ currentUser.last_login_at || '从未登录' }}</span>
                         </div>
                     </div>
@@ -646,6 +652,8 @@
                     <el-form-item label="用户类型" prop="user_type">
                         <el-select v-model="editForm.user_type" placeholder="请选择用户类型" style="width: 100%;">
                             <el-option label="普通用户" value="customer"></el-option>
+                            <el-option label="业务员" value="salesperson"></el-option>
+                            <el-option label="下载员" value="deloadperson"></el-option>
                             <el-option label="管理员" value="admin"></el-option>
                         </el-select>
                     </el-form-item>
@@ -772,6 +780,16 @@
                         'banned': '禁用'
                     };
                     return statusMap[status] || status;
+                },
+
+                getUserText(typeValue) {
+                    const statusMap = {
+                        'salesperson': '业务员',
+                        'deloadperson': '下载员',
+                        'admin': '管理员',
+                        'customer': '普通用户'
+                    };
+                    return statusMap[typeValue] || typeValue;
                 },
                 
                 // 获取订单状态文本
