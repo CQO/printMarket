@@ -587,7 +587,7 @@
                         <div v-if="!product.image_url" class="empty-image">
                             <i class="el-icon-picture-outline"></i>
                         </div>
-                        <img v-else :src="'http://43.143.87.196:8070/api/' + product.image_url" :alt="product.product_name">
+                        <img v-else :src="'https://ht.bbbyg.vip/api/' + product.image_url" :alt="product.product_name">
                         
                         <!-- 库存标签 -->
                         <div v-if="product.stock_quantity >= 0" class="stock-badge">
@@ -596,7 +596,7 @@
                         
                         <!-- 积分标签 -->
                         <div class="points-badge">
-                            {{ formatNumber(product.points_required) }} 积分
+                            {{ formatNumber(product.points_required) }} 积分 或 {{ formatNumber(product.money_required) }} 余额
                         </div>
                     </div>
                     
@@ -775,6 +775,20 @@
                         </el-input>
                     </el-form-item>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-label form-required">所需余额</div>
+                    <el-form-item prop="money_required">
+                        <el-input
+                            v-model="productForm.money_required"
+                            placeholder="请输入所需余额"
+                            type="number"
+                            min="1"
+                        >
+                            <template slot="append">余额</template>
+                        </el-input>
+                    </el-form-item>
+                </div>
                 
                 <div class="form-row">
                     <div class="form-label">库存数量</div>
@@ -897,6 +911,7 @@
                         product_type: 'physical',
                         category: 'daily',
                         points_required: 100,
+                        money_required: 100,
                         stock_quantity: -1,
                         is_active: 1,
                         sort_order: 0
@@ -907,7 +922,6 @@
                         ],
                         points_required: [
                             { required: true, message: '请输入所需积分', trigger: 'blur' },
-                            { type: 'number', message: '积分必须是数字', trigger: 'blur' },
                             { validator: this.validatePoints, trigger: 'blur' }
                         ],
                         category: [
@@ -1014,7 +1028,7 @@
                             params.category = this.selectedCategory;
                         }
                         
-                        const response = await axios.get('http://43.143.87.196:8070/api/points/products', { params });
+                        const response = await axios.get('https://ht.bbbyg.vip/api/points/products', { params });
                         
                         if (response.data.success) {
                             this.products = response.data.products;
@@ -1041,7 +1055,7 @@
                         type: 'warning'
                     }).then(async () => {
                         try {
-                            const response = await axios.delete(`http://43.143.87.196:8070/api/admin/points/product/${product.id}`);
+                            const response = await axios.delete(`https://ht.bbbyg.vip/api/admin/points/product/${product.id}`);
                             
                             if (response.data.success) {
                                 this.$message.success('删除成功');
@@ -1071,6 +1085,7 @@
                         product_type: 'physical',
                         category: 'daily',
                         points_required: 100,
+                        money_required: 100,
                         stock_quantity: -1,
                         is_active: 1,
                         sort_order: 0
@@ -1129,6 +1144,7 @@
                                 formData.append('product_type', this.productForm.product_type);
                                 formData.append('category', this.productForm.category);
                                 formData.append('points_required', this.productForm.points_required);
+                                formData.append('money_required', this.productForm.money_required);
                                 formData.append('stock_quantity', this.productForm.stock_quantity);
                                 formData.append('is_active', this.productForm.is_active);
                                 formData.append('sort_order', this.productForm.sort_order);
@@ -1141,14 +1157,14 @@
                                 let response;
                                 if (this.isProductEditMode) {
                                     // 编辑模式
-                                    response = await axios.put(`http://43.143.87.196:8070/api/admin/points/product/${this.selectedProduct.id}`, formData, {
+                                    response = await axios.put(`https://ht.bbbyg.vip/api/admin/points/product/${this.selectedProduct.id}`, formData, {
                                         headers: {
                                             'Content-Type': 'multipart/form-data'
                                         }
                                     });
                                 } else {
                                     // 添加模式
-                                    response = await axios.post('http://43.143.87.196:8070/api/admin/points/product', formData, {
+                                    response = await axios.post('https://ht.bbbyg.vip/api/admin/points/product', formData, {
                                         headers: {
                                             'Content-Type': 'multipart/form-data'
                                         }

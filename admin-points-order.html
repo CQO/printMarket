@@ -331,7 +331,7 @@
                             page_size: this.pageSize
                         };
                         
-                        const response = await axios.get('http://43.143.87.196:8070/api/admin/points/orders/list', { params });
+                        const response = await axios.get('https://ht.bbbyg.vip/api/admin/points/orders/list', { params });
                         
                         if (response.data.success) {
                             this.orders = response.data.orders;
@@ -367,7 +367,7 @@
                         type: 'warning'
                     }).then(async () => {
                         try {
-                            const response = await axios.put(`http://43.143.87.196:8070/api/admin/points/order/${order.id}/ship`);
+                            const response = await axios.put(`https://ht.bbbyg.vip/api/admin/points/order/${order.id}/ship`);
                             
                             if (response.data.success) {
                                 this.$message.success('发货成功');

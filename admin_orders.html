@@ -681,7 +681,7 @@
             </div>
             <div class="stat-card stat-after-sale" data-status="after_sale">
                 <a href="./admin-points-order.html">
-                    <div class="stat-value">0</div>
+                    <div class="stat-value" id="jfspsl">0</div>
                     <div class="stat-label">积分商品</div>
                 </a>
             </div>
@@ -1057,7 +1057,7 @@
         async function loadOrders() {
             try {
                 // 构建查询参数
-                let url = `http://43.143.87.196:8070/api/admin/orders?page=${currentPage}&page_size=${pageSize}`;
+                let url = `https://ht.bbbyg.vip/api/admin/orders?page=${currentPage}&page_size=${pageSize}`;
                 
                 // 添加筛选条件
                 const params = new URLSearchParams();
@@ -1092,6 +1092,8 @@
                     
                     // 更新分页信息
                     updatePagination(result.total, result.page, result.page_size);
+
+                    window.jfspsl.innerText = result.jifen_total
                     
                     // 重置选择状态
                     resetSelection();
@@ -1307,7 +1309,7 @@
 
         async function changeSalesperson(orderID, value) {
             console.log(orderID, value)
-            const response = await fetch(`http://43.143.87.196:8070/api/admin/order/salesperson/${orderID}/${value}`, {
+            const response = await fetch(`https://ht.bbbyg.vip/api/admin/order/salesperson/${orderID}/${value}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1318,7 +1320,7 @@
 
         async function changeDeloadperson(orderID, value) {
             console.log(orderID, value)
-            const response = await fetch(`http://43.143.87.196:8070/api/admin/order/deloadperson/${orderID}/${value}`, {
+            const response = await fetch(`https://ht.bbbyg.vip/api/admin/order/deloadperson/${orderID}/${value}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1350,7 +1352,7 @@
             }
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/admin/order/${orderId}/cost`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/admin/order/${orderId}/cost`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1420,7 +1422,7 @@
             }
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/admin/order/${currentOrderId}/status`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/admin/order/${currentOrderId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1470,7 +1472,7 @@
             }
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/admin/order/${currentOrderId}/surcharge`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/admin/order/${currentOrderId}/surcharge`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1526,7 +1528,7 @@
         // 导出为CSV
         async function exportToCSV() {
             try {
-                let exportUrl = `http://43.143.87.196:8070/api/admin/orders/export?`;
+                let exportUrl = `https://ht.bbbyg.vip/api/admin/orders/export?`;
                 
                 // 如果有选中的订单，导出选中的
                 if (selectedOrders.size > 0) {

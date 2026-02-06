@@ -644,7 +644,7 @@
         }
         async function loadUserPoints() {
             try {
-                const response = await axios.get(`http://43.143.87.196:8070/api/user/profile/${window.userInfo.id}`);
+                const response = await axios.get(`https://ht.bbbyg.vip/api/user/profile/${window.userInfo.id}`);
                 if (response.data.success) {
                     console.log(response)
                     document.querySelector('.balance-amount').innerText = '¥ ' + response.data.user.balance
@@ -656,7 +656,7 @@
         }
         async function loadUserRecharge() {
             try {
-                const response = await axios.get(`http://43.143.87.196:8070/api/user/recharge/${window.userInfo.id}/${window.userInfo.session}`);
+                const response = await axios.get(`https://ht.bbbyg.vip/api/user/recharge/${window.userInfo.id}/${window.userInfo.session}`);
                 if (response.data.success) {
                     console.log(response.data)
                     let czjlStr = ``

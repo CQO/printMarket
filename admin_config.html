@@ -755,7 +755,7 @@
                             params.category = this.searchForm.category;
                         }
                         
-                        const response = await axios.get('http://43.143.87.196:8070/api/admin/settings', { params });
+                        const response = await axios.get('https://ht.bbbyg.vip/api/admin/settings', { params });
                         
                         if (response.data.success) {
                             this.settings = response.data.settings;
@@ -845,7 +845,7 @@
                         type: 'warning'
                     }).then(async () => {
                         try {
-                            const response = await axios.delete(`http://43.143.87.196:8070/api/admin/setting/${setting.id}`);
+                            const response = await axios.delete(`https://ht.bbbyg.vip/api/admin/setting/${setting.id}`);
                             
                             if (response.data.success) {
                                 this.$message.success('删除成功');
@@ -870,10 +870,10 @@
                                 
                                 if (this.isEditMode) {
                                     // 编辑模式
-                                    response = await axios.put(`http://43.143.87.196:8070/api/admin/setting/${this.currentSetting.id}`, this.settingForm);
+                                    response = await axios.put(`https://ht.bbbyg.vip/api/admin/setting/${this.currentSetting.id}`, this.settingForm);
                                 } else {
                                     // 添加模式
-                                    response = await axios.post('http://43.143.87.196:8070/api/admin/setting', this.settingForm);
+                                    response = await axios.post('https://ht.bbbyg.vip/api/admin/setting', this.settingForm);
                                 }
                                 
                                 if (response.data.success) {
@@ -896,7 +896,7 @@
                 // 导出设置
                 async handleExport() {
                     try {
-                        window.open('http://43.143.87.196:8070/api/admin/settings/export', '_blank');
+                        window.open('https://ht.bbbyg.vip/api/admin/settings/export', '_blank');
                     } catch (error) {
                         console.error('导出设置失败:', error);
                         this.$message.error('导出失败');
@@ -914,7 +914,7 @@
                         type: 'warning'
                     }).then(async () => {
                         try {
-                            const response = await axios.post('http://43.143.87.196:8070/api/admin/settings/import', formData, {
+                            const response = await axios.post('https://ht.bbbyg.vip/api/admin/settings/import', formData, {
                                 headers: {
                                     'Content-Type': 'multipart/form-data'
                                 }

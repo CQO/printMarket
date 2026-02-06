@@ -529,6 +529,10 @@
                     <div class="points-value">{{ formatNumber(userPoints) }}</div>
                     <div class="points-label">可用积分</div>
                 </div>
+                <div class="user-points">
+                    <div class="points-value">{{ formatNumber(userMoney) }}</div>
+                    <div class="points-label">可用余额</div>
+                </div>
             </div>
         </div>
         
@@ -600,7 +604,7 @@
                         <div v-if="!product.image_url" class="empty-image">
                             <i class="el-icon-picture-outline"></i>
                         </div>
-                        <img v-else :src="'http://43.143.87.196:8070/api/' + product.image_url" :alt="product.product_name">
+                        <img v-else :src="'https://ht.bbbyg.vip/api/' + product.image_url" :alt="product.product_name">
                         
                         <!-- 库存标签 -->
                         <div v-if="product.stock_quantity >= 0" class="stock-badge">
@@ -609,7 +613,7 @@
                         
                         <!-- 积分标签 -->
                         <div class="points-badge">
-                            {{ formatNumber(product.points_required) }} 积分
+                            {{ formatNumber(product.points_required) }} 积分 或 {{ formatNumber(product.money_required) }} 余额
                         </div>
                     </div>
                     
@@ -633,7 +637,18 @@
                             :disabled="!isProductAvailable(product) || userPoints < product.points_required"
                             @click="handlePurchase(product)"
                         >
-                            {{ isProductAvailable(product) ? '立即兑换' : '已售罄' }}
+                            {{ isProductAvailable(product) ? '积分兑换' : '已售罄' }}
+                        </el-button>
+                    </div>
+
+                    <div class="product-actions">
+                        <el-button 
+                            type="primary" 
+                            class="buy-button"
+                            :disabled="!isProductAvailable(product) || userMoney < product.points_required"
+                            @click="handlePurchase2(product)"
+                        >
+                            {{ isProductAvailable(product) ? '余额兑换' : '已售罄' }}
                         </el-button>
                     </div>
                 </div>
@@ -712,12 +727,14 @@
                     :src="selectedProduct.image_url || '/static/images/default-product.jpg'" 
                     :alt="selectedProduct.product_name" 
                     class="product-summary-image"
-                    @error="handleImageError"
                 >
                 <div class="product-summary-info">
                     <div class="product-summary-name">{{ selectedProduct.product_name }}</div>
-                    <div class="product-summary-points">
+                    <div class="product-summary-points" v-if="selectedMode == 0">
                         需要 {{ formatNumber(selectedProduct.points_required) }} 积分
+                    </div>
+                    <div class="product-summary-points" v-if="selectedMode == 1">
+                        需要 {{ formatNumber(selectedProduct.points_required) }} 余额
                     </div>
                 </div>
             </div>
@@ -728,7 +745,7 @@
                         <el-input-number
                             v-model="purchaseForm.quantity"
                             :min="1"
-                            :max="selectedProduct.stock_quantity >= 0 ? selectedProduct.stock_quantity : 999"
+                            :max="999"
                             label="兑换数量"
                         ></el-input-number>
                     </el-form-item>
@@ -753,12 +770,18 @@
                     </el-form-item>
                 </el-form>
                 
-                <div class="points-cost">
+                <div class="points-cost" v-if="selectedMode == 0">
                     共需要 {{ formatNumber(purchaseForm.quantity * selectedProduct.points_required) }} 积分
                 </div>
+                <div class="points-cost" v-if="selectedMode == 1">
+                    共需要 {{ formatNumber(purchaseForm.quantity * selectedProduct.money_required) }} 余额
+                </div>
                 
-                <div class="points-remaining">
+                <div class="points-remaining" v-if="selectedMode == 0">
                     兑换后剩余积分：{{ formatNumber(userPoints - purchaseForm.quantity * selectedProduct.points_required) }}
+                </div>
+                <div class="points-remaining" v-if="selectedMode == 1">
+                    兑换后剩余余额：{{ formatNumber(userMoney - purchaseForm.quantity * selectedProduct.money_required) }}
                 </div>
             </div>
             
@@ -769,7 +792,8 @@
                 </el-button>
             </div>
         </el-dialog>
-        
+
+
         <!-- 我的兑换记录对话框 -->
         <el-dialog
             title="我的兑换记录"
@@ -864,6 +888,7 @@
                 return {
                     // 用户信息
                     userPoints: 0,
+                    userMoney: 0,
                     myOrders: [],
                     pointsRecords: [],
                     
@@ -883,6 +908,7 @@
                     total: 0,
                     
                     // 对话框控制
+                    selectedMode: 0,
                     productDialogVisible: false,
                     isProductEditMode: false,
                     productSubmitLoading: false,
@@ -1037,7 +1063,7 @@
                             params.category = this.selectedCategory;
                         }
                         
-                        const response = await axios.get('http://43.143.87.196:8070/api/points/products', { params });
+                        const response = await axios.get('https://ht.bbbyg.vip/api/points/products', { params });
                         
                         if (response.data.success) {
                             this.products = response.data.products;
@@ -1059,9 +1085,10 @@
                 async loadUserPoints() {
                     checkLogin()
                     try {
-                        const response = await axios.get(`http://43.143.87.196:8070/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
+                        const response = await axios.get(`https://ht.bbbyg.vip/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.userPoints = response.data.points;
+                            this.userMoney = response.data.balance;
                         } else {
                             alert('此页面需要登陆后访问!');
                             location.href = './login.html';
@@ -1075,7 +1102,7 @@
                 async loadAddresses() {
                     checkLogin()
                     try {
-                        const response = await axios.get(`http://43.143.87.196:8070/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
+                        const response = await axios.get(`https://ht.bbbyg.vip/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.addresses = response.data.addresses;
                         }
@@ -1095,7 +1122,41 @@
                         this.$message.warning('商品已下架或库存不足');
                         return;
                     }
+                    this.selectedMode = 0;
+                    this.selectedProduct = product;
                     
+                    // 如果是实物商品，需要选择地址
+                    if (product.product_type === 'physical') {
+                        if (this.addresses.length === 0) {
+                            this.$message.warning('请先添加收货地址');
+                            return;
+                        }
+                        this.addressDialogVisible = true;
+                        this.selectedAddressId = null;
+                        this.selectedAddress = null;
+                    } else {
+                        // 虚拟商品直接进入确认界面
+                        this.selectedAddressId = 0;
+                        this.selectedAddress = {
+                            receiver_name: '虚拟商品',
+                            phone: '无需收货',
+                            address: '无'
+                        };
+                        this.showPurchaseDialog();
+                    }
+                },
+
+                handlePurchase2(product) {
+                    if (this.userMoney < product.points_required) {
+                        this.$message.warning('余额不足，无法兑换');
+                        return;
+                    }
+                    
+                    if (!this.isProductAvailable(product)) {
+                        this.$message.warning('商品已下架或库存不足');
+                        return;
+                    }
+                    this.selectedMode = 1;
                     this.selectedProduct = product;
                     
                     // 如果是实物商品，需要选择地址
@@ -1166,18 +1227,17 @@
                                     product_id: this.selectedProduct.id,
                                     quantity: this.purchaseForm.quantity,
                                     address_id: this.selectedAddressId,
-                                    notes: this.purchaseForm.notes
+                                    notes: this.purchaseForm.notes,
+                                    selecte_mode: this.selectedMode
                                 };
-                                
-                                const response = await axios.post('http://43.143.87.196:8070/api/points/purchase', requestData);
+                                let urlTemp = 'https://ht.bbbyg.vip/api/points/purchase/' + window.userInfo.id
+                                const response = await axios.post(urlTemp, requestData);
                                 
                                 if (response.data.success) {
                                     this.$message.success('兑换成功');
                                     this.purchaseDialogVisible = false;
-                                    
                                     // 刷新数据
-                                    this.loadProducts();
-                                    this.loadUserPoints();
+                                    location.reload()
                                 } else {
                                     this.$message.error(response.data.error || '兑换失败');
                                 }
@@ -1226,7 +1286,7 @@
                 async showPointsRecords() {
                     checkLogin()
                     try {
-                        const response = await axios.get(`http://43.143.87.196:8070/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
+                        const response = await axios.get(`https://ht.bbbyg.vip/api/user/points/${window.userInfo.id}/${window.userInfo.session}`);
                         if (response.data.success) {
                             this.pointsRecords = response.data.recent_records;
                             this.recordsDialogVisible = true;
@@ -1251,7 +1311,7 @@
         }
         };
 
-        fetch('http://43.143.87.196:8070/api/setting/jfscgg', options)
+        fetch('https://ht.bbbyg.vip/api/setting/jfscgg', options)
         .then(response => response.json())
         .then(response => {
             console.log(response)

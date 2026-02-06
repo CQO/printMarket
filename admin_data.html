@@ -840,7 +840,7 @@
                 // 加载统计数据
                 async loadStats() {
                     try {
-                        const response = await axios.get('http://43.143.87.196:8070/api/admin/stats/dashboard');
+                        const response = await axios.get('https://ht.bbbyg.vip/api/admin/stats/dashboard');
                         
                         if (response.data.success) {
                             this.stats = response.data.stats;
@@ -1184,7 +1184,7 @@
                             end_date: this.dateRange[1]
                         };
                         
-                        const response = await axios.get('http://43.143.87.196:8070/api/admin/stats/date-range', { params });
+                        const response = await axios.get('https://ht.bbbyg.vip/api/admin/stats/date-range', { params });
                         
                         if (response.data.success) {
                             this.rangeStats = {

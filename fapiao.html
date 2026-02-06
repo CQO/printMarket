@@ -585,7 +585,7 @@
             try {
                 checkLogin()
                 // 构建查询参数
-                const url = `http://43.143.87.196:8070/api/invoice/monthly?year=${currentYear}&user_id=${window.userInfo.id}&session=${window.userInfo.session}`;
+                const url = `https://ht.bbbyg.vip/api/invoice/monthly?year=${currentYear}&user_id=${window.userInfo.id}&session=${window.userInfo.session}`;
                 
                 // 发送请求获取发票数据
                 const response = await fetch(url);
@@ -803,7 +803,7 @@
             }
             checkLogin()
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/invoice/apply?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/invoice/apply?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

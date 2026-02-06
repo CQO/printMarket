@@ -575,7 +575,7 @@
             const addressList = document.getElementById('addressList');
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
+                const response = await fetch(`https://ht.bbbyg.vip/api/address/list/${window.userInfo.id}/${window.userInfo.session}`);
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
@@ -672,7 +672,7 @@
             currentEditId = addressId;
             
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`);
+                const response = await fetch(`https://ht.bbbyg.vip/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`);
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
@@ -817,7 +817,7 @@
                 if (currentEditId) {
                     
                     // 编辑地址
-                    response = await fetch(`http://43.143.87.196:8070/api/address/${currentEditId}/${window.userInfo.id}/${window.userInfo.session}`, {
+                    response = await fetch(`https://ht.bbbyg.vip/api/address/${currentEditId}/${window.userInfo.id}/${window.userInfo.session}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -826,7 +826,7 @@
                     });
                 } else {
                     // 添加地址
-                    response = await fetch(`http://43.143.87.196:8070/api/address/${window.userInfo.id}/${window.userInfo.session}`, {
+                    response = await fetch(`https://ht.bbbyg.vip/api/address/${window.userInfo.id}/${window.userInfo.session}`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -855,7 +855,7 @@
             if (!confirm('确定要将此地址设为默认地址吗？')) return;
             checkLogin()
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/set-default/${window.userInfo.id}/${window.userInfo.session}`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/address/${addressId}/set-default/${window.userInfo.id}/${window.userInfo.session}`, {
                     method: 'PUT'
                 });
                 
@@ -878,7 +878,7 @@
             if (!confirm('确定要删除这个地址吗？此操作不可撤销。')) return;
             checkLogin()
             try {
-                const response = await fetch(`http://43.143.87.196:8070/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`, {
+                const response = await fetch(`https://ht.bbbyg.vip/api/address/${addressId}/${window.userInfo.id}/${window.userInfo.session}`, {
                     method: 'DELETE'
                 });
                 

@@ -1018,7 +1018,7 @@
                     checkLogin()
                     this.loading = true;
                     try {
-                        const response = await axios.get(`http://43.143.87.196:8070/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`);
+                        const response = await axios.get(`https://ht.bbbyg.vip/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`);
                         
                         if (response.data.success) {
                             this.currentAddress = response.data.invoice_address;
@@ -1068,7 +1068,7 @@
                             this.submitting = true;
                             checkLogin()
                             try {
-                                const response = await axios.post(`http://43.143.87.196:8070/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, this.form);
+                                const response = await axios.post(`https://ht.bbbyg.vip/api/invoice/address?user_id=${window.userInfo.id}&session=${window.userInfo.session}`, this.form);
                                 
                                 if (response.data.success) {
                                     const operation = response.data.operation; // 'created' 或 'updated'
