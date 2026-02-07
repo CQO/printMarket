@@ -1068,7 +1068,7 @@
                         if (response.data.success) {
                             this.products = response.data.products;
                             this.categories = response.data.categories || [];
-                            this.userPoints = response.data.user_points;
+                            // this.userPoints = response.data.user_points;
                             this.total = response.data.total;
                         } else {
                             this.$message.error(response.data.error || '加载商品列表失败');

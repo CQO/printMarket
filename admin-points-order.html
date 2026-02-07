@@ -147,6 +147,66 @@
             font-size: 12px;
             margin-top: 5px;
         }
+        
+        /* 搜索栏样式 */
+        .search-bar {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-item {
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+        
+        .search-label {
+            font-size: 14px;
+            color: #606266;
+            margin-bottom: 5px;
+        }
+        
+        .search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .date-range-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-range-separator {
+            color: #909399;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-item {
+                min-width: 100%;
+            }
+            
+            .search-actions {
+                justify-content: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
@@ -182,6 +242,90 @@
         <div class="header">
             <h1 class="title">积分订单管理</h1>
             <p class="subtitle">管理用户积分兑换的订单</p>
+        </div>
+        
+        <!-- 搜索栏 -->
+        <div class="search-bar">
+            <div class="search-form">
+                <div class="search-item">
+                    <div class="search-label">订单号</div>
+                    <el-input
+                        v-model="searchParams.order_number"
+                        placeholder="请输入订单号"
+                        clearable
+                        @clear="handleSearch"
+                        @keyup.enter.native="handleSearch"
+                    ></el-input>
+                </div>
+                
+                <div class="search-item">
+                    <div class="search-label">商品名称</div>
+                    <el-input
+                        v-model="searchParams.product_name"
+                        placeholder="请输入商品名称"
+                        clearable
+                        @clear="handleSearch"
+                        @keyup.enter.native="handleSearch"
+                    ></el-input>
+                </div>
+                
+                <div class="search-item">
+                    <div class="search-label">收货人</div>
+                    <el-input
+                        v-model="searchParams.shipping_name"
+                        placeholder="请输入收货人姓名"
+                        clearable
+                        @clear="handleSearch"
+                        @keyup.enter.native="handleSearch"
+                    ></el-input>
+                </div>
+                
+                <div class="search-item">
+                    <div class="search-label">订单状态</div>
+                    <el-select
+                        v-model="searchParams.status"
+                        placeholder="请选择订单状态"
+                        clearable
+                        @change="handleSearch"
+                    >
+                        <el-option label="全部" value=""></el-option>
+                        <el-option label="待处理" value="pending"></el-option>
+                        <el-option label="处理中" value="processing"></el-option>
+                        <el-option label="已发货" value="shipped"></el-option>
+                        <el-option label="已完成" value="completed"></el-option>
+                        <el-option label="已取消" value="cancelled"></el-option>
+                    </el-select>
+                </div>
+                
+                <div class="search-item">
+                    <div class="search-label">下单时间</div>
+                    <div class="date-range-picker">
+                        <el-date-picker
+                            v-model="searchParams.start_date"
+                            type="date"
+                            placeholder="开始日期"
+                            value-format="yyyy-MM-dd"
+                            @change="handleDateChange"
+                            clearable
+                        ></el-date-picker>
+                        <span class="date-range-separator">至</span>
+                        <el-date-picker
+                            v-model="searchParams.end_date"
+                            type="date"
+                            placeholder="结束日期"
+                            value-format="yyyy-MM-dd"
+                            @change="handleDateChange"
+                            clearable
+                        ></el-date-picker>
+                    </div>
+                </div>
+                
+                <div class="search-actions">
+                    <el-button type="primary" @click="handleSearch" icon="el-icon-search">搜索</el-button>
+                    <el-button @click="handleReset" icon="el-icon-refresh">重置</el-button>
+                    <el-button @click="exportOrders" icon="el-icon-download" type="success">导出</el-button>
+                </div>
+            </div>
         </div>
         
         <!-- 订单表格 -->
@@ -232,6 +376,12 @@
                             <span class="points-badge">{{ scope.row.points_used }}</span>
                         </template>
                     </el-table-column>
+
+                    <el-table-column prop="points_used" label="金额" width="100" align="center">
+                        <template slot-scope="scope">
+                            <span class="points-badge">{{ scope.row.money_used }}</span>
+                        </template>
+                    </el-table-column>
                     
                     <el-table-column prop="shipping_name" label="收货人" width="120">
                         <template slot-scope="scope">
@@ -250,7 +400,7 @@
                     
                     <el-table-column prop="created_at" label="下单时间" width="160">
                         <template slot-scope="scope">
-                            {{ formatDate(scope.row.created_at) }}
+                            {{ formatDateTime(scope.row.created_at) }}
                         </template>
                     </el-table-column>
                     
@@ -296,18 +446,33 @@
                     loading: false,
                     currentPage: 1,
                     pageSize: 20,
-                    total: 0
+                    total: 0,
+                    
+                    // 搜索参数
+                    searchParams: {
+                        order_number: '',
+                        product_name: '',
+                        shipping_name: '',
+                        status: '',
+                        start_date: '',
+                        end_date: ''
+                    }
                 };
             },
             mounted() {
                 this.loadOrders();
             },
             methods: {
-                // 格式化日期
-                formatDate(date) {
+                // 格式化日期时间
+                formatDateTime(date) {
                     if (!date) return '';
                     const d = new Date(date);
-                    return d.toLocaleDateString('zh-CN');
+                    const year = d.getFullYear();
+                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                    const day = d.getDate().toString().padStart(2, '0');
+                    const hours = d.getHours().toString().padStart(2, '0');
+                    const minutes = d.getMinutes().toString().padStart(2, '0');
+                    return `${year}-${month}-${day} ${hours}:${minutes}`;
                 },
                 
                 // 获取状态文本
@@ -322,14 +487,44 @@
                     return statusMap[status] || status;
                 },
                 
+                // 处理日期选择
+                handleDateChange() {
+                    // 如果选择了结束日期但没有开始日期，自动设置开始日期为结束日期前30天
+                    if (this.searchParams.end_date && !this.searchParams.start_date) {
+                        const endDate = new Date(this.searchParams.end_date);
+                        const startDate = new Date(endDate);
+                        startDate.setDate(startDate.getDate() - 30);
+                        this.searchParams.start_date = this.formatDate(startDate);
+                    }
+                    this.handleSearch();
+                },
+                
+                // 格式化日期为YYYY-MM-DD
+                formatDate(date) {
+                    if (!date) return '';
+                    const d = new Date(date);
+                    const year = d.getFullYear();
+                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                    const day = d.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                },
+                
                 // 加载订单列表
                 async loadOrders() {
                     this.loading = true;
                     try {
                         const params = {
                             page: this.currentPage,
-                            page_size: this.pageSize
+                            page_size: this.pageSize,
+                            ...this.searchParams
                         };
+                        
+                        // 清理空参数
+                        Object.keys(params).forEach(key => {
+                            if (params[key] === '' || params[key] === null || params[key] === undefined) {
+                                delete params[key];
+                            }
+                        });
                         
                         const response = await axios.get('https://ht.bbbyg.vip/api/admin/points/orders/list', { params });
                         
@@ -345,6 +540,52 @@
                     } finally {
                         this.loading = false;
                     }
+                },
+                
+                // 搜索订单
+                handleSearch() {
+                    this.currentPage = 1; // 重置到第一页
+                    this.loadOrders();
+                },
+                
+                // 重置搜索条件
+                handleReset() {
+                    this.searchParams = {
+                        order_number: '',
+                        product_name: '',
+                        shipping_name: '',
+                        status: '',
+                        start_date: '',
+                        end_date: ''
+                    };
+                    this.currentPage = 1;
+                    this.loadOrders();
+                },
+                
+                // 导出订单
+                exportOrders() {
+                    const params = {
+                        ...this.searchParams,
+                        export: true
+                    };
+                    
+                    // 清理空参数
+                    Object.keys(params).forEach(key => {
+                        if (params[key] === '' || params[key] === null || params[key] === undefined) {
+                            delete params[key];
+                        }
+                    });
+                    
+                    // 构建查询字符串
+                    const queryString = Object.keys(params)
+                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                        .join('&');
+                    
+                    // 创建导出URL
+                    const exportUrl = `https://ht.bbbyg.vip/api/admin/points/orders/export?${queryString}`;
+                    
+                    // 在新窗口打开导出链接
+                    window.open(exportUrl, '_blank');
                 },
                 
                 // 分页大小改变

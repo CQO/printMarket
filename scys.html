@@ -1009,11 +1009,6 @@
             if (currentBind) {
                 // 如果已经绑定到订单项
                 orderSelect.value = currentBind;
-            } else {
-                // 默认选择第一个订单（如果有的话）
-                if (orderItems.length > 0) {
-                    orderSelect.value = orderItems[0].id;
-                }
             }
             
             bindDialog.style.display = 'flex';
@@ -1021,7 +1016,7 @@
         
         // 更新订单选择框
         function updateOrderSelect() {
-            orderSelect.innerHTML = '<option value="">请选择订单项...</option>';
+            orderSelect.innerHTML = '<option value="" selected>请选择订单项...</option>';
             
             orderItems.forEach((item, index) => {
                 const option = document.createElement('option');
@@ -1345,7 +1340,7 @@
             productName = text;
             
             // 匹配数量（查找"X张"或"X个"模式）
-            const quantityMatch = text.match(/(\d+)[张个盒]/);
+            const quantityMatch = text.match(/(\d+)[本张个盒]/);
             if (quantityMatch) {
                 quantity = parseInt(quantityMatch[1]);
             }
