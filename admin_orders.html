@@ -1200,7 +1200,7 @@
                     <div class="order-phone">${order.phone}</div>
                 </td>
                 <td>
-                    <div class="order-number" onclick="viewOrderDetail('${order.order_number}')">${order.order_number}</div>
+                    <div class="order-number">${order.order_number}</div>
                 </td>
                 <td>
                     <div class="order-info">
@@ -1504,12 +1504,7 @@
         function downloadOrderFiles(orderNumber) {
             alert(`开始下载订单 ${orderNumber} 的文件\n实际开发中这里会打包下载所有文件`);
         }
-        
-        // 查看订单详情
-        function viewOrderDetail(orderNumber) {
-            alert(`查看订单 ${orderNumber} 的详情`);
-        }
-        
+
         // 查看关联订单
         function viewRelatedOrder(orderNumber) {
             alert(`查看关联订单 ${orderNumber}`);

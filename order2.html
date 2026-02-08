@@ -457,6 +457,10 @@
                     <i class="fas fa-clipboard-list"></i>
                     <span>已完成的订单</span>
                 </a>
+                <a href="./jfdd.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>积分订单</span>
+                </a>
                 <a href="./fpdz.html" class="menu-item">
                     <i class="fas fa-file-invoice"></i>
                     <span>开票地址</span>
@@ -773,12 +777,7 @@
             
             return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
         }
-        
-        // 查看订单详情
-        function viewOrderDetail(orderNumber) {
-            alert(`查看订单 ${orderNumber} 的详情\n实际开发中这里会跳转到订单详情页面`);
-            // window.location.href = `/order-detail.html?order_number=${orderNumber}`;
-        }
+
         
         // 支付订单
         async function payOrder(orderNumber) {
