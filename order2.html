@@ -513,7 +513,6 @@
                             <th>数量</th>
                             <th>支付状态</th>
                             <th>文件下载</th>
-                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody id="ordersBody">
@@ -728,6 +727,10 @@
             
             // 检查是否有文件
             const hasFiles = order.file_count > 0;
+            let fileTemp = ``
+            JSON.parse(order.files).forEach(element => {
+                fileTemp += `<a target="_blank" href="https://ht.bbbyg.vip/${element.file_path}">${element.original_name}</a>`
+            });
             
             row.innerHTML = `
                 <td>
@@ -747,19 +750,7 @@
                     <span class="status-badge ${paymentInfo.class}">${paymentInfo.text}</span>
                 </td>
                 <td>
-                    ${hasFiles ? 
-                        `<button class="action-btn download-btn" onclick="downloadFiles('${order.order_number}')">
-                            下载(${order.file_count})
-                        </button>` : 
-                        '<span style="color:#95a5a6;">无文件</span>'}
-                </td>
-                <td>
-                    <div class="action-buttons">
-                        ${order.payment_status === 'pending' ? 
-                            `<button class="action-btn pay-btn" onclick="payOrder('${order.order_number}')">
-                                去支付
-                            </button>` : ''}
-                    </div>
+                    ${fileTemp}
                 </td>
             `;
             

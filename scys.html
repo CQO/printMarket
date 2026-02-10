@@ -810,7 +810,7 @@
                         if (bindStatus && bindStatus.textContent.includes('未绑定') || bindStatus.textContent.includes('等待处理')) {
                             // 自动绑定到唯一订单
                             file.bindTo = orderItems[0].id;
-                            bindStatus.textContent = `自动绑定: ${orderItems[0].productName.substring(0, 15)}...`;
+                            bindStatus.textContent = `自动绑定: ${orderItems[0].productName}`;
                             bindStatus.style.background = '#e1f3d8';
                             bindStatus.style.color = '#67c23a';
                             
@@ -841,7 +841,7 @@
             
             // 更新文件列表中的绑定状态
             const bindStatus = document.getElementById(`bind-status-${fileId}`);
-            bindStatus.textContent = `已绑定: ${orderItem.productName.substring(0, 12)}...`;
+            bindStatus.textContent = `已绑定: ${orderItem.productName}`;
             bindStatus.style.background = '#e1f3d8';
             bindStatus.style.color = '#67c23a';
             
@@ -915,8 +915,8 @@
                 listItem.id = `file-${fileId}`;
                 listItem.innerHTML = `
                     <div style="flex: 1;">
-                        <div style="font-weight: 500; margin-bottom: 5px; display: flex; align-items: center; gap: 10px;">
-                            ${file.name}
+                        <div style="font-weight: 500; margin-bottom: 5px; align-items: center; gap: 10px;">
+                            <span>${file.name}</span>
                             <span id="bind-status-${fileId}" style="font-size: 0.8rem; background: #f0f0f0; padding: 2px 8px; border-radius: 10px;">
                                 等待绑定
                             </span>
@@ -929,9 +929,6 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 5px;">
-                        <button class="bind-btn" data-file-id="${fileId}" style="padding: 5px 10px; background: #409EFF; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
-                            <i class="fas fa-edit"></i> 设置
-                        </button>
                         <button class="delete-btn" data-file-id="${fileId}" style="padding: 5px 10px; background: #f56c6c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
                             <i class="fas fa-times"></i>
                         </button>
@@ -951,14 +948,6 @@
                     markAsWaiting(fileId);
                 }
                 
-                // 添加绑定（设置）按钮事件
-                listItem.querySelector('.bind-btn').addEventListener('click', function() {
-                    const fileId = this.getAttribute('data-file-id');
-                    const file = uploadedFiles.find(f => f.id === fileId);
-                    if (file) {
-                        showBindDialog(fileId, file.name, file.size, file.bindTo, file.fileNote);
-                    }
-                });
                 
                 // 添加删除按钮事件
                 listItem.querySelector('.delete-btn').addEventListener('click', function() {
@@ -1017,12 +1006,15 @@
         // 更新订单选择框
         function updateOrderSelect() {
             orderSelect.innerHTML = '<option value="" selected>请选择订单项...</option>';
-            
+            const bindList = uploadedFiles.map((item) =>{ return item.bindTo})
             orderItems.forEach((item, index) => {
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.textContent = `${index + 1}. ${item.productName} (${item.quantity}件)`;
-                orderSelect.appendChild(option);
+                if (!bindList.includes(String(item.id))) {
+                    const option = document.createElement('option');
+                    option.value = item.id;
+                    option.textContent = `${index + 1}. ${item.productName} (${item.quantity}件)`;
+                    orderSelect.appendChild(option);
+                }
+                
             });
 
             
@@ -1093,7 +1085,7 @@
             const bindStatus = document.getElementById(`bind-status-${currentFileId}`);
             const orderItem = orderItems.find(item => item.id == selectedOrderId);
             if (orderItem) {
-                bindStatus.textContent = `已绑定: ${orderItem.productName.substring(0, 12)}...`;
+                bindStatus.textContent = `已绑定: ${orderItem.productName}`;
                 bindStatus.style.background = '#e1f3d8';
                 bindStatus.style.color = '#67c23a';
             }
@@ -1270,7 +1262,6 @@
                 })),
                 files: uploadedFiles.filter(file => file.uploaded).map(file => ({
                     original_name: file.name,
-                    server_name: file.serverName,
                     file_path: file.serverPath,
                     file_size: file.size,
                     bind_to: file.bindTo, // 必填：绑定的订单项ID
@@ -1333,7 +1324,7 @@
         function parseOrderText(text) {
             // 尝试提取商品名称
             let productName = '';
-            let quantity = 0;
+            let quantity = 1;
             let price = 0;
             let item = 0;
 
@@ -1449,7 +1440,7 @@
                             if (orderItems.length === 1) {
                                 // 重新绑定到唯一的订单
                                 file.bindTo = orderItems[0].id;
-                                bindStatus.textContent = `重新绑定: ${orderItems[0].productName.substring(0, 15)}...`;
+                                bindStatus.textContent = `重新绑定: ${orderItems[0].productName}`;
                                 bindStatus.style.background = '#e1f3d8';
                                 bindStatus.style.color = '#67c23a';
                             } else if (orderItems.length > 1) {

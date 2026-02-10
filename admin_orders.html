@@ -659,18 +659,18 @@
         
         <!-- 统计卡片 -->
         <div class="stats-cards">
-            <div class="stat-card stat-pending" data-status="pending">
+            <!-- <div class="stat-card stat-pending" data-status="pending">
                 <div class="stat-value" id="pendingCount">0</div>
                 <div class="stat-label">待支付</div>
-            </div>
+            </div> -->
             <div class="stat-card stat-paid" data-status="paid">
                 <div class="stat-value" id="paidCount">0</div>
-                <div class="stat-label">已支付</div>
+                <div class="stat-label">待下载</div>
             </div>
-            <!-- <div class="stat-card stat-downloaded" data-status="downloaded">
+            <div class="stat-card stat-downloaded" data-status="downloaded">
                 <div class="stat-value" id="downloadedCount">0</div>
                 <div class="stat-label">已下载</div>
-            </div> -->
+            </div>
             <div class="stat-card stat-shipped" data-status="shipped">
                 <div class="stat-value" id="shippedCount">0</div>
                 <div class="stat-label">已发货</div>
@@ -768,7 +768,7 @@
                         <th>订单成本</th>
                         <th>订单利润</th>
                         <th>关联订单</th>
-                        
+                        <th>附件</th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody">
@@ -912,7 +912,7 @@
         
         // 统计卡片
         const totalOrdersSpan = document.getElementById('totalOrders');
-        const pendingCountSpan = document.getElementById('pendingCount');
+        // const pendingCountSpan = document.getElementById('pendingCount');
         const paidCountSpan = document.getElementById('paidCount');
         const downloadedCountSpan = document.getElementById('downloadedCount');
         const shippedCountSpan = document.getElementById('shippedCount');
@@ -1109,9 +1109,9 @@
         // 更新统计数据
         function updateStats(stats) {
             totalOrdersSpan.textContent = stats.total_orders || 0;
-            pendingCountSpan.textContent = stats.pending_count || 0;
+            // pendingCountSpan.textContent = stats.pending_count || 0;
             paidCountSpan.textContent = stats.paid_count || 0;
-            // downloadedCountSpan.textContent = stats.downloaded_count || 0;
+            downloadedCountSpan.textContent = stats.downloaded_count || 0;
             shippedCountSpan.textContent = stats.shipped_count || 0;
             afterSaleCountSpan.textContent = stats.after_sale_count || 0;
         }
@@ -1192,6 +1192,15 @@
                 yuangongSelect1 += `<option ${order.sales_person == element.id ? 'selected' : ''} value="${element.id}">${element.username}</option>`
                 yuangongSelect2 += `<option ${order.deload_person == element.id ? 'selected' : ''} value="${element.id}">${element.username}</option>`
             });
+            let downFileLi = ``
+            if (order.files) {
+                JSON.parse(order.files).forEach(element => {
+                    downFileLi += `<div class="related-orders">
+                            <a target="_blank" href="https://ht.bbbyg.vip/${element.file_path}" class="related-order">${element.original_name}</a>
+                        </div>`
+                });
+            }
+            
             row.innerHTML = `
                 <td class="order-checkbox">
                     <input type="checkbox" class="order-select" data-order-id="${orderId}" onchange="updateSelectedOrders(this)">
@@ -1238,9 +1247,7 @@
                         <button class="action-btn status-btn" onclick="openStatusModal('${order.order_number}', '${order.status}')">
                             改状态
                         </button>
-                        <button class="action-btn download-btn" onclick="downloadOrderFiles('${order.order_number}')">
-                            下载
-                        </button>
+
                         <button class="action-btn surcharge-btn" onclick="openSurchargeModal('${order.order_number}', ${amount})">
                             补差价
                         </button>
@@ -1270,7 +1277,9 @@
                         ${relatedOrdersHtml || '-'}
                     </div>
                 </td>
-                
+                <td>
+                    ${downFileLi}
+                </td>
             `;
             
             return row;
@@ -1499,11 +1508,7 @@
                 console.error('创建补差订单错误:', error);
             }
         }
-        
-        // 下载订单文件
-        function downloadOrderFiles(orderNumber) {
-            alert(`开始下载订单 ${orderNumber} 的文件\n实际开发中这里会打包下载所有文件`);
-        }
+
 
         // 查看关联订单
         function viewRelatedOrder(orderNumber) {
