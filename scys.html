@@ -243,7 +243,7 @@
         
         .address-section {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 15px;
         }
         
@@ -623,27 +623,30 @@
                 </select>
             </div>
             <div class="address-section">
-                <div class="address-field">
+                <div class="address-field"  style="grid-column: span 3;">
                     <label>收货人姓名</label>
                     <input type="text" id="receiverName" value="">
                 </div>
                 
-                <div class="address-field">
+                <div class="address-field"  style="grid-column: span 3;">
                     <label>联系电话</label>
                     <input type="tel" id="phone" value="">
                 </div>
                 
-                <div class="address-field">
+                <div class="address-field"  style="grid-column: span 2;">
                     <label>省份</label>
                     <input type="text" id="province" value="">
                 </div>
                 
-                <div class="address-field">
+                <div class="address-field"  style="grid-column: span 2;">
                     <label>城市</label>
                     <input type="text" id="city" value="">
                 </div>
-                
-                <div class="address-field" style="grid-column: span 2;">
+                <div class="address-field"  style="grid-column: span 2;">
+                    <label>区</label>
+                    <input type="text" id="district" value="">
+                </div>
+                <div class="address-field" style="grid-column: span 6;">
                     <label>详细地址</label>
                     <input type="text" id="address" value="">
                 </div>
@@ -1271,7 +1274,7 @@
                 receiverName: receiverName,
                 phone: phone,
                 province: document.getElementById('province').value,
-                city: document.getElementById('city').value,
+                city: document.getElementById('city').value + document.getElementById('district').value,
                 address: address,
                 totalAmount: parseFloat(subtotalElement.textContent),
                 orderTime: new Date().toISOString()
@@ -1303,9 +1306,7 @@
                     showMessage('订单提交成功！订单号：' + result.order_number, 'success');
                     
                     // 重置表单（可选）
-                    setTimeout(() => {
-                        location.href = './order.html'
-                    }, 3000);
+                    location.href = './order.html'
                 } else {
                     
                     showMessage('提交失败：' + result.error, 'error');
@@ -1507,6 +1508,7 @@
             document.getElementById('phone').value = element.phone;
             document.getElementById('province').value = element.province;
             document.getElementById('city').value = element.city;
+            document.getElementById('district').value = element.district;
             document.getElementById('address').value = element.detail_address;
 
         }
@@ -1531,6 +1533,7 @@
                             document.getElementById('phone').value = element.phone;
                             document.getElementById('province').value = element.province;
                             document.getElementById('city').value = element.city;
+                            document.getElementById('district').value = element.district;
                             document.getElementById('address').value = element.detail_address;
                             tempData += `<option value="${index}" selected>${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
                         } else {

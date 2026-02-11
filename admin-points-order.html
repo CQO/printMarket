@@ -92,16 +92,7 @@
             color: #67c23a;
             border: 1px solid #e1f3d8;
         }
-        
-        .points-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 500;
-        }
+
         
         .no-data {
             text-align: center;
@@ -289,7 +280,7 @@
                         @change="handleSearch"
                     >
                         <el-option label="全部" value=""></el-option>
-                        <el-option label="待处理" value="pending"></el-option>
+                        <el-option label="待发货" value="pending"></el-option>
                         <el-option label="处理中" value="processing"></el-option>
                         <el-option label="已发货" value="shipped"></el-option>
                         <el-option label="已完成" value="completed"></el-option>
@@ -323,7 +314,7 @@
                 <div class="search-actions">
                     <el-button type="primary" @click="handleSearch" icon="el-icon-search">搜索</el-button>
                     <el-button @click="handleReset" icon="el-icon-refresh">重置</el-button>
-                    <el-button @click="exportOrders" icon="el-icon-download" type="success">导出</el-button>
+                    <!-- <el-button @click="exportOrders" icon="el-icon-download" type="success">导出</el-button> -->
                 </div>
             </div>
         </div>
@@ -351,8 +342,8 @@
                 </div>
                 
                 <!-- 订单表格 -->
-                <el-table v-else :data="orders" style="width: 100%;">
-                    <el-table-column prop="order_number" label="订单号" width="160">
+                <el-table v-else :data="orders">
+                    <el-table-column prop="order_number" label="订单号" width="210">
                         <template slot-scope="scope">
                             <div style="font-weight: 500; color: #409EFF;">
                                 {{ scope.row.order_number }}
@@ -360,7 +351,7 @@
                         </template>
                     </el-table-column>
                     
-                    <el-table-column prop="product_name" label="商品信息" min-width="180">
+                    <el-table-column prop="product_name" label="商品信息">
                         <template slot-scope="scope">
                             <div class="order-info">
                                 <div style="font-weight: 500;">{{ scope.row.product_name }}</div>
@@ -453,7 +444,7 @@
                         order_number: '',
                         product_name: '',
                         shipping_name: '',
-                        status: '',
+                        status: 'pending',
                         start_date: '',
                         end_date: ''
                     }
@@ -478,7 +469,7 @@
                 // 获取状态文本
                 getStatusText(status) {
                     const statusMap = {
-                        'pending': '待处理',
+                        'pending': '待发货',
                         'processing': '处理中',
                         'shipped': '已发货',
                         'completed': '已完成',

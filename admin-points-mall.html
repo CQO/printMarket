@@ -216,6 +216,12 @@
             border: 1px solid #e1f3d8;
         }
         
+        .type-stock_quantity {
+            background-color: #ecf5ff;
+            color: #409EFF;
+            border: 1px solid #d9ecff;
+        }
+
         .type-physical {
             background-color: #ecf5ff;
             color: #409EFF;
@@ -225,7 +231,7 @@
         .product-actions {
             display: flex;
             gap: 10px;
-            padding: 0 20px 20px;
+            padding: 0 20px 10px;
         }
         
         .buy-button {
@@ -587,7 +593,7 @@
                         <div v-if="!product.image_url" class="empty-image">
                             <i class="el-icon-picture-outline"></i>
                         </div>
-                        <img v-else :src="'https://ht.bbbyg.vip/api/' + product.image_url" :alt="product.product_name">
+                        <img v-else :src="'https://ht.bbbyg.vip' + product.image_url" :alt="product.product_name">
                         
                         <!-- 库存标签 -->
                         <div v-if="product.stock_quantity >= 0" class="stock-badge">
@@ -602,9 +608,13 @@
                     
                     <!-- 商品信息 -->
                     <div class="product-info">
-                        <div class="product-type" :class="'type-' + product.product_type">
+                        <span class="product-type" :class="'type-' + product.product_type">
                             {{ product.product_type === 'virtual' ? '虚拟商品' : '实物商品' }}
-                        </div>
+                        </span>
+
+                        <span class="product-type" :class="'type-stock_quantity'">
+                            库存：{{ product.stock_quantity }}
+                        </span>
                         
                         <h3 class="product-name">{{ product.product_name }}</h3>
                         <div class="product-description">
@@ -620,6 +630,15 @@
                             icon="el-icon-delete"
                             @click="handleDelete(product)"
                         >删除商品</el-button>
+                    </div>
+                    <!-- 修改库存 -->
+                    <div class="product-actions">
+                        <el-button 
+                            type="danger" 
+                            class="delete-button"
+                            icon="el-icon-delete"
+                            @click="showEditProductDialog(product)"
+                        >修改商品</el-button>
                     </div>
                 </div>
                 
@@ -718,7 +737,7 @@
                             
                             <div v-if="productForm.image_preview || productForm.image_url">
                                 <img 
-                                    :src="productForm.image_preview || productForm.image_url" 
+                                    :src="'https://ht.bbbyg.vip' + (productForm.image_preview || productForm.image_url)" 
                                     alt="预览" 
                                     class="image-preview"
                                 >
@@ -921,8 +940,7 @@
                             { required: true, message: '请输入商品名称', trigger: 'blur' }
                         ],
                         points_required: [
-                            { required: true, message: '请输入所需积分', trigger: 'blur' },
-                            { validator: this.validatePoints, trigger: 'blur' }
+                            { required: true, message: '请输入所需积分', trigger: 'blur' }
                         ],
                         category: [
                             { required: true, message: '请选择商品分类', trigger: 'change' }
@@ -1090,6 +1108,23 @@
                         is_active: 1,
                         sort_order: 0
                     };
+                    
+                    this.productDialogVisible = true;
+                    
+                    // 重置表单验证
+                    this.$nextTick(() => {
+                        if (this.$refs.productForm) {
+                            this.$refs.productForm.clearValidate();
+                        }
+                    });
+                },
+                // 显示添加商品对话框
+                showEditProductDialog(item) {
+                    console.log(item)
+                    this.isProductEditMode = true;
+                    this.productDialogTitle = '编辑商品';
+                    this.selectedProduct = item
+                    this.productForm = item;
                     
                     this.productDialogVisible = true;
                     
