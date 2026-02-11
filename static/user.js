@@ -5,3 +5,8 @@ function checkLogin() {
         window.location.href = '/login.html';
     }
 }
+setTimeout(() => {
+    if (window.userInfo) {
+        document.body.classList.add('user-' + window.userInfo.user_type)
+    }
+}, 100);

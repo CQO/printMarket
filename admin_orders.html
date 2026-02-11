@@ -755,19 +755,19 @@
                         <th class="order-checkbox">
                             <input type="checkbox" id="tableSelectAll">
                         </th>
-                        <th>用户名</th>
-                        <th>订单编号</th>
-                        <th>订单信息</th>
-                        <th>客户信息</th>
-                        <th>订单金额</th>
-                        <th>客户备注</th>
-                        <th>类目</th>
+                        <th class="can-output">用户名</th>
+                        <th> class="can-output"订单编号</th>
+                        <th class="can-output">订单信息</th>
+                        <th class="can-output">客户信息</th>
+                        <th class="can-output">订单金额</th>
+                        <th class="can-output">客户备注</th>
+                        <th class="can-output">类目</th>
                         <th style=" width: 160px; ">操作</th>
-                        <th>业务员</th>
-                        <th>下载员</th>
-                        <th>订单成本</th>
-                        <th>订单利润</th>
-                        <th>关联订单</th>
+                        <th class="can-output">业务员</th>
+                        <th class="can-output">下载员</th>
+                        <th class="can-output">订单成本</th>
+                        <th class="can-output">订单利润</th>
+                        <th class="can-output">关联订单</th>
                         <th>附件</th>
                     </tr>
                 </thead>
@@ -1202,17 +1202,17 @@
             }
             
             row.innerHTML = `
-                <td class="order-checkbox">
+                <td class="order-checkbox ">
                     <input type="checkbox" class="order-select" data-order-id="${orderId}" onchange="updateSelectedOrders(this)">
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="order-phone">${order.phone}</div>
                 </td>
-                <td>
-                    <div class="order-number">${order.order_number}</div>
+                <td class="can-output">
+                    <div class="order-number can-output">${order.order_number}</div>
                 </td>
                 <td>
-                    <div class="order-info">
+                    <div class="order-info can-output">
                         <div class="order-info-content" title="${productSummary}">
                             ${productSummary}
                         </div>
@@ -1221,7 +1221,7 @@
                         </button>
                     </div>
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="order-info">
                         <div class="order-info-content" title="${order.city} ${order.address} ${order.receiver_name} ${order.phone}">
                             ${order.city} ${order.address} ${order.receiver_name} ${order.phone}
@@ -1231,15 +1231,15 @@
                         </button>
                     </div>
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="order-amount">¥${amount.toFixed(2)}</div>
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="customer-note" title="${order.customer_note || '无备注'}">
                         ${order.customer_note || '无备注'}
                     </div>
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="order-leimu">${getLeimu(order.product_summary)}</div>
                 </td>
                 <td>
@@ -1253,26 +1253,26 @@
                         </button>
                     </div>
                 </td>
-                <td>
+                <td class="can-output">
                     <select value="${order.sales_person}"  onchange="changeSalesperson(${order.id}, this.value)" style="width: 100%;">
                         ${yuangongSelect1}
                     </select>
                 </td>
-                <td>
+                <td class="can-output">
                     <select value="${order.deload_person}"  onchange="changeDeloadperson(${order.id}, this.value)" style="width: 100%;">
                         ${yuangongSelect2}
                     </select>
                 </td>
-                <td>
+                <td class="can-output">
                     <input type="number" class="cost-input" value="${cost}" 
                            data-order-id="${orderId}" 
                            onchange="updateOrderCost(${orderId}, this.value)" 
                            step="0.01" min="0">
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="${profitClass}">¥${profit.toFixed(2)}</div>
                 </td>
-                <td>
+                <td class="can-output">
                     <div class="related-orders">
                         ${relatedOrdersHtml || '-'}
                     </div>
@@ -1285,7 +1285,44 @@
             return row;
         }
         
+        // 保存CSV
+        function fake_click(obj) {
+        var ev = document.createEvent("MouseEvents");
+        ev.initMouseEvent(
+            "click", true, false, window, 0, 0, 0, 0, 0
+            , false, false, false, false, 0, null
+            );
+        obj.dispatchEvent(ev);
+        }
+        function download(name, data) {
+        var urlObject = window.URL || window.webkitURL || window;
 
+        var downloadData = new Blob([data]);
+
+        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        save_link.href = urlObject.createObjectURL(downloadData);
+        save_link.download = name;
+        fake_click(save_link);
+        }
+
+        function saveCSV (name, data) {
+        let saveData = ''
+        data.forEach(element => {
+            if (element) {
+            saveData += element.join(',')
+            saveData += '\r\n'
+            }
+        });
+        
+        var urlObject = window.URL || window.webkitURL || window;
+        
+        var downloadData = new Blob(['\ufeff' + saveData], { type: 'text/csv,charset=UTF-8'});
+
+        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+        save_link.href = urlObject.createObjectURL(downloadData);
+        save_link.download = name;
+        fake_click(save_link);
+        }
         
         // 更新选择的订单
         function updateSelectedOrders(checkbox) {
@@ -1527,48 +1564,24 @@
         
         // 导出为CSV
         async function exportToCSV() {
-            try {
-                let exportUrl = `https://ht.bbbyg.vip/api/admin/orders/export?`;
-                
-                // 如果有选中的订单，导出选中的
-                if (selectedOrders.size > 0) {
-                    const orderIds = Array.from(selectedOrders).join(',');
-                    exportUrl += `order_ids=${orderIds}`;
-                } else {
-                    // 否则导出当前筛选条件下的所有订单
-                    const params = new URLSearchParams();
+            let outPut = []
+            document.querySelectorAll('table tr').forEach(element => {
+                let temp = []
+                element.querySelectorAll('th').forEach(element => {
+                    if (element.classList.contains('can-output')) {
+                        temp.push(element.innerText)
+                    }
+                });
+                element.querySelectorAll('td').forEach(element => {
+                    if (element.classList.contains('can-output')) {
+                        temp.push(element.innerText)
+                    }
                     
-                    if (currentStatus) params.append('status', currentStatus);
-                    if (startDateInput.value) params.append('start_date', startDateInput.value);
-                    if (endDateInput.value) params.append('end_date', endDateInput.value);
-                    if (minAmountInput.value) params.append('min_amount', minAmountInput.value);
-                    if (maxAmountInput.value) params.append('max_amount', maxAmountInput.value);
-                    if (paymentFilter.value) params.append('payment_method', paymentFilter.value);
-                    
-                    const searchText = searchInput.value.trim();
-                    if (searchText) params.append('search', searchText);
-                    
-                    exportUrl += params.toString();
-                }
-                
-                // 模拟导出
-                alert(`开始导出订单数据...\n导出URL: ${exportUrl}`);
-                
-                // 实际实现：
-                // const response = await fetch(exportUrl, { credentials: 'include' });
-                // const blob = await response.blob();
-                // const url = window.URL.createObjectURL(blob);
-                // const a = document.createElement('a');
-                // a.href = url;
-                // a.download = `订单数据_${new Date().toISOString().split('T')[0]}.csv`;
-                // document.body.appendChild(a);
-                // a.click();
-                // document.body.removeChild(a);
-                
-            } catch (error) {
-                console.error('导出错误:', error);
-                alert('导出失败，请稍后重试');
-            }
+                });
+
+                outPut.push(temp)
+            });
+            saveCSV("导出数据.csv", outPut)
         }
         
         // 关闭模态框

@@ -10,6 +10,7 @@
     <script src="./static/axios.min.js"></script>
     <link rel="stylesheet" href="./static/back.css">
     <link rel="stylesheet" href="./static/all.min.css">
+    <script src="./static/user.js"></script>
     <style>
         * {
             margin: 0;
@@ -251,6 +252,9 @@
                 grid-template-columns: 1fr;
             }
         }
+        .user-admin .xgye-button{
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -420,7 +424,7 @@
                                     type="primary"
                                     @click="handleViewDetail(scope.row)"
                                 >查看</el-button>
-                                <el-button
+                                <el-button class="xgye-button" style="display: none;"
                                     size="mini"
                                     type="warning"
                                     @click="handleEditBalance(scope.row)"
