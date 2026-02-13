@@ -323,8 +323,27 @@
         </div>
         
         <form id="registerForm" class="register-form" onsubmit="return false;">
-            <!-- 用户名 -->
+            
+            <!-- 手机号 -->
             <div class="form-group">
+                <label class="form-label">手机号码</label>
+                <input type="tel" class="form-input" id="phone" placeholder="请输入11位手机号码" required>
+                <div class="error-message" id="phoneError">请输入正确的手机号码</div>
+            </div>
+            
+            <!-- 验证码 -->
+            <div class="form-group" style="display: none;">
+                <label class="form-label">短信验证码</label>
+                <div class="sms-group">
+                    <input type="text" class="form-input sms-input" id="smsCode" placeholder="请输入6位验证码（选填）">
+                    <button type="button" class="sms-btn" id="sendSmsBtn">发送验证码</button>
+                </div>
+                <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 5px;">
+                    验证码目前为选填项，可直接注册
+                </div>
+            </div>
+            <!-- 用户名 -->
+            <div class="form-group" style="display: none;">
                 <label class="form-label">用户名</label>
                 <input type="text" class="form-input" id="username" placeholder="请输入用户名（4-16位字母、数字或下划线）" required>
                 <div class="error-message" id="usernameError">用户名必须是4-16位字母、数字或下划线</div>
@@ -347,25 +366,13 @@
                 <input type="password" class="form-input" id="confirmPassword" placeholder="请再次输入密码" required>
                 <div class="error-message" id="confirmPasswordError">两次输入的密码不一致</div>
             </div>
-            
-            <!-- 手机号 -->
-            <div class="form-group">
-                <label class="form-label">手机号码</label>
-                <input type="tel" class="form-input" id="phone" placeholder="请输入11位手机号码" required>
-                <div class="error-message" id="phoneError">请输入正确的手机号码</div>
+
+            <!-- 邀请人ID -->
+            <div class="form-group yqr-group">
+                <label class="form-label">邀请人ID</label>
+                <input type="text" class="form-input" id="yqr" placeholder="选填">
             </div>
             
-            <!-- 验证码 -->
-            <div class="form-group">
-                <label class="form-label">短信验证码</label>
-                <div class="sms-group">
-                    <input type="text" class="form-input sms-input" id="smsCode" placeholder="请输入6位验证码（选填）">
-                    <button type="button" class="sms-btn" id="sendSmsBtn">发送验证码</button>
-                </div>
-                <div style="font-size: 0.9rem; color: #7f8c8d; margin-top: 5px;">
-                    验证码目前为选填项，可直接注册
-                </div>
-            </div>
             
             <!-- 用户协议 -->
             <div class="terms-group">
@@ -417,6 +424,16 @@
     </footer>
 
     <script>
+        // 获取推荐人
+        // 获取当前URL参数
+        const params = new URLSearchParams(window.location.search);
+
+        // 获取单个参数
+        const invitation = params.get('invitation'); 
+        setTimeout(() => {
+            window.yqr.value = invitation
+            document.querySelector('.yqr-group').style.display = 'none'
+        }, 1000);
         // DOM元素
         const registerForm = document.getElementById('registerForm');
         const usernameInput = document.getElementById('username');
@@ -546,6 +563,8 @@
         // 注册用户
         // 注册用户 - 修改为调用真实API
         async function registerUser() {
+            // 只能手机号注册
+            usernameInput.value = phoneInput.value
             // 验证所有输入
             const isUsernameValid = validateUsername();
             const isPasswordValid = validatePassword();
@@ -566,6 +585,7 @@
                     username: usernameInput.value.trim(),
                     password: passwordInput.value,
                     phone: phoneInput.value.trim(),
+                    invitation: window.yqr.value,
                     sms_code: smsCodeInput.value.trim() || '' // 验证码可选
                 };
                 

@@ -181,7 +181,7 @@
             margin-bottom: 15px;
         }
         
-        .upload-area.processing {
+        .upload-area.paid {
             background-color: #e8f4fc;
             border-color: #2ecc71;
         }
@@ -881,7 +881,15 @@
         function handleFiles(files) {
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
-                
+                console.log(file)
+                let canNext = true
+                document.querySelectorAll('.file-name').forEach(element => {
+                    if (element.innerText == file.name) {
+                        alert('不能上传重复的文件!')
+                        canNext = false
+                    }
+                });
+                if (!canNext) return
                 // 检查文件大小（最大50MB）
                 if (file.size > 50 * 1024 * 1024) {
                     alert(`文件 ${file.name} 超过50MB大小限制`);
@@ -919,7 +927,7 @@
                 listItem.innerHTML = `
                     <div style="flex: 1;">
                         <div style="font-weight: 500; margin-bottom: 5px; align-items: center; gap: 10px;">
-                            <span>${file.name}</span>
+                            <span class="file-name">${file.name}</span>
                             <span id="bind-status-${fileId}" style="font-size: 0.8rem; background: #f0f0f0; padding: 2px 8px; border-radius: 10px;">
                                 等待绑定
                             </span>
@@ -1120,6 +1128,7 @@
             
             const fileData = uploadedFiles[fileIndex];
             
+            
             // 更新上传状态
             const progressBar = document.getElementById(`progress-${fileId}`);
             const progressText = document.getElementById(`progress-text-${fileId}`);
@@ -1274,7 +1283,8 @@
                 receiverName: receiverName,
                 phone: phone,
                 province: document.getElementById('province').value,
-                city: document.getElementById('city').value + document.getElementById('district').value,
+                city: document.getElementById('city').value,
+                district: document.getElementById('district').value,
                 address: address,
                 totalAmount: parseFloat(subtotalElement.textContent),
                 orderTime: new Date().toISOString()

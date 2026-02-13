@@ -81,7 +81,7 @@
             border: 1px solid #faecd8;
         }
         
-        .status-processing {
+        .status-paid {
             background-color: #ecf5ff;
             color: #409EFF;
             border: 1px solid #d9ecff;
@@ -281,7 +281,7 @@
                     >
                         <el-option label="全部" value=""></el-option>
                         <el-option label="待发货" value="pending"></el-option>
-                        <el-option label="处理中" value="processing"></el-option>
+                        <el-option label="已支付" value="paid"></el-option>
                         <el-option label="已发货" value="shipped"></el-option>
                         <el-option label="已完成" value="completed"></el-option>
                         <el-option label="已取消" value="cancelled"></el-option>
@@ -398,7 +398,7 @@
                     <el-table-column label="操作" width="100" fixed="right" align="center">
                         <template slot-scope="scope">
                             <el-button
-                                v-if="scope.row.status === 'pending' || scope.row.status === 'processing'"
+                                v-if="scope.row.status === 'pending' || scope.row.status === 'paid'"
                                 type="primary"
                                 size="small"
                                 @click="shipOrder(scope.row)"
@@ -470,7 +470,7 @@
                 getStatusText(status) {
                     const statusMap = {
                         'pending': '待发货',
-                        'processing': '处理中',
+                        'paid': '已支付',
                         'shipped': '已发货',
                         'completed': '已完成',
                         'cancelled': '已取消'

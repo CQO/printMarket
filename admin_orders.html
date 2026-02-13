@@ -417,10 +417,8 @@
         
         /* 关联订单 */
         .related-orders {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            max-width: 150px;
+            color: #2980b9;
+            cursor: pointer;
         }
         
         .related-order {
@@ -731,6 +729,12 @@
                     <button id="resetBtn" class="admin-btn reset-btn">
                         <i class="fas fa-redo"></i> 重置
                     </button>
+                    <button onclick="updateOrderStatusAll('shipped')" class="admin-btn export-btn">
+                        <i class="fas fa-file-export"></i> 批量发货
+                    </button>
+                    <button onclick="updateOrderStatusAll('downloaded')" class="admin-btn export-btn">
+                        <i class="fas fa-file-export"></i> 批量下载
+                    </button>
                     <button id="exportBtn" class="admin-btn export-btn">
                         <i class="fas fa-file-export"></i> 导出CSV
                     </button>
@@ -756,7 +760,7 @@
                             <input type="checkbox" id="tableSelectAll">
                         </th>
                         <th class="can-output">用户名</th>
-                        <th> class="can-output"订单编号</th>
+                        <th class="can-output">订单编号</th>
                         <th class="can-output">订单信息</th>
                         <th class="can-output">客户信息</th>
                         <th class="can-output">订单金额</th>
@@ -898,7 +902,7 @@
         let currentPage = 1;
         let pageSize = 15;
         let totalPages = 1;
-        let currentStatus = '';
+        let currentStatus = 'paid';
         let selectedOrders = new Set();
         let currentOrderId = null;
         
@@ -1115,6 +1119,8 @@
             shippedCountSpan.textContent = stats.shipped_count || 0;
             afterSaleCountSpan.textContent = stats.after_sale_count || 0;
         }
+
+        
         
         // 更新分页信息
         function updatePagination(total, page, pageSize) {
@@ -1195,9 +1201,7 @@
             let downFileLi = ``
             if (order.files) {
                 JSON.parse(order.files).forEach(element => {
-                    downFileLi += `<div class="related-orders">
-                            <a target="_blank" href="https://ht.bbbyg.vip/${element.file_path}" class="related-order">${element.original_name}</a>
-                        </div>`
+                    downFileLi += `<a class="related-orders" onclick="downLoadFile('https://ht.bbbyg.vip/${element.file_path}', '${order.phone}_${order.order_number}_${element.original_name}')">${element.original_name}</a>`
                 });
             }
             
@@ -1224,7 +1228,7 @@
                 <td class="can-output">
                     <div class="order-info">
                         <div class="order-info-content" title="${order.city} ${order.address} ${order.receiver_name} ${order.phone}">
-                            ${order.city} ${order.address} ${order.receiver_name} ${order.phone}
+                            ${order.city}  ${order.district} ${order.address} ${order.receiver_name}
                         </div>
                         <button class="copy-btn" onclick="copyOrderInfo('${order.city} ${order.address} ${order.receiver_name} ${order.phone}')">
                             <i class="fas fa-copy"></i>
@@ -1344,6 +1348,7 @@
             selectAllCheckbox.checked = checkedCount === allCheckboxes.length;
             tableSelectAllCheckbox.checked = checkedCount === allCheckboxes.length;
         }
+        
         
         // 重置选择状态
         function resetSelection() {
@@ -1494,6 +1499,37 @@
                 console.error('更新订单状态错误:', error);
             }
         }
+        // 批量更新状态
+        async function updateOrderStatusAll(status) {
+
+            
+            try {
+                const response = await fetch(`https://ht.bbbyg.vip/api/admin/orders/status/batch`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "order_numbers": Array.from(selectedOrders),
+                        "status": status,
+                        "note": "批量处理"
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    alert('订单状态更新成功！');
+                    closeModal('statusModal');
+                    loadOrders(); // 重新加载订单列表
+                } else {
+                    alert(`更新失败：${result.error || '未知错误'}`);
+                }
+            } catch (error) {
+                alert('网络错误，请稍后重试');
+                console.error('更新订单状态错误:', error);
+            }
+        }
         
         // 创建补差价订单
         async function createSurchargeOrder() {
@@ -1624,6 +1660,37 @@
                 }
             });
         });
+        async function downLoadFile(url, filename) {
+            try {
+                const response = await fetch(url, {
+                    mode: 'cors',  // 如果需要跨域
+                    credentials: 'include'  // 如果需要携带cookie
+                });
+                
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+                
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                
+                // 清理
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                console.error('下载失败:', error);
+                // 降级方案：如果fetch失败，尝试直接用a标签
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = filename;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
     </script>
 </body>
 </html>

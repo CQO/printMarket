@@ -256,7 +256,7 @@
             color: #155724;
         }
         
-        .status-processing {
+        .status-paid {
             background-color: #cce5ff;
             color: #004085;
         }
@@ -762,7 +762,6 @@
             const paymentMap = {
                 'pending': { text: '待支付', class: 'status-pending' },
                 'paid': { text: '已支付', class: 'status-paid' },
-                'processing': { text: '处理中', class: 'status-processing' },
                 'refunded': { text: '已退款', class: 'status-pending' }
             };
             
@@ -805,25 +804,60 @@
             currentPage = 1;
             loadOrders();
         }
-        
+        // 保存CSV
+        function fake_click(obj) {
+            var ev = document.createEvent("MouseEvents");
+            ev.initMouseEvent(
+                "click", true, false, window, 0, 0, 0, 0, 0
+                , false, false, false, false, 0, null
+                );
+            obj.dispatchEvent(ev);
+        }
+        function download(name, data) {
+            var urlObject = window.URL || window.webkitURL || window;
+
+            var downloadData = new Blob([data]);
+
+            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+            save_link.href = urlObject.createObjectURL(downloadData);
+            save_link.download = name;
+            fake_click(save_link);
+        }
+
+        function saveCSV (name, data) {
+            let saveData = ''
+            data.forEach(element => {
+                if (element) {
+                saveData += element.join(',')
+                saveData += '\r\n'
+                }
+            });
+            
+            var urlObject = window.URL || window.webkitURL || window;
+            
+            var downloadData = new Blob(['\ufeff' + saveData], { type: 'text/csv,charset=UTF-8'});
+
+            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
+            save_link.href = urlObject.createObjectURL(downloadData);
+            save_link.download = name;
+            fake_click(save_link);
+        }
         // 导出到Excel
         function exportToExcel() {
-            alert('开始导出订单数据...\n实际开发中这里会生成Excel文件并下载');
-            
-            // 模拟导出过程
-            exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 导出中...';
-            exportBtn.disabled = true;
-            
-            setTimeout(() => {
-                alert('导出完成！已生成Excel文件并开始下载。');
-                exportBtn.innerHTML = '<i class="fas fa-file-export"></i> 导出表格';
-                exportBtn.disabled = false;
-                
-                // 实际开发中可以这样实现：
-                // 1. 调用后端导出接口
-                // 2. 后端生成Excel文件
-                // 3. 前端下载文件
-            }, 1500);
+            let outPut = []
+            document.querySelectorAll('table tr').forEach(element => {
+                let temp = []
+                element.querySelectorAll('th').forEach(element => {
+                    temp.push(element.innerText)
+                });
+                element.querySelectorAll('td').forEach(element => {
+                    temp.push(element.innerText)
+                    
+                });
+
+                outPut.push(temp)
+            });
+            saveCSV("导出数据.csv", outPut)
         }
     </script>
 </body>
