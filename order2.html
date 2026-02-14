@@ -409,6 +409,10 @@
                 white-space: nowrap;
             }
         }
+        .sqsh {
+            color: #3498db;
+            cursor: pointer;
+        }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
 </head>
@@ -513,6 +517,7 @@
                             <th>数量</th>
                             <th>支付状态</th>
                             <th>文件下载</th>
+                            <th>操作</th>
                         </tr>
                     </thead>
                     <tbody id="ordersBody">
@@ -561,7 +566,8 @@
             </div>
         </div>
     </footer>
-
+    <link rel="stylesheet" href="https://cunchu.site/work/login/standard.css">
+    <script src="https://cunchu.site/work/login/standard.js" type="text/javascript" charset="UTF-8"></script>
     <script>
         // 全局变量
         let currentPage = 1;
@@ -717,7 +723,7 @@
             const orderTime = new Date(order.created_at).toLocaleString('zh-CN');
             
             // 获取支付状态显示文本和样式
-            const paymentInfo = getPaymentInfo(order.payment_status);
+            const paymentInfo = getPaymentInfo(order.status);
             
             // 获取商品名称（如果是多个商品，显示第一个+...）
             let productName = order.first_product || '多款商品';
@@ -752,17 +758,43 @@
                 <td>
                     ${fileTemp}
                 </td>
+                <td>
+                    <span class="sqsh" onclick="sqsh(${order.id})">申请售后</span>
+                </td>
             `;
             
             return row;
         }
         
+        function sqsh(id) {
+            // if (confirm("确定要申请售后吗？")) {
+            //     document.getElementById("item").remove();
+            // }
+            owo.tool.panel(`<h4>选择售后类型</h4><select id="shlx"><option value="退款">退款</option><option value="补印">补印</option></select><h4>售后说明</h4><textarea id="shyy"></textarea><div class="owo button" onclick="tjsh(${id})">提交售后</div>`, '请选择售后原因:', (val) => {console.log(val)})
+        }
+
+        function tjsh (id) {
+            fetch(`https://ht.bbbyg.vip/api/order/after-sale/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customer_note: `[${window.shlx.value}] ${window.shyy.value}`
+                })
+            })
+            setTimeout(() => {
+                location.reload()
+            }, 1000);
+        }
+
         // 获取支付状态信息
         function getPaymentInfo(paymentStatus) {
             const paymentMap = {
                 'pending': { text: '待支付', class: 'status-pending' },
                 'paid': { text: '已支付', class: 'status-paid' },
-                'refunded': { text: '已退款', class: 'status-pending' }
+                'refunded': { text: '已退款', class: 'status-pending' },
+                'after_sale': { text: '售后中', class: 'after_sale' }
             };
             
             return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
