@@ -570,7 +570,7 @@
                     :class="{'active': selectedCategory === cat}"
                     @click="selectCategory(cat)"
                 >
-                    {{ getCategoryText(cat) }}
+                    {{ cat }}
                 </span>
             </div>
         </div>
@@ -773,10 +773,7 @@
                             placeholder="请选择商品分类"
                             style="width: 100%;"
                         >
-                            <el-option label="数码产品" value="digital"></el-option>
-                            <el-option label="日用品" value="daily"></el-option>
-                            <el-option label="优惠券" value="coupon"></el-option>
-                            <el-option label="其他" value="other"></el-option>
+                            <el-option v-for="item in categoryList" :label="item" :value="item"></el-option>
                         </el-select>
                     </el-form-item>
                 </div>
@@ -879,6 +876,8 @@
                     products: [],
                     categories: [],
                     loading: false,
+                    // 商品分类列表
+                    categoryList: [],
                     
                     // 筛选条件
                     searchKeyword: '',
@@ -928,7 +927,7 @@
                         image_preview: '',
                         image_url: '',
                         product_type: 'physical',
-                        category: 'daily',
+                        category: '日用品',
                         points_required: 100,
                         money_required: 100,
                         stock_quantity: -1,
@@ -950,6 +949,21 @@
             },
             mounted() {
                 this.loadProducts();
+                // 获取商品分类
+                fetch('https://ht.bbbyg.vip/api/setting/spfl', {
+                    method: 'GET',
+                    headers: {
+                        Accept: '*/*',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+                        Connection: 'keep-alive'
+                    }
+                })
+                .then(response => response.json())
+                .then(response => {
+                    this.categoryList = response.value.split('@')
+                })
+                .catch(err => console.error(err));
             },
             methods: {
                 // 格式化数字
@@ -963,17 +977,7 @@
                     if (!date) return '';
                     return new Date(date).toLocaleString('zh-CN');
                 },
-                
-                // 获取分类文本
-                getCategoryText(category) {
-                    const categoryMap = {
-                        'digital': '数码产品',
-                        'daily': '日用品',
-                        'coupon': '优惠券',
-                        'other': '其他'
-                    };
-                    return categoryMap[category] || category;
-                },
+
                 
                 // 获取订单状态文本
                 getOrderStatusText(status) {
@@ -1101,7 +1105,7 @@
                         image_preview: '',
                         image_url: '',
                         product_type: 'physical',
-                        category: 'daily',
+                        category: '日用品',
                         points_required: 100,
                         money_required: 100,
                         stock_quantity: -1,

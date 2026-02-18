@@ -413,6 +413,9 @@
             color: #3498db;
             cursor: pointer;
         }
+        .status-after_sale .sqsh {
+            display: none;
+        }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
 </head>
@@ -718,12 +721,12 @@
             if (order.payment_status === 'pending') {
                 row.className = 'unpaid';
             }
-            
+            row.classList.add('status-' + order.status)
             // 格式化时间
             const orderTime = new Date(order.created_at).toLocaleString('zh-CN');
             
             // 获取支付状态显示文本和样式
-            const paymentInfo = getPaymentInfo(order.status);
+            const paymentInfo = getPaymentInfo(order.status, order.customer_note);
             
             // 获取商品名称（如果是多个商品，显示第一个+...）
             let productName = order.first_product || '多款商品';
@@ -770,7 +773,7 @@
             // if (confirm("确定要申请售后吗？")) {
             //     document.getElementById("item").remove();
             // }
-            owo.tool.panel(`<h4>选择售后类型</h4><select id="shlx"><option value="退款">退款</option><option value="补印">补印</option></select><h4>售后说明</h4><textarea id="shyy"></textarea><div class="owo button" onclick="tjsh(${id})">提交售后</div>`, '请选择售后原因:', (val) => {console.log(val)})
+            owo.tool.panel(`<h4>选择售后类型</h4><select id="shlx"><option value="补印">补印</option><option value="退款">退款</option></select><h4>售后说明</h4><textarea id="shyy"></textarea><div class="owo button" onclick="tjsh(${id})">提交售后</div>`, '请选择售后原因:', (val) => {console.log(val)})
         }
 
         function tjsh (id) {
@@ -789,13 +792,22 @@
         }
 
         // 获取支付状态信息
-        function getPaymentInfo(paymentStatus) {
+        function getPaymentInfo(paymentStatus, customer_note) {
             const paymentMap = {
                 'pending': { text: '待支付', class: 'status-pending' },
                 'paid': { text: '已支付', class: 'status-paid' },
+                'shipped': { text: '已发货', class: 'shipped' },
                 'refunded': { text: '已退款', class: 'status-pending' },
                 'after_sale': { text: '售后中', class: 'after_sale' }
             };
+            if (paymentMap[paymentStatus]['class'] == 'after_sale') {
+                if (customer_note.includes('[已同意]')) {
+                    paymentMap[paymentStatus]['text'] = `已同意售后`
+                }
+                if (customer_note.includes('[已拒绝]')) {
+                    paymentMap[paymentStatus]['text'] = `已拒绝售后`
+                }
+            }
             
             return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
         }

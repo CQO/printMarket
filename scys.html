@@ -287,7 +287,7 @@
             padding: 20px;
             border-radius: 8px;
             text-align: right;
-            font-size: 1.3rem;
+            font-size: 1rem;
             color: #2c3e50;
             margin-top: 20px;
         }
@@ -577,7 +577,7 @@
                 <p><strong>提示：</strong> 商品折扣以及优惠需要在提交订单后查看</p>
             </div>
             <div class="total-section">
-                商品小计: <span id="subtotal">0</span> 元
+                人工下单：<span id="subtotal2" style="font-weight: bold;">0</span> 元 <br>自助下单：<span style="color: #409EFF;font-weight: bold;" id="subtotal"></span> 元
             </div>
             
         </div>
@@ -1228,6 +1228,10 @@
                 alert('请至少添加一个文件');
                 return;
             }
+            if (uploadedFiles.length !== orderItems.length) {
+                alert('上传文件数量和订单数量不匹配');
+                return;
+            }
             
             // 检查是否有文件未绑定
             const unboundFiles = uploadedFiles.filter(file => !file.bindTo);
@@ -1478,8 +1482,8 @@
             orderItems.forEach(item => {
                 subtotal += item.price;
             });
-            
-            subtotalElement.textContent = subtotal.toFixed(2);
+            document.getElementById('subtotal2').textContent = subtotal.toFixed(2);
+            subtotalElement.textContent = (subtotal * window.spzk / 100).toFixed(2);
         }
         
 
@@ -1533,6 +1537,10 @@
                 const result = await response.json();
                 
                 if (response.ok && result.success) {
+                    if (result.addresses.length == 0) {
+                        alert('当前未设置收货地址，请先设置!')
+                        location.href = '/address.html'
+                    }
                     console.log(result.addresses);
                     let tempData = ``
                     window.addressList = result.addresses
@@ -1549,8 +1557,9 @@
                         } else {
                             tempData += `<option value="${index}">${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
                         }
-                        document.querySelector('#dzmb').innerHTML = tempData;
+                        
                     }
+                    document.querySelector('#dzmb').innerHTML = tempData;
                 } else {
                     console.error('加载地址数据失败:', result.error);
                 }
@@ -1587,13 +1596,13 @@
     <script>
         // 获取公告
         const options = {
-        method: 'GET',
-        headers: {
-            Accept: '*/*',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
-            Connection: 'keep-alive'
-        }
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+                Connection: 'keep-alive'
+            }
         };
 
         fetch('https://ht.bbbyg.vip/api/setting/scysgg', options)
@@ -1602,6 +1611,23 @@
             console.log(response)
             window.wzgg.innerText=response.value;
             document.querySelector('.ggl').style.display = 'block'
+        })
+        .catch(err => console.error(err));
+        // 获取折扣
+
+        fetch('https://ht.bbbyg.vip/api/setting/order_discount', {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+                Connection: 'keep-alive'
+            }
+        })
+        .then(response => response.json())
+        .then(response => {
+            // window.zhekou.innerText = response.value / 100
+            window.spzk = response.value
         })
         .catch(err => console.error(err));
     </script>

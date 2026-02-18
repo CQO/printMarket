@@ -509,9 +509,9 @@
                             <th>订单编号</th>
                             <th>下单时间</th>
                             <th>商品名称</th>
+                            <th>折扣</th>
                             <th>价格</th>
                             <th>数量</th>
-                            <th>支付状态</th>
                             <th>操作</th>
                         </tr>
                     </thead>
@@ -739,12 +739,12 @@
                     <div class="product-name" title="${order.first_product || ''}">${productName}</div>
                 </td>
                 <td>
-                    <div class="order-price">¥${order.total_amount}</div>
+                    <div class="order-price">${(order.total_amount - (order.total_amount * parseInt(order.discount) / 100)).toFixed(2)}元</div>
+                </td>
+                <td>
+                    <div class="order-price">¥${(order.total_amount * parseInt(order.discount) / 100).toFixed(2)}</div>
                 </td>
                 <td>${order.item_count || 1}</td>
-                <td>
-                    <span class="status-badge ${paymentInfo.class}">${paymentInfo.text}</span>
-                </td>
 
                 <td>
                     <div class="action-buttons">

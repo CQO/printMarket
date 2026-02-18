@@ -962,7 +962,7 @@
                 // 格式化数字
                 formatNumber(num) {
                     if (!num && num !== 0) return '0';
-                    return parseInt(num).toLocaleString('zh-CN');
+                    return parseFloat(num).toLocaleString('zh-CN');
                 },
                 
                 // 格式化日期
