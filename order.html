@@ -444,8 +444,8 @@
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <div class="user-name">张先生</div>
-                <div class="user-email">user@example.com</div>
+                <div class="user-name"></div>
+                <div class="tcdl" style="cursor: pointer;color: blueviolet;" onclick="tcdl()">退出登录</div>
             </div>
             
             <div class="menu">
@@ -509,7 +509,7 @@
                             <th>订单编号</th>
                             <th>下单时间</th>
                             <th>商品名称</th>
-                            <th>折扣</th>
+                            <!-- <th>折扣</th> -->
                             <th>价格</th>
                             <th>数量</th>
                             <th>操作</th>
@@ -737,9 +737,6 @@
                 </td>
                 <td>
                     <div class="product-name" title="${order.first_product || ''}">${productName}</div>
-                </td>
-                <td>
-                    <div class="order-price">${(order.total_amount - (order.total_amount * parseInt(order.discount) / 100)).toFixed(2)}元</div>
                 </td>
                 <td>
                     <div class="order-price">¥${(order.total_amount * parseInt(order.discount) / 100).toFixed(2)}</div>

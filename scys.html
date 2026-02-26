@@ -646,7 +646,11 @@
                     <label>区</label>
                     <input type="text" id="district" value="">
                 </div>
-                <div class="address-field" style="grid-column: span 6;">
+                <div class="address-field" style="grid-column: span 2;">
+                    <label>公司</label>
+                    <input type="text" id="company" value="">
+                </div>
+                <div class="address-field" style="grid-column: span 4;">
                     <label>详细地址</label>
                     <input type="text" id="address" value="">
                 </div>
@@ -891,8 +895,8 @@
                 });
                 if (!canNext) return
                 // 检查文件大小（最大50MB）
-                if (file.size > 50 * 1024 * 1024) {
-                    alert(`文件 ${file.name} 超过50MB大小限制`);
+                if (file.size > 1024 * 1024 * 1024) {
+                    alert(`文件 ${file.name} 超过1024MB大小限制`);
                     continue;
                 }
                 
@@ -1260,6 +1264,7 @@
             const receiverName = document.getElementById('receiverName').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const address = document.getElementById('address').value.trim();
+            const company = document.getElementById('company').value.trim();
             
             if (!receiverName || !phone || !address) {
                 alert('请填写完整的收货信息');
@@ -1290,6 +1295,7 @@
                 city: document.getElementById('city').value,
                 district: document.getElementById('district').value,
                 address: address,
+                company: company,
                 totalAmount: parseFloat(subtotalElement.textContent),
                 orderTime: new Date().toISOString()
             };
@@ -1524,7 +1530,7 @@
             document.getElementById('city').value = element.city;
             document.getElementById('district').value = element.district;
             document.getElementById('address').value = element.detail_address;
-
+            document.getElementById('company').value = element.company;
         }
 
         // 加载地址数据
@@ -1553,6 +1559,7 @@
                             document.getElementById('city').value = element.city;
                             document.getElementById('district').value = element.district;
                             document.getElementById('address').value = element.detail_address;
+                            document.getElementById('company').value = element.company || "";
                             tempData += `<option value="${index}" selected>${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`
                         } else {
                             tempData += `<option value="${index}">${element.receiver_name}-${element.phone}-${element.city}-${element.detail_address}</option>`

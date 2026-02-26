@@ -8,5 +8,13 @@ function checkLogin() {
 setTimeout(() => {
     if (window.userInfo) {
         document.body.classList.add('user-' + window.userInfo.user_type)
+        if (document.querySelector('.user-name')) {
+            document.querySelector('.user-name').innerText = window.userInfo.username
+        }
     }
 }, 100);
+
+function tcdl () {
+    localStorage.clear()
+    window.location.href = '/login.html';
+}

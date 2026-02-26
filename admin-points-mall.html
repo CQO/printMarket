@@ -9,6 +9,8 @@
     <script src="./static/index.js"></script>
     <script src="./static/axios.min.js"></script>
     <link rel="stylesheet" href="./static/back.css">
+    <link rel="stylesheet" href="./static/admin-main.css">
+    <script src="./static/admin-user.js"></script>
     <style>
         * {
             margin: 0;
@@ -504,9 +506,9 @@
             
             <ul class="admin-nav-links">
                 <li><a href="./admin_orders.html"><i class="fas fa-clipboard-list"></i> 订单管理</a></li>
-                <li><a href="./admin_user.html"><i class="fas fa-users"></i> 用户管理</a></li>
-                <li><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
-                <li><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
+                <li id="yhgl" style="display: none;"><a href="./admin_user.html" ><i class="fas fa-users"></i> 用户管理</a></li>
+                <li id="sjtj" style="display: none;"><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
+                <li id="xtsz" style="display: none;"><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
                 <li><a href="./admin-points-mall.html" class="active"><i class="fas fa-cog"></i> 积分商城</a></li>
                 <li><a href="./admin-points-order.html"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
             </ul>
@@ -516,8 +518,7 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div>
-                    <div style="font-weight: 500;">管理员</div>
-                    <div style="font-size: 0.85rem; opacity: 0.8;">admin@print.com</div>
+                    <div id="usernameShow" style="font-weight: 500;">管理员</div>
                 </div>
             </div>
         </div>

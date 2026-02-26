@@ -451,8 +451,8 @@
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <div class="user-name">张先生</div>
-                <div class="user-email">user@example.com</div>
+                <div class="user-name"></div>
+                <div class="tcdl" style="cursor: pointer;color: blueviolet;" onclick="tcdl()">退出登录</div>
             </div>
             
             <div class="menu">
@@ -798,9 +798,10 @@
                 'paid': { text: '已支付', class: 'status-paid' },
                 'shipped': { text: '已发货', class: 'shipped' },
                 'refunded': { text: '已退款', class: 'status-pending' },
-                'after_sale': { text: '售后中', class: 'after_sale' }
+                'after_sale': { text: '售后中', class: 'after_sale' },
+                'downloaded': { text: '处理中', class: 'downloaded' }
             };
-            if (paymentMap[paymentStatus]['class'] == 'after_sale') {
+            if (paymentMap[paymentStatus] && paymentMap[paymentStatus]['class'] == 'after_sale') {
                 if (customer_note.includes('[已同意]')) {
                     paymentMap[paymentStatus]['text'] = `已同意售后`
                 }

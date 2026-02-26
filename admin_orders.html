@@ -26,7 +26,6 @@
         
         /* 主内容区 */
         .admin-container {
-            max-width: 1400px;
             margin: 20px auto;
             padding: 0 20px;
         }
@@ -571,6 +570,17 @@
             display: block;
         }
         
+
+
+        .changeywy, .changexzy {
+            display: none;
+        }
+        .user-admin .changexzy, .user-admin .changeywy {
+            display: inline-block;
+        }
+        .user-admin .ywy-text, .user-admin .xzy-text {
+            display: none;
+        }
         /* 响应式 */
         @media (max-width: 1200px) {
             .stats-cards {
@@ -627,6 +637,8 @@
         }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
+    <link rel="stylesheet" href="./static/admin-main.css">
+    <script src="./static/admin-user.js"></script>
 </head>
 <body>
     <!-- 后台顶部导航 -->
@@ -639,9 +651,9 @@
             
             <ul class="admin-nav-links">
                 <li><a href="./admin_orders.html" class="active"><i class="fas fa-clipboard-list"></i> 订单管理</a></li>
-                <li><a href="./admin_user.html"><i class="fas fa-users"></i> 用户管理</a></li>
-                <li><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
-                <li><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
+                <li id="yhgl" style="display: none;"><a href="./admin_user.html"><i class="fas fa-users"></i> 用户管理</a></li>
+                <li id="sjtj" style="display: none;"><a href="./admin_data.html"><i class="fas fa-chart-line"></i> 数据统计</a></li>
+                <li id="xtsz" style="display: none;"><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
                 <li><a href="./admin-points-mall.html"><i class="fas fa-cog"></i> 积分商城</a></li>
                 <li><a href="./admin-points-order.html"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
             </ul>
@@ -651,8 +663,7 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div>
-                    <div style="font-weight: 500;">管理员</div>
-                    <div style="font-size: 0.85rem; opacity: 0.8;">admin@print.com</div>
+                    <div id="usernameShow" style="font-weight: 500;">管理员</div>
                 </div>
             </div>
         </div>
@@ -720,6 +731,22 @@
                         <input type="number" class="filter-input" id="maxAmount" placeholder="最大金额">
                     </div>
                 </div>
+
+                <div class="filter-group">
+                    <label class="filter-label">订单类型</label>
+                    <div class="date-range">
+                        <select class="filter-input" id="statusSelect">
+                            <option label="全部" value="">全部</option>
+                            <option label="待支付" value="pending">待支付</option>
+                            <option label="待发货" value="downloaded">待发货</option>
+                            <option label="待下载" value="paid">待下载</option>
+                            <option label="已发货" value="shipped">已发货</option>
+                            <option label="已完成" value="completed">已完成</option>
+                            <option label="售后" value="after_sale">售后</option>
+                            <option label="已取消" value="cancelled">已取消</option>
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="filter-group" style="display: none;">
                     <label class="filter-label">支付方式</label>
@@ -750,7 +777,7 @@
                     <button onclick="updateOrderStatusAll('downloaded')" class="admin-btn export-btn">
                         <i class="fas fa-file-export"></i> 批量下载
                     </button>
-                    <button id="exportBtn" onclick="printAll()" class="admin-btn export-btn">
+                    <button onclick="printAll()" class="admin-btn export-btn">
                         <i class="fas fa-file-export"></i> 打印订单
                     </button>
                     <button id="exportBtn" class="admin-btn export-btn">
@@ -777,8 +804,7 @@
                         <th class="order-checkbox">
                             <input type="checkbox" id="tableSelectAll">
                         </th>
-                        <th class="can-output">用户名</th>
-                        <th class="can-output">订单编号</th>
+                        <th>附件</th>
                         <th class="can-output">订单信息</th>
                         <th class="can-output">客户信息</th>
                         <th class="can-output">订单金额</th>
@@ -790,7 +816,10 @@
                         <th class="can-output">订单成本</th>
                         <th class="can-output">订单利润</th>
                         <th class="can-output">关联订单</th>
-                        <th>附件</th>
+                        <th>用户名</th>
+                        <th class="can-output">公司</th>
+                        <th class="can-output">订单编号</th>
+                        
                     </tr>
                 </thead>
                 <tbody id="ordersBody">
@@ -836,8 +865,7 @@
                     <label class="filter-label">新状态</label>
                     <select class="filter-select" id="modalNewStatus" required>
                         <option value="">请选择新状态</option>
-                        <option value="pending">待支付</option>
-                        <option value="paid">已支付</option>
+                        <option value="paid">待下载</option>
                         <option value="downloaded">待发货</option>
                         <option value="shipped">已发货</option>
                         <option value="after_sale">售后</option>
@@ -1081,10 +1109,10 @@
             try {
                 // 构建查询参数
                 let url = `https://ht.bbbyg.vip/api/admin/orders?page=${currentPage}&page_size=${pageSize}`;
-                
+
                 // 添加筛选条件
                 const params = new URLSearchParams();
-                
+                if (window.statusSelect) window.statusSelect.value = currentStatus
                 if (currentStatus) params.append('status', currentStatus);
                 if (startDateInput.value) params.append('start_date', startDateInput.value);
                 if (endDateInput.value) params.append('end_date', endDateInput.value);
@@ -1100,6 +1128,12 @@
                 
                 // 发送请求获取订单数据
                 const response = await fetch(url, {
+                    headers: {
+                        "userid": window.userInfo.id,
+                        "username": window.userInfo.username,
+                        "session": window.userInfo.session,
+                        "usertype": window.userInfo.user_type,
+                    },
                     credentials: 'include' // 包含cookie
                 });
                 
@@ -1183,7 +1217,7 @@
         
         // 创建订单行
         function createOrderRow(order, yuangong) {
-            console.log(order);
+            console.log(yuangong);
             const row = document.createElement('tr');
             row.classList.add(`order-${order.status}`)
             const orderId = order.id;
@@ -1195,7 +1229,7 @@
             
             // 计算利润
             const cost = order.cost || 0;
-            const amount = parseFloat(order.total_amount) || 0;
+            const amount = parseFloat(order.total_amount ) * parseFloat(order.discount) / 100;
             const profit = amount - cost;
             const profitClass = profit >= 0 ? 'profit-amount' : 'profit-amount profit-negative';
             
@@ -1214,14 +1248,16 @@
             // 员工选择
             let yuangongSelect1 = `<option value=""></option>`
             let yuangongSelect2 = `<option value=""></option>`
+            let yuangongList = {}
             yuangong.forEach(element => {
                 yuangongSelect1 += `<option ${order.sales_person == element.id ? 'selected' : ''} value="${element.id}">${element.username}</option>`
                 yuangongSelect2 += `<option ${order.deload_person == element.id ? 'selected' : ''} value="${element.id}">${element.username}</option>`
+                yuangongList[element.id] = element.username
             });
             let downFileLi = ``
             if (order.files) {
                 JSON.parse(order.files).forEach(element => {
-                    downFileLi += `<a class="related-orders" onclick="downLoadFile('https://ht.bbbyg.vip/${element.file_path}', '${order.phone}_${order.order_number}_${element.original_name}')">${element.original_name}</a>`
+                    downFileLi += `<a class="related-orders" onclick="downLoadFile('https://ht.bbbyg.vip/${element.file_path}', '${order.phone}_${order.order_number}_${element.original_name}', '${order.order_number}')">${element.original_name}</a>`
                 });
             }
             
@@ -1229,15 +1265,13 @@
                 <td class="order-checkbox">
                     <input type="checkbox" class="order-select" data-order-id="${orderId}" onchange="updateSelectedOrders(this)">
                 </td>
-                <td class="can-output">
-                    <div class="order-phone">${order.phone}</div>
-                </td>
-                <td class="can-output">
-                    <div class="order-number can-output">${order.order_number}</div>
-                </td>
                 <td>
-                    <div class="order-info can-output">
-                        <div class="order-info-content" title="${productSummary}">
+                    ${downFileLi}
+                </td>
+                
+                <td class="can-output">
+                    <div class="order-info">
+                        <div class="order-info-content" title="${productSummary}" contenteditable>
                             ${productSummary}
                         </div>
                         <button class="copy-btn" onclick="copyOrderInfo('${productSummary.replace(/'/g, "\\'")}')">
@@ -1247,8 +1281,8 @@
                 </td>
                 <td class="can-output">
                     <div class="order-info">
-                        <div class="order-info-content" title="${order.city} ${order.address} ${order.receiver_name} ${order.phone}">
-                            ${order.city}  ${order.district} ${order.address} ${order.receiver_name}
+                        <div class="order-info-content" contenteditable title="${order.city} ${order.address} ${order.receiver_name} ${order.phone}">
+                            ${order.city}  ${order.district} ${order.address} ${order.receiver_name} ${order.phone}
                         </div>
                         <button class="copy-btn" onclick="copyOrderInfo('${order.city} ${order.address} ${order.receiver_name} ${order.phone}')">
                             <i class="fas fa-copy"></i>
@@ -1256,7 +1290,7 @@
                     </div>
                 </td>
                 <td class="can-output">
-                    <div class="order-amount">¥${amount.toFixed(2) * parseInt(order.discount) / 100}(${parseInt(order.discount) / 10}折)</div>
+                    <div class="order-amount">¥${(amount).toFixed(2)}</div>
                 </td>
                 <td class="can-output">
                     <div class="customer-note" title="${order.customer_note || '无备注'}">
@@ -1278,11 +1312,11 @@
                     </div>
                     <div class="action-buttons action-buttons-2">
                         <button class="action-btn status-btn" onclick="changeOrderStatus('${order.order_number}', 'after_sale', '[已同意]${order.customer_note}')">
-                            同意退款
+                            同意
                         </button>
 
                         <button class="action-btn status-btn" onclick="changeOrderStatus('${order.order_number}', 'after_sale', '[已拒绝]${order.customer_note}')">
-                            拒绝退款
+                            拒绝
                         </button>
                     </div>
                     <div class="action-buttons action-buttons-3">
@@ -1292,14 +1326,16 @@
                     </div>
                 </td>
                 <td class="can-output">
-                    <select value="${order.sales_person}"  onchange="changeSalesperson(${order.id}, this.value)" style="width: 100%;">
+                    <select value="${order.sales_person}" class="changeywy"  onchange="changeSalesperson(${order.id}, this.value)" style="width: 100%;">
                         ${yuangongSelect1}
                     </select>
+                    <span class="ywy-text">${yuangongList[order.sales_person] ? yuangongList[order.sales_person] : ''}</span>
                 </td>
                 <td class="can-output">
-                    <select value="${order.deload_person}"  onchange="changeDeloadperson(${order.id}, this.value)" style="width: 100%;">
+                    <select value="${order.deload_person}" class="changexzy"  onchange="changeDeloadperson(${order.id}, this.value)" style="width: 100%;">
                         ${yuangongSelect2}
                     </select>
+                    <span class="xzy-text">${yuangongList[order.deload_person] ? yuangongList[order.deload_person] : ''}</span>
                 </td>
                 <td class="can-output">
                     <input type="number" class="cost-input" value="${cost}" 
@@ -1316,8 +1352,16 @@
                     </div>
                 </td>
                 <td>
-                    ${downFileLi}
+                    <div class="order-phone">${order.phone}</div>
                 </td>
+                <td>
+                    <div class="order-company">${order.company}</div>
+                </td>
+                <td class="can-output">
+                    <div class="order-number can-output">${order.order_number}</div>
+                </td>
+                
+                
             `;
             
             return row;
@@ -1700,12 +1744,17 @@
                 let temp = []
                 element.querySelectorAll('th').forEach(element => {
                     if (element.classList.contains('can-output')) {
-                        temp.push(element.innerText)
+                        temp.push(element.innerText.replaceAll(',', ' '))
                     }
                 });
                 element.querySelectorAll('td').forEach(element => {
                     if (element.classList.contains('can-output')) {
-                        temp.push(element.innerText)
+                        if (element.querySelector('span')) {
+                            temp.push(element.querySelector('span').innerText.replaceAll(',', ' '))
+                        } else {
+                            temp.push(element.innerText.replaceAll(',', ' '))
+                        }
+                        
                     }
                     
                 });
@@ -1755,8 +1804,21 @@
                 }
             });
         });
-        async function downLoadFile(url, filename) {
+        async function downLoadFile(url, filename, currentOrderId) {
             try {
+                // 先标记订单为已下载
+                const responseXZ = await fetch(`https://ht.bbbyg.vip/api/admin/order/${currentOrderId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        status: "downloaded"
+                    }),
+                    credentials: 'include'
+                });
+                
+
                 const response = await fetch(url, {
                     mode: 'cors',  // 如果需要跨域
                     credentials: 'include'  // 如果需要携带cookie
@@ -1788,35 +1850,40 @@
         }
 
         function printAll() {
-            
-            let data = [
-            ];
-            
+            let data = [];
             
             document.querySelectorAll('#ordersBody tr').forEach(element => {
                 const element2 = element.querySelectorAll('td');
                 console.log(element2)
                 if (element2[0].querySelector('input').checked) {
                     data.push({
-                        "用户名": element2[1].innerText,
-                        "订单编号": element2[2].innerText,
-                        "订单信息": element2[3].innerText,
+                        "订单编号": element2[14].innerText,
+                        "订单信息": element2[2].innerText,
                         "客户信息": element2[3].innerText,
+                        "公司": element2[14].innerText,
                         "订单金额": element2[4].innerText,
                         "客户备注": element2[5].innerText,
                         "类目": element2[6].innerText,
-                        "业务员": element2[8].innerText,
-                        "下载员": element2[9].innerText,
+                        "业务员": element2[8].querySelector('span').innerText,
+                        "下载员": element2[9].querySelector('span').innerText,
                         "订单成本": element2[10].innerText,
                         "订单利润": element2[11].innerText,
                         "关联订单": element2[12].innerText,
                     })
                 }
             });
+            
+            // 按客户信息排序，将相同客户信息的订单排列在一起
+            data.sort((a, b) => {
+                if (a["客户信息"] < b["客户信息"]) return -1;
+                if (a["客户信息"] > b["客户信息"]) return 1;
+                return 0;
+            });
+            
             printJS({
                 printable: data,
                 type: 'json',
-                properties: ['用户名', '订单编号', '订单信息', '客户信息', '订单金额', '客户备注', '类目', '业务员', '下载员', '订单成本', '订单利润', '关联订单'],
+                properties: ['订单编号', '订单信息', '客户信息', "公司", '订单金额', '客户备注', '类目', '业务员', '下载员', '订单成本', '订单利润', '关联订单'],
                 header: '导出订单数据',
                 gridHeaderStyle: 'color: #333; background-color: #f2f2f2;',
                 gridStyle: 'border: 1px solid #ddd;'
