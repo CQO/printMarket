@@ -484,6 +484,10 @@
                     <i class="fas fa-map-marker-alt"></i>
                     <span>我的地址</span>
                 </a>
+                <a href="./invitation.html" class="menu-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>邀请有奖</span>
+                </a>
             </div>
         </div>
         
@@ -799,6 +803,7 @@
                 'shipped': { text: '已发货', class: 'shipped' },
                 'refunded': { text: '已退款', class: 'status-pending' },
                 'after_sale': { text: '售后中', class: 'after_sale' },
+                'after_sale—_1': { text: '已退货', class: 'after_sale' },
                 'downloaded': { text: '处理中', class: 'downloaded' }
             };
             if (paymentMap[paymentStatus] && paymentMap[paymentStatus]['class'] == 'after_sale') {

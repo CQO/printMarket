@@ -703,7 +703,7 @@
                 <div class="stat-value" id="afterSaleCount">0</div>
                 <div class="stat-label">售后</div>
             </div>
-            <div class="stat-card stat-after-sale" data-status="after_sale">
+            <div class="stat-card stat-after-sale" >
                 <a href="./admin-points-order.html">
                     <div class="stat-value" id="jfspsl">0</div>
                     <div class="stat-label">积分商品</div>
@@ -743,7 +743,9 @@
                             <option label="已发货" value="shipped">已发货</option>
                             <option label="已完成" value="completed">已完成</option>
                             <option label="售后" value="after_sale">售后</option>
+                            <option label="已退货" value="after_sale_1">已退货</option>
                             <option label="已取消" value="cancelled">已取消</option>
+                            
                         </select>
                     </div>
                 </div>
@@ -869,6 +871,7 @@
                         <option value="downloaded">待发货</option>
                         <option value="shipped">已发货</option>
                         <option value="after_sale">售后</option>
+                        <option value="after_sale_1">已退货</option>
                     </select>
                 </div>
                 
@@ -1210,14 +1213,24 @@
             }
             
             orders.forEach(order => {
-                const row = createOrderRow(order, yuangong);
-                ordersBody.appendChild(row);
+                for (let index = 0; index < order.items.length; index++) {
+                    const itemsItem = order.items[index];
+                    let tempOrder = JSON.parse(JSON.stringify(order))
+                    tempOrder.product_name = itemsItem.product_name
+                    tempOrder.quantity = itemsItem.quantity
+                    tempOrder.price = itemsItem.price
+                    tempOrder.file = JSON.parse(tempOrder.files)[index]
+                    const row = createOrderRow(tempOrder, yuangong);
+                    ordersBody.appendChild(row);
+                }
+
+                
             });
         }
         
         // 创建订单行
         function createOrderRow(order, yuangong) {
-            console.log(yuangong);
+            console.log(order);
             const row = document.createElement('tr');
             row.classList.add(`order-${order.status}`)
             const orderId = order.id;
@@ -1229,14 +1242,12 @@
             
             // 计算利润
             const cost = order.cost || 0;
-            const amount = parseFloat(order.total_amount ) * parseFloat(order.discount) / 100;
+            const amount = parseFloat(order.price );
             const profit = amount - cost;
             const profitClass = profit >= 0 ? 'profit-amount' : 'profit-amount profit-negative';
             
             // 商品信息摘要
-            const productSummary = order.items && order.items.length > 0 
-                ? order.items.map(item => `${item.product_name} × ${item.quantity}`).join('; ')
-                : '无商品信息';
+            const productSummary = `${order.product_name} × ${order.quantity}`
             
             // 关联订单
             const relatedOrders = order.related_orders || [];
@@ -1254,12 +1265,7 @@
                 yuangongSelect2 += `<option ${order.deload_person == element.id ? 'selected' : ''} value="${element.id}">${element.username}</option>`
                 yuangongList[element.id] = element.username
             });
-            let downFileLi = ``
-            if (order.files) {
-                JSON.parse(order.files).forEach(element => {
-                    downFileLi += `<a class="related-orders" onclick="downLoadFile('https://ht.bbbyg.vip/${element.file_path}', '${order.phone}_${order.order_number}_${element.original_name}', '${order.order_number}')">${element.original_name}</a>`
-                });
-            }
+            let downFileLi = `<span class="related-orders" onclick="downLoadFile('https://ht.bbbyg.vip/${order.file.file_path}', '${order.phone}_${order.order_number}_${order.file.original_name}', '${order.order_number}')">${order.file.original_name}</span>`
             
             row.innerHTML = `
                 <td class="order-checkbox">
@@ -1309,9 +1315,13 @@
                         <button class="action-btn surcharge-btn" onclick="openSurchargeModal('${order.order_number}', ${amount})">
                             补差价
                         </button>
+
+                        <button class="action-btn status-btn" onclick="printNew('${order.address}')">
+                            打印
+                        </button>
                     </div>
                     <div class="action-buttons action-buttons-2">
-                        <button class="action-btn status-btn" onclick="changeOrderStatus('${order.order_number}', 'after_sale', '[已同意]${order.customer_note}')">
+                        <button class="action-btn status-btn" onclick="changeOrderStatus('${order.order_number}', 'after_sale_1', '[已同意]${order.customer_note}')">
                             同意
                         </button>
 
@@ -1470,6 +1480,10 @@
                 }
             }
             return ''
+        }
+
+        function printNew (address) {
+            window.open(`./print_order.html?address=${address}`)
         }
         
         // 更新订单成本
@@ -1789,7 +1803,8 @@
                 'paid': '已支付',
                 'downloaded': '待发货',
                 'shipped': '已发货',
-                'after_sale': '售后'
+                'after_sale': '售后',
+                'after_sale_1': '已退货'
             };
             
             return statusMap[status] || '未知状态';

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邀请有奖 - 诚荟印沈阳</title>
+    <link rel="stylesheet" href="./static/main.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 20px auto;
+            display: flex;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* 左侧菜单栏 */
+        .sidebar {
+            width: 220px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px 0;
+            margin-right: 20px;
+        }
+        
+        .user-info {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+        }
+        
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .user-email {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .menu {
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background-color: #f8f9fa;
+            color: #3498db;
+        }
+        
+        .menu-item.active {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-left-color: #3498db;
+            font-weight: 500;
+        }
+        
+        .menu-item i {
+            width: 24px;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* 右侧内容区 */
+        .main-content-r {
+            flex: 1;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 25px;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+        
+        .page-title i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        /* 地址卡片 */
+        .address-list {
+            margin-bottom: 30px;
+        }
+        
+        .address-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .address-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .address-card.default {
+            border-color: #3498db;
+            background-color: #f0f9ff;
+            border-width: 2px;
+        }
+        
+        .default-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background-color: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .address-info {
+            margin-bottom: 15px;
+        }
+        
+        .address-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .address-phone {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .address-detail {
+            line-height: 1.5;
+            color: #555;
+        }
+        
+        .address-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+        
+        .edit-btn {
+            background-color: #f8f9fa;
+            color: #555;
+            border-color: #ddd;
+        }
+        
+        .edit-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .delete-btn {
+            background-color: #ffeaea;
+            color: #e74c3c;
+            border-color: #f8d7da;
+        }
+        
+        .delete-btn:hover {
+            background-color: #f8d7da;
+        }
+        
+        .set-default-btn {
+            background-color: #e8f4fc;
+            color: #3498db;
+            border-color: #bde0ff;
+        }
+        
+        .set-default-btn:hover {
+            background-color: #d4ebff;
+        }
+        
+    </style>
+    <link rel="stylesheet" href="./static/all.min.css">
+    <script src="./static/user.js"></script>
+</head>
+<body>
+    <!-- 导航条 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-print"></i>
+                <span>诚荟印沈阳</span>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="./index.html"><i class="fas fa-calculator"></i> 印刷报价</a></li>
+                <li><a href="./yssc.html"><i class="fas fa-shopping-cart"></i> 印刷报价</a></li>
+                <li><a href="./scys.html"><i class="fas fa-cloud-upload-alt"></i> 上传印刷</a></li>
+                <li><a href="./jfsc.html"><i class="fas fa-coins"></i> 积分商城</a></li>
+                <li class="active"><a href="./order.html"><i class="fas fa-user-circle"></i> 个人中心</a></li>
+            </ul>
+            
+            <div class="contact-info">
+                <i class="fas fa-phone-alt"></i>
+                <span>电话：18913151333</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 个人中心内容 -->
+    <div class="container">
+        <!-- 左侧菜单栏 -->
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name"></div>
+                <div class="tcdl" style="cursor: pointer;color: blueviolet;" onclick="tcdl()">退出登录</div>
+            </div>
+            
+            <div class="menu">
+                <a href="./order.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>进行中的订单</span>
+                </a>
+                <a href="./order2.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>已完成的订单</span>
+                </a>
+                <a href="./jfdd.html" class="menu-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>积分订单</span>
+                </a>
+                <a href="./fpdz.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>开票地址</span>
+                </a>
+                <a href="./fpdz.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>开票地址</span>
+                </a>
+                <a href="./fapiao.html" class="menu-item">
+                    <i class="fas fa-file-invoice"></i>
+                    <span>发票中心</span>
+                </a>
+                <a href="./chongzhi.html" class="menu-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>账户充值</span>
+                </a>
+                <a href="./address.html" class="menu-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>我的地址</span>
+                </a>
+                <a href="./invitation.html" class="menu-item active">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>邀请有奖</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="main-content-r">
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="fas fa-map-marker-alt"></i>
+                    邀请信息
+                </h1>
+            </div>
+            
+            <!-- 地址列表 -->
+            <div id="addressList" class="address-list">
+                <div style=" font-weight: bold; margin-bottom: 10px; ">邀请好友注册，在他第一次下单时候，您将获得<span id="yqzs"></span>元奖励! 以下是您的专属邀请链接</div>
+                <div style=" background-color: antiquewhite; border-radius: 5px; padding: 5px; " id="yqlj">https://bbbyg.vip/register.html</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 版权信息 -->
+    <footer>
+        <div class="container footer-content">
+            <div class="copyright">
+                <p>&copy; 2026 诚荟印沈阳 版权所有</p>
+            </div>
+            
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-shield-alt"></i> 隐私政策</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> 服务条款</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> 帮助中心</a></li>
+                <li><a href="#"><i class="fas fa-envelope"></i> 联系我们</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> 网站地图</a></li>
+            </ul>
+            
+            <div class="company-info">
+                <p>诚荟印沈阳印刷有限公司 | 地址：北京市朝阳区印刷创意园A座12层 | 电话：400-123-4567 | 邮箱：service@printingworkshop.com</p>
+                <p>本站所有产品图片仅供参考，实际产品以实物为准 | 京ICP备12345678号-1</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        setTimeout(() => {
+            window.yqlj.innerText = `https://bbbyg.vip/register.html?invitation=${window.userInfo.id}`
+        }, 1000);
+        // 获取公告
+        const options = {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+                Connection: 'keep-alive'
+            }
+            };
+
+            fetch('https://ht.bbbyg.vip/api/setting/yqzs', options)
+            .then(response => response.json())
+            .then(response => {
+                console.log(response)
+                window.yqzs.innerText=response.value;
+            })
+            .catch(err => console.error(err));
+    </script>
+</body>
+</html>

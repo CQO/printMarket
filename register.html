@@ -430,10 +430,14 @@
 
         // 获取单个参数
         const invitation = params.get('invitation'); 
-        setTimeout(() => {
-            window.yqr.value = invitation
-            document.querySelector('.yqr-group').style.display = 'none'
-        }, 1000);
+        if (invitation) {
+            console.log(invitation)
+            setTimeout(() => {
+                window.yqr.value = invitation
+                document.querySelector('.yqr-group').style.display = 'none'
+            }, 100);
+        }
+        
         // DOM元素
         const registerForm = document.getElementById('registerForm');
         const usernameInput = document.getElementById('username');

@@ -477,6 +477,10 @@
                     <i class="fas fa-map-marker-alt"></i>
                     <span>我的地址</span>
                 </a>
+                <a href="./invitation.html" class="menu-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>邀请有奖</span>
+                </a>
             </div>
         </div>
         
@@ -739,7 +743,7 @@
                     <div class="product-name" title="${order.first_product || ''}">${productName}</div>
                 </td>
                 <td>
-                    <div class="order-price">¥${(order.total_amount * parseInt(order.discount) / 100).toFixed(2)}</div>
+                    <div class="order-price">¥${order.total_amount}</div>
                 </td>
                 <td>${order.item_count || 1}</td>
 
