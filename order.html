@@ -581,6 +581,8 @@
         const nextPageBtn = document.getElementById('nextPage');
         const searchInput = document.getElementById('searchInput');
         const exportBtn = document.getElementById('exportBtn');
+
+        const urlParams = new URLSearchParams(window.location.search);
         
         // 页面加载时获取订单数据
         document.addEventListener('DOMContentLoaded', function() {
@@ -683,6 +685,12 @@
                         const orderRow = createOrderRow(order);
                         ordersBody.appendChild(orderRow);
                     });
+                    setTimeout(() => {
+                        const ispay = urlParams.get('pay');
+                        if (ispay == 1) {
+                            document.querySelector('.action-btn.pay-btn').click()
+                        }
+                    }, 1000);
                 } else {
                     ordersBody.innerHTML = `
                         <tr>
@@ -773,7 +781,22 @@
             return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
         }
 
-        
+        function rechargeNew(num) {
+            const requestOptions = {
+                method: "GET",
+                redirect: "follow"
+            };
+            let payURL = `https://pay.lamp.run/aliPay/PC/11/${window.userInfo.id}/${parseInt(num * 100)}`
+            // if (isMobile()) {
+            //     payURL = `https://pay.lamp.run/aliPay/H5/11/${window.userInfo.id}/${parseFloat(window.customAmount.value).toFixed(2)}`
+            // }
+            fetch(payURL, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+                location.href = result
+            })
+            .catch((error) => console.error(error));
+        }
         // 支付订单
         async function payOrder(orderNumber) {
             if (!confirm(`确定要支付订单 ${orderNumber} 吗？`)) return;
@@ -794,10 +817,7 @@
                     location.href = './order2.html'
                 } else {
                     if (result.error.includes('余额不足')) {
-                        const selectValue = confirm(result.error + "。是否立即充值?");
-                        if (selectValue) {
-                            location.href ='./chongzhi.html'
-                        }
+                        rechargeNew(result.shortage)
                         return
                     }
                     alert(`支付失败：${result.error || '未知错误'}`);

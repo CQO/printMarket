@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打印订单 · 信息表格</title>
+    <style>
+        /* 全局打印/显示优化——无JS，纯CSS，适合装订或存档 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #e6e7e9;
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            padding: 0;
+        }
+
+        /* 卡片纸张效果，打印时白底黑字无阴影 */
+        .print-container {
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 1px solid #cfd1d4;
+            width: 220mm;
+            height: calc(83mm - 30px);
+            padding: 5px 10px;
+        }
+
+
+        /* 表头区域：订单信息和公司名左右排列 */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 12px;
+        }
+
+        .order-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #1e2b37;
+            line-height: 1.2;
+        }
+
+        .company-name {
+            font-size: 1.9rem;
+            font-weight: 500;
+            color: #2c3e50;
+            border: 1px dashed #6c7a89;
+            padding: 6px 18px;
+            border-radius: 30px;
+            background: #f8fafc;
+        }
+
+        /* 表格设计——干净，打印友好 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+            border: 1px solid #333;
+            margin: 10px 0;
+        }
+
+        th {
+            background-color: #f0f3f7;   /* 浅灰底纹，打印浅灰不影响阅读 */
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid #2b2b2b;
+            text-align: center;
+            font-size: 1.05rem;
+        }
+
+        td {
+            border: 1px solid #2b2b2b;
+            padding: 0px 5px;
+            vertical-align: middle;
+        }
+
+        /* 让表格内的占位文本显示为灰色（仅屏幕提示），打印时为黑色占位 */
+        .placeholder-text {
+            color: #555;
+            font-family: 'Courier New', monospace;
+            font-weight: 400;
+        }
+
+        /* 表格内行高 */
+        td:first-child, th:first-child { padding-left: 12px; }
+        td:last-child, th:last-child { padding-right: 12px; }
+
+        /* 地址电话姓名栏（底部） */
+        .address-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 16px;
+        }
+
+        .info-block {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #1e3c5c;
+            font-size: 16px;
+        }
+
+        .info-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 400;
+            color: #121212;
+            letter-spacing: 0.4px;
+        }
+
+        /* 完全占位内容（你自己填 —— 按需求保留示例，但明确是「随便内容」） */
+        .footnote-sample {
+            font-size: 0.9rem;
+            color: #4d5a66;
+            margin-top: 8px;
+            text-align: right;
+            border-top: 1px dashed #ccc;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+
+        <div class="address-line" style="display: flex;flex-wrap: nowrap;">
+            <!-- 地址块 -->
+            <div class="info-block" style=" width: 100%; ">
+                <span class="info-label">用户ID:</span>
+                <span class="info-value" id="yhm"></span>
+            </div>
+            <div class="info-block" style=" width: 100%; ">
+                <span class="info-label">公司:</span>
+                <span class="info-value" id="gsmc"></span>
+            </div>
+        </div>
+        <!-- 表格主体：表头是“订单信息和公司名字”已在上方，表格内具体数据可完全自定义 -->
+        <table>
+            <!-- 表格第一行即列头，体现订单信息细节 -->
+            <thead>
+                <tr>
+                    <th style="width: 60px;">ID</th>
+                    <th>产品信息</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+
+        <!-- 表格下方：地址 电话 姓名 (具体值为你随便填的示例) 三块内容清晰排列 -->
+        <div class="address-line">
+            <!-- 地址块 -->
+            <div class="info-block" style=" width: 100%; ">
+                <span class="info-label">地址:</span>
+                <span class="info-value" id="dizhi">F</span>
+            </div>
+            <!-- 电话块 -->
+            <div class="info-block">
+                <span class="info-label">电话:</span>
+                <span class="info-value" id="dianhua"></span>
+            </div>
+            <!-- 姓名块(联系人) -->
+            <div class="info-block">
+                <span class="info-label">姓名:</span>
+                <span class="info-value" id="xingming"></span>
+            </div>
+        </div>
+
+
+    </div>
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+        fetch(`https://ht.bbbyg.vip/api/order/searchPhone/${getQueryParam('phone')}`, {
+            method: 'GET',
+            headers: {
+                Accept: '*/*',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'User-Agent': 'PostmanRuntime-ApipostRuntime/1.1.0',
+                Connection: 'keep-alive'
+            }
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response)
+            let tableHtml = ''
+            for (let index = 0; index < 6; index++) {
+                const element = response.orders[index];
+                if (element) {
+                    tableHtml += `<tr>
+                        <td><span class="placeholder-text">${element.id}</span></td>
+                        <td><span class="placeholder-text">${element.product_name}</span></td>
+                    </tr>`
+                } else {
+                    tableHtml += `<tr>
+                    <td><span class="placeholder-text"></span></td>
+                    <td><span class="placeholder-text"></span></td>
+                </tr>`
+                }
+            }
+            document.querySelector('tbody').innerHTML = tableHtml
+            window.dizhi.innerText = `${response.orders[0].shipping_address}`
+            window.dianhua.innerText = response.orders[0].shipping_phone
+            window.xingming.innerText = response.orders[0].shipping_name
+            window.yhm.innerText = response.orders[0].user_id
+            window.gsmc.innerText = response.orders[0].company || ""
+            print()
+        })
+        .catch(err => console.error(err));
+    </script>
+</body>
+</html>

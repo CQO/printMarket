@@ -656,6 +656,7 @@
                 <li id="xtsz" style="display: none;"><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
                 <li><a href="./admin-points-mall.html"><i class="fas fa-cog"></i> 积分商城</a></li>
                 <li><a href="./admin-points-order.html"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
+                <li><a href="./admin_fapiao.html"><i class="fas fa-clipboard-list"></i> 发票审核</a></li>
             </ul>
             
             <div class="admin-user-info">
@@ -742,9 +743,8 @@
                             <option label="待下载" value="paid">待下载</option>
                             <option label="已发货" value="shipped">已发货</option>
                             <option label="已完成" value="completed">已完成</option>
-                            <option label="售后" value="after_sale">售后</option>
-                            <option label="已退货" value="after_sale_1">已退货</option>
-                            <option label="已取消" value="cancelled">已取消</option>
+                            <option label="售后中" value="after_sale">售后</option>
+                            <option label="售后完毕" value="after_sale_1">已退货</option>
                             
                         </select>
                     </div>
@@ -1242,7 +1242,7 @@
             
             // 计算利润
             const cost = order.cost || 0;
-            const amount = parseFloat(order.price );
+            const amount = order.total_amount;
             const profit = amount - cost;
             const profitClass = profit >= 0 ? 'profit-amount' : 'profit-amount profit-negative';
             
@@ -1296,7 +1296,7 @@
                     </div>
                 </td>
                 <td class="can-output">
-                    <div class="order-amount">¥${(amount).toFixed(2)}</div>
+                    <div class="order-amount">¥${amount}</div>
                 </td>
                 <td class="can-output">
                     <div class="customer-note" title="${order.customer_note || '无备注'}">
@@ -1377,44 +1377,7 @@
             return row;
         }
         
-        // 保存CSV
-        function fake_click(obj) {
-        var ev = document.createEvent("MouseEvents");
-        ev.initMouseEvent(
-            "click", true, false, window, 0, 0, 0, 0, 0
-            , false, false, false, false, 0, null
-            );
-        obj.dispatchEvent(ev);
-        }
-        function download(name, data) {
-        var urlObject = window.URL || window.webkitURL || window;
-
-        var downloadData = new Blob([data]);
-
-        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-        save_link.href = urlObject.createObjectURL(downloadData);
-        save_link.download = name;
-        fake_click(save_link);
-        }
-
-        function saveCSV (name, data) {
-        let saveData = ''
-        data.forEach(element => {
-            if (element) {
-            saveData += element.join(',')
-            saveData += '\r\n'
-            }
-        });
         
-        var urlObject = window.URL || window.webkitURL || window;
-        
-        var downloadData = new Blob(['\ufeff' + saveData], { type: 'text/csv,charset=UTF-8'});
-
-        var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-        save_link.href = urlObject.createObjectURL(downloadData);
-        save_link.download = name;
-        fake_click(save_link);
-        }
         
         // 更新选择的订单
         function updateSelectedOrders(checkbox) {

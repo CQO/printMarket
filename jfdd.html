@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - 诚荟印沈阳</title>
+    <title>积分订单 - 诚荟印沈阳</title>
     <link rel="stylesheet" href="./static/main.css">
     <script src="./static/user.js"></script>
     <style>
@@ -134,6 +134,118 @@
         .action-bar {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* 时间筛选样式 */
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-date-filters {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .quick-filter-btn {
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .quick-filter-btn:hover {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .date-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .date-icon {
+            position: absolute;
+            left: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .date-input {
+            padding: 8px 10px 8px 35px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 140px;
+            background-color: white;
+        }
+        
+        .date-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .date-separator {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .filter-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .filter-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .clear-btn {
+            background-color: transparent;
+            color: #7f8c8d;
+            border: 1px solid #bdc3c7;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .clear-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
         }
         
         .search-box {
@@ -154,25 +266,6 @@
             top: 50%;
             transform: translateY(-50%);
             color: #7f8c8d;
-        }
-        
-        .export-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: background-color 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .export-btn:hover {
-            background-color: #27ae60;
         }
         
         /* 订单表格 */
@@ -238,6 +331,16 @@
             color: #e74c3c;
         }
         
+        .points-value {
+            font-weight: 600;
+            color: #f39c12;
+        }
+        
+        .money-value {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+        
         .status-badge {
             display: inline-block;
             padding: 5px 12px;
@@ -256,48 +359,14 @@
             color: #155724;
         }
         
-        .status-paid {
+        .status-shipped {
             background-color: #cce5ff;
             color: #004085;
         }
         
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        
-        .action-btn {
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid transparent;
-        }
-        
-        .pay-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-        }
-        
-        .pay-btn:hover {
-            background-color: #27ae60;
-        }
-        
-        .download-btn {
-            background-color: #3498db;
-            color: white;
-            border: none;
-        }
-        
-        .download-btn:hover {
-            background-color: #2980b9;
+        .status-refunded {
+            background-color: #f8d7da;
+            color: #721c24;
         }
         
         .no-orders {
@@ -351,6 +420,19 @@
             color: #555;
         }
         
+        .hidden {
+            display: none;
+        }
+        
+        .filter-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #27ae60;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
@@ -377,12 +459,6 @@
                 border-left: none;
                 border-bottom-color: #3498db;
             }
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
-            }
             
             .page-header {
                 flex-direction: column;
@@ -392,11 +468,51 @@
             
             .action-bar {
                 width: 100%;
+            }
+            
+            .date-filter-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content-r {
+                padding: 15px;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+            }
+            
+            .date-filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .quick-date-filters {
                 justify-content: space-between;
             }
             
+            .quick-filter-btn {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .date-filter {
+                flex-wrap: wrap;
+            }
+            
+            .date-input-group {
+                width: calc(50% - 25px);
+            }
+            
+            .date-input {
+                width: 100%;
+            }
+            
             .search-input {
-                width: 200px;
+                width: 100%;
             }
             
             .orders-table {
@@ -411,6 +527,7 @@
         }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
+    <link rel="stylesheet" href="https://cunchu.site/work/login/standard.css">
 </head>
 <body>
     <!-- 导航条 -->
@@ -493,11 +610,40 @@
                 </h1>
                 
                 <div class="action-bar">
+                    <!-- 时间筛选区域 -->
+                    <div class="date-filter-container">
+                        <!-- 快速筛选 -->
+                        <div class="quick-date-filters">
+                            <button class="quick-filter-btn" onclick="setQuickDate('today')">今天</button>
+                            <button class="quick-filter-btn" onclick="setQuickDate('week')">本周</button>
+                            <button class="quick-filter-btn" onclick="setQuickDate('month')">本月</button>
+                        </div>
+                        
+                        <!-- 自定义时间筛选 -->
+                        <div class="date-filter">
+                            <div class="date-input-group">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="date" id="startDate" class="date-input" placeholder="开始日期">
+                            </div>
+                            <span class="date-separator">至</span>
+                            <div class="date-input-group">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="date" id="endDate" class="date-input" placeholder="结束日期">
+                            </div>
+                            <button id="filterDateBtn" class="filter-btn">
+                                <i class="fas fa-filter"></i> 筛选
+                            </button>
+                            <button id="clearDateBtn" class="clear-btn" title="清除时间筛选">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索框 -->
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" id="searchInput" class="search-input" placeholder="搜索订单号...">
                     </div>
-
                 </div>
             </div>
             
@@ -510,15 +656,15 @@
                             <th>下单时间</th>
                             <th>商品名称</th>
                             <th>状态</th>
-                            <th>消费金额</th>
                             <th>消费积分</th>
+                            <th>消费金额</th>
                             <th>数量</th>
                         </tr>
                     </thead>
                     <tbody id="ordersBody">
                         <!-- 订单数据将在这里动态加载 -->
                         <tr>
-                            <td colspan="8" class="loading">
+                            <td colspan="7" class="loading">
                                 <i class="fas fa-spinner fa-spin"></i><br>
                                 正在加载订单数据...
                             </td>
@@ -562,11 +708,16 @@
         </div>
     </footer>
 
+    <script src="https://cunchu.site/work/login/standard.js" type="text/javascript" charset="UTF-8"></script>
     <script>
         // 全局变量
         let currentPage = 1;
         let pageSize = 15;
         let totalPages = 1;
+        
+        // 时间筛选变量
+        let startDate = '';
+        let endDate = '';
         
         // DOM元素
         const ordersBody = document.getElementById('ordersBody');
@@ -577,11 +728,17 @@
         const nextPageBtn = document.getElementById('nextPage');
         const searchInput = document.getElementById('searchInput');
         
+        // 时间筛选DOM元素
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const filterDateBtn = document.getElementById('filterDateBtn');
+        const clearDateBtn = document.getElementById('clearDateBtn');
+        
         // 页面加载时获取订单数据
         document.addEventListener('DOMContentLoaded', function() {
             loadOrders();
             
-            // 绑定搜索输入框事件
+            // 绑定搜索输入框事件（防抖）
             let searchTimer;
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimer);
@@ -591,7 +748,28 @@
                 }, 500);
             });
             
-
+            // 绑定时间筛选按钮事件
+            filterDateBtn.addEventListener('click', function() {
+                applyDateFilter();
+            });
+            
+            // 绑定清除时间筛选按钮事件
+            clearDateBtn.addEventListener('click', function() {
+                clearDateFilter();
+            });
+            
+            // 回车键触发筛选
+            startDateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyDateFilter();
+                }
+            });
+            
+            endDateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyDateFilter();
+                }
+            });
             
             // 绑定分页按钮事件
             prevPageBtn.addEventListener('click', function() {
@@ -609,12 +787,91 @@
             });
         });
         
+        // 应用时间筛选
+        function applyDateFilter() {
+            startDate = startDateInput.value;
+            endDate = endDateInput.value;
+            
+            // 验证日期范围
+            if (startDate && endDate && startDate > endDate) {
+                alert('开始日期不能大于结束日期');
+                return;
+            }
+            
+            currentPage = 1;
+            loadOrders();
+            
+            // 更新筛选按钮状态
+            if (startDate || endDate) {
+                filterDateBtn.style.backgroundColor = '#27ae60';
+            } else {
+                filterDateBtn.style.backgroundColor = '#3498db';
+            }
+        }
+        
+        // 清除时间筛选
+        function clearDateFilter() {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            startDate = '';
+            endDate = '';
+            currentPage = 1;
+            loadOrders();
+            filterDateBtn.style.backgroundColor = '#3498db';
+        }
+        
+        // 快速日期筛选
+        function setQuickDate(range) {
+            const today = new Date();
+            let start = new Date(today);
+            
+            switch(range) {
+                case 'today':
+                    // 今天
+                    start = today;
+                    break;
+                case 'week':
+                    // 本周一
+                    const day = today.getDay() || 7; // 周日返回0，转为7
+                    start.setDate(today.getDate() - day + 1);
+                    break;
+                case 'month':
+                    // 本月1号
+                    start.setDate(1);
+                    break;
+            }
+            
+            startDateInput.value = formatDate(start);
+            endDateInput.value = formatDate(today);
+            applyDateFilter();
+        }
+        
+        // 格式化日期为 YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        // 清除所有筛选条件
+        function clearAllFilters() {
+            searchInput.value = '';
+            startDateInput.value = '';
+            endDateInput.value = '';
+            startDate = '';
+            endDate = '';
+            currentPage = 1;
+            loadOrders();
+            filterDateBtn.style.backgroundColor = '#3498db';
+        }
+        
         // 加载订单数据
         async function loadOrders() {
             // 显示加载状态
             ordersBody.innerHTML = `
                 <tr>
-                    <td colspan="8" class="loading">
+                    <td colspan="7" class="loading">
                         <i class="fas fa-spinner fa-spin"></i><br>
                         正在加载订单数据...
                     </td>
@@ -622,13 +879,25 @@
             `;
             
             try {
-                checkLogin()
-                // 构建查询参数
-                let url = `https://ht.bbbyg.vip/api/personal/points/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo.id}&session=${window.userInfo.session}&status=paid`;
+                if (typeof checkLogin === 'function') {
+                    await checkLogin();
+                }
                 
+                // 构建查询参数
+                let url = `https://ht.bbbyg.vip/api/personal/points/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo?.id || ''}&session=${window.userInfo?.session || ''}`;
+                
+                // 添加搜索条件
                 const searchText = searchInput.value.trim();
                 if (searchText) {
                     url += `&search=${encodeURIComponent(searchText)}`;
+                }
+                
+                // 添加时间筛选条件
+                if (startDate) {
+                    url += `&start_date=${encodeURIComponent(startDate)}`;
+                }
+                if (endDate) {
+                    url += `&end_date=${encodeURIComponent(endDate)}`;
                 }
                 
                 // 发送请求获取订单数据
@@ -654,16 +923,21 @@
                     }
                     
                     // 如果没有订单数据
-                    if (result.orders.length === 0) {
+                    if (!result.orders || result.orders.length === 0) {
+                        let emptyMessage = '您还没有积分订单';
+                        if (searchText || startDate || endDate) {
+                            emptyMessage = '没有找到符合条件的积分订单';
+                        }
+                        
                         ordersBody.innerHTML = `
                             <tr>
-                                <td colspan="8" class="no-orders">
+                                <td colspan="7" class="no-orders">
                                     <i class="fas fa-clipboard"></i>
                                     <h3>暂无订单</h3>
-                                    <p>${searchText ? '没有找到符合条件的订单' : '您还没有创建任何订单'}</p>
-                                    ${searchText ? 
-                                        '<button onclick="clearSearch()" class="action-btn" style="margin-top: 10px;">清除搜索</button>' : 
-                                        '<a href="./scys.html" class="action-btn" style="margin-top: 10px; display: inline-block;">去创建订单</a>'}
+                                    <p>${emptyMessage}</p>
+                                    ${(searchText || startDate || endDate) ? 
+                                        '<button onclick="clearAllFilters()" class="action-btn" style="margin-top: 10px;">清除筛选</button>' : 
+                                        '<a href="./jfsc.html" class="action-btn" style="margin-top: 10px; display: inline-block;">去积分商城</a>'}
                                 </td>
                             </tr>
                         `;
@@ -678,7 +952,7 @@
                 } else {
                     ordersBody.innerHTML = `
                         <tr>
-                            <td colspan="8" class="no-orders">
+                            <td colspan="7" class="no-orders">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <h3>加载失败</h3>
                                 <p>${result.error || '无法加载订单数据，请稍后重试'}</p>
@@ -691,7 +965,7 @@
                 console.error('加载订单数据错误:', error);
                 ordersBody.innerHTML = `
                     <tr>
-                        <td colspan="8" class="no-orders">
+                        <td colspan="7" class="no-orders">
                             <i class="fas fa-exclamation-triangle"></i>
                             <h3>网络错误</h3>
                             <p>无法连接到服务器，请检查网络连接</p>
@@ -705,71 +979,80 @@
         // 创建订单行
         function createOrderRow(order) {
             const row = document.createElement('tr');
-            if (order.payment_status === 'pending') {
-                row.className = 'unpaid';
-            }
             
             // 格式化时间
-            const orderTime = new Date(order.created_at).toLocaleString('zh-CN');
+            let orderTime = '未知时间';
+            if (order.created_at) {
+                try {
+                    orderTime = new Date(order.created_at).toLocaleString('zh-CN');
+                } catch (e) {
+                    console.error('时间格式化错误', e);
+                }
+            }
             
-            // 获取支付状态显示文本和样式
-            const paymentInfo = getPaymentInfo(order.payment_status);
-            
-            // 获取商品名称（如果是多个商品，显示第一个+...）
+            // 获取商品名称
             let productName = order.product_name || '多款商品';
-            if (productName.length > 20) {
+            if (productName && productName.length > 20) {
                 productName = productName.substring(0, 20) + '...';
             }
             
-            // 检查是否有文件
-            const hasFiles = order.file_count > 0;
+            // 获取状态信息
+            const statusInfo = getStatusInfo(order.status);
             
             row.innerHTML = `
                 <td>
-                    <div class="order-number">${order.order_number}</div>
+                    <div class="order-number">${order.order_number || '未知'}</div>
                 </td>
                 <td>
                     <div class="order-time">${orderTime}</div>
                 </td>
                 <td>
-                    <div class="order-status">${getPaymentInfo(order.status)['text']}</div>
+                    <div class="product-name" title="${order.product_name || ''}">${productName}</div>
                 </td>
                 <td>
-                    <div class="product-name" title="${order.first_product || ''}">${productName}</div>
-                </td>
-                
-                <td>
-                    <div class="order-price">¥${order.points_used}</div>
+                    <span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>
                 </td>
                 <td>
-                    <div class="order-price">¥${order.money_used}</div>
+                    <div class="points-value">${order.points_used || 0}</div>
                 </td>
-                <td>${order.item_count || 1}</td>
-
+                <td>
+                    <div class="money-value">¥${(order.money_used || 0)}</div>
+                </td>
+                <td>${order.quantity || 1}</td>
             `;
             
             return row;
         }
         
-        // 获取支付状态信息
-        function getPaymentInfo(paymentStatus) {
-            const paymentMap = {
-                'pending': { text: '已支付', class: 'status-pending' },
+        // 获取状态信息
+        function getStatusInfo(status) {
+            const statusMap = {
+                'pending': { text: '处理中', class: 'status-pending' },
                 'paid': { text: '已支付', class: 'status-paid' },
-                'refunded': { text: '已退款', class: 'status-pending' },
-                'shipped': { text: '已发货', class: 'status-pending' }
+                'shipped': { text: '已发货', class: 'status-shipped' },
+                'completed': { text: '已完成', class: 'status-paid' },
+                'refunded': { text: '已退款', class: 'status-refunded' }
             };
             
-            return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
+            return statusMap[status] || { text: '未知', class: 'status-pending' };
         }
-
+        
         // 清除搜索
         function clearSearch() {
             searchInput.value = '';
             currentPage = 1;
             loadOrders();
         }
-
+        
+        // 退出登录函数
+        function tcdl() {
+            if (confirm('确定要退出登录吗？')) {
+                if (window.localStorage) {
+                    localStorage.removeItem('userInfo');
+                }
+                window.location.href = './login.html';
+            }
+        }
     </script>
 </body>
 </html>

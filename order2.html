@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>个人中心 - 诚荟印沈阳</title>
+    <title>已完成订单 - 诚荟印沈阳</title>
     <link rel="stylesheet" href="./static/main.css">
     <script src="./static/user.js"></script>
     <style>
@@ -134,6 +134,118 @@
         .action-bar {
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        /* 时间筛选样式 */
+        .date-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-date-filters {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .quick-filter-btn {
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            color: #555;
+        }
+        
+        .quick-filter-btn:hover {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        
+        .date-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .date-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .date-icon {
+            position: absolute;
+            left: 10px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        .date-input {
+            padding: 8px 10px 8px 35px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 140px;
+            background-color: white;
+        }
+        
+        .date-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .date-separator {
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        
+        .filter-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .filter-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .clear-btn {
+            background-color: transparent;
+            color: #7f8c8d;
+            border: 1px solid #bdc3c7;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .clear-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
         }
         
         .search-box {
@@ -256,9 +368,40 @@
             color: #155724;
         }
         
-        .status-paid {
+        .status-shipped {
             background-color: #cce5ff;
             color: #004085;
+        }
+        
+        .status-after_sale {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-downloaded {
+            background-color: #e2d5f1;
+            color: #4a235a;
+        }
+        
+        .file-link {
+            display: inline-block;
+            margin: 2px 5px 2px 0;
+            padding: 3px 8px;
+            background-color: #e9ecef;
+            border-radius: 3px;
+            color: #3498db;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        
+        .file-link:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .no-file {
+            color: #7f8c8d;
+            font-size: 0.9rem;
         }
         
         .action-buttons {
@@ -351,6 +494,68 @@
             color: #555;
         }
         
+        .hidden {
+            display: none;
+        }
+        
+        .sqsh {
+            color: #3498db;
+            cursor: pointer;
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        
+        .sqsh:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        /* 售后弹窗样式 */
+        .panel-content {
+            padding: 20px;
+        }
+        
+        .panel-content h4 {
+            margin: 10px 0 5px;
+            color: #2c3e50;
+        }
+        
+        .panel-content select,
+        .panel-content textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        .panel-content textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .owo.button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+        
+        .owo.button:hover {
+            background-color: #2980b9;
+        }
+        .status-after_sale_1 .sqsh{
+            display: none;
+        }
+        
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
@@ -377,12 +582,6 @@
                 border-left: none;
                 border-bottom-color: #3498db;
             }
-        }
-        
-        @media (max-width: 768px) {
-            .main-content {
-                padding: 15px;
-            }
             
             .page-header {
                 flex-direction: column;
@@ -392,11 +591,56 @@
             
             .action-bar {
                 width: 100%;
+            }
+            
+            .date-filter-container {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content-r {
+                padding: 15px;
+            }
+            
+            .action-bar {
+                flex-direction: column;
+            }
+            
+            .date-filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .quick-date-filters {
                 justify-content: space-between;
             }
             
+            .quick-filter-btn {
+                flex: 1;
+                text-align: center;
+            }
+            
+            .date-filter {
+                flex-wrap: wrap;
+            }
+            
+            .date-input-group {
+                width: calc(50% - 25px);
+            }
+            
+            .date-input {
+                width: 100%;
+            }
+            
             .search-input {
-                width: 200px;
+                width: 100%;
+            }
+            
+            .export-btn {
+                width: 100%;
+                justify-content: center;
             }
             
             .orders-table {
@@ -409,15 +653,9 @@
                 white-space: nowrap;
             }
         }
-        .sqsh {
-            color: #3498db;
-            cursor: pointer;
-        }
-        .status-after_sale .sqsh {
-            display: none;
-        }
     </style>
     <link rel="stylesheet" href="./static/all.min.css">
+    <link rel="stylesheet" href="https://cunchu.site/work/login/standard.css">
 </head>
 <body>
     <!-- 导航条 -->
@@ -496,15 +734,46 @@
             <div class="page-header">
                 <h1 class="page-title">
                     <i class="fas fa-clipboard-list"></i>
-                    我的订单
+                    已完成订单
                 </h1>
                 
                 <div class="action-bar">
+                    <!-- 时间筛选区域 -->
+                    <div class="date-filter-container">
+                        <!-- 快速筛选 -->
+                        <div class="quick-date-filters">
+                            <button class="quick-filter-btn" onclick="setQuickDate('today')">今天</button>
+                            <button class="quick-filter-btn" onclick="setQuickDate('week')">本周</button>
+                            <button class="quick-filter-btn" onclick="setQuickDate('month')">本月</button>
+                        </div>
+                        
+                        <!-- 自定义时间筛选 -->
+                        <div class="date-filter">
+                            <div class="date-input-group">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="date" id="startDate" class="date-input" placeholder="开始日期">
+                            </div>
+                            <span class="date-separator">至</span>
+                            <div class="date-input-group">
+                                <i class="fas fa-calendar-alt date-icon"></i>
+                                <input type="date" id="endDate" class="date-input" placeholder="结束日期">
+                            </div>
+                            <button id="filterDateBtn" class="filter-btn">
+                                <i class="fas fa-filter"></i> 筛选
+                            </button>
+                            <button id="clearDateBtn" class="clear-btn" title="清除时间筛选">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 搜索框 -->
                     <div class="search-box">
                         <i class="fas fa-search search-icon"></i>
                         <input type="text" id="searchInput" class="search-input" placeholder="搜索订单号...">
                     </div>
                     
+                    <!-- 导出按钮 -->
                     <button id="exportBtn" class="export-btn">
                         <i class="fas fa-file-export"></i>
                         导出表格
@@ -573,13 +842,17 @@
             </div>
         </div>
     </footer>
-    <link rel="stylesheet" href="https://cunchu.site/work/login/standard.css">
+    
     <script src="https://cunchu.site/work/login/standard.js" type="text/javascript" charset="UTF-8"></script>
     <script>
         // 全局变量
         let currentPage = 1;
         let pageSize = 15;
         let totalPages = 1;
+        
+        // 时间筛选变量
+        let startDate = '';
+        let endDate = '';
         
         // DOM元素
         const ordersBody = document.getElementById('ordersBody');
@@ -591,11 +864,17 @@
         const searchInput = document.getElementById('searchInput');
         const exportBtn = document.getElementById('exportBtn');
         
+        // 时间筛选DOM元素
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        const filterDateBtn = document.getElementById('filterDateBtn');
+        const clearDateBtn = document.getElementById('clearDateBtn');
+        
         // 页面加载时获取订单数据
         document.addEventListener('DOMContentLoaded', function() {
             loadOrders();
             
-            // 绑定搜索输入框事件
+            // 绑定搜索输入框事件（防抖）
             let searchTimer;
             searchInput.addEventListener('input', function() {
                 clearTimeout(searchTimer);
@@ -603,6 +882,29 @@
                     currentPage = 1;
                     loadOrders();
                 }, 500);
+            });
+            
+            // 绑定时间筛选按钮事件
+            filterDateBtn.addEventListener('click', function() {
+                applyDateFilter();
+            });
+            
+            // 绑定清除时间筛选按钮事件
+            clearDateBtn.addEventListener('click', function() {
+                clearDateFilter();
+            });
+            
+            // 回车键触发筛选
+            startDateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyDateFilter();
+                }
+            });
+            
+            endDateInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyDateFilter();
+                }
             });
             
             // 绑定导出按钮事件
@@ -626,6 +928,65 @@
             });
         });
         
+        // 应用时间筛选
+        function applyDateFilter() {
+            startDate = startDateInput.value;
+            endDate = endDateInput.value;
+            
+            // 验证日期范围
+            if (startDate && endDate && startDate > endDate) {
+                alert('开始日期不能大于结束日期');
+                return;
+            }
+            
+            currentPage = 1;
+            loadOrders();
+        }
+        
+        // 清除时间筛选
+        function clearDateFilter() {
+            startDateInput.value = '';
+            endDateInput.value = '';
+            startDate = '';
+            endDate = '';
+            currentPage = 1;
+            loadOrders();
+        }
+        
+        // 快速日期筛选
+        function setQuickDate(range) {
+            const today = new Date();
+            let start = new Date(today);
+            
+            switch(range) {
+                case 'today':
+                    // 今天
+                    start = today;
+                    break;
+                case 'week':
+                    // 本周一
+                    const day = today.getDay() || 7; // 周日返回0，转为7
+                    start.setDate(today.getDate() - day + 1);
+                    break;
+                case 'month':
+                    // 本月1号
+                    start.setDate(1);
+                    break;
+            }
+            
+            startDateInput.value = formatDate(start);
+            endDateInput.value = formatDate(today);
+            applyDateFilter();
+        }
+        
+        // 格式化日期为 YYYY-MM-DD
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
         // 加载订单数据
         async function loadOrders() {
             // 显示加载状态
@@ -639,13 +1000,26 @@
             `;
             
             try {
-                checkLogin()
-                // 构建查询参数
-                let url = `https://ht.bbbyg.vip/api/personal/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo.id}&session=${window.userInfo.session}&status=paid`;
+                // 检查登录状态
+                if (typeof checkLogin === 'function') {
+                    await checkLogin();
+                }
                 
+                // 构建查询参数
+                let url = `https://ht.bbbyg.vip/api/personal/orders?page=${currentPage}&page_size=${pageSize}&user_id=${window.userInfo?.id || ''}&session=${window.userInfo?.session || ''}&status=paid`;
+                
+                // 添加搜索条件
                 const searchText = searchInput.value.trim();
                 if (searchText) {
                     url += `&search=${encodeURIComponent(searchText)}`;
+                }
+                
+                // 添加时间筛选条件
+                if (startDate) {
+                    url += `&start_date=${encodeURIComponent(startDate)}`;
+                }
+                if (endDate) {
+                    url += `&end_date=${encodeURIComponent(endDate)}`;
                 }
                 
                 // 发送请求获取订单数据
@@ -671,16 +1045,21 @@
                     }
                     
                     // 如果没有订单数据
-                    if (result.orders.length === 0) {
+                    if (!result.orders || result.orders.length === 0) {
+                        let emptyMessage = '您还没有已完成订单';
+                        if (searchText || startDate || endDate) {
+                            emptyMessage = '没有找到符合条件的订单';
+                        }
+                        
                         ordersBody.innerHTML = `
                             <tr>
                                 <td colspan="8" class="no-orders">
                                     <i class="fas fa-clipboard"></i>
                                     <h3>暂无订单</h3>
-                                    <p>${searchText ? '没有找到符合条件的订单' : '您还没有创建任何订单'}</p>
-                                    ${searchText ? 
-                                        '<button onclick="clearSearch()" class="action-btn" style="margin-top: 10px;">清除搜索</button>' : 
-                                        '<a href="./scys.html" class="action-btn" style="margin-top: 10px; display: inline-block;">去创建订单</a>'}
+                                    <p>${emptyMessage}</p>
+                                    ${(searchText || startDate || endDate) ? 
+                                        '<button onclick="clearAllFilters()" class="action-btn" style="margin-top: 10px; padding: 8px 20px;">清除所有筛选</button>' : 
+                                        '<a href="./scys.html" class="action-btn" style="margin-top: 10px; display: inline-block; padding: 8px 20px;">去创建订单</a>'}
                                 </td>
                             </tr>
                         `;
@@ -689,9 +1068,21 @@
                     
                     // 渲染订单数据
                     result.orders.forEach(order => {
-                        const orderRow = createOrderRow(order);
-                        ordersBody.appendChild(orderRow);
+                        if (order.items && order.items.length > 0) {
+                            order.items.forEach(elementItem => {
+                                const orderRow = createOrderRow(order, elementItem);
+                                ordersBody.appendChild(orderRow);
+                            });
+                        } else {
+                            // 如果没有订单项，也创建一个行
+                            const orderRow = createOrderRow(order, {});
+                            ordersBody.appendChild(orderRow);
+                        }
                     });
+                    
+                    // 更新筛选按钮状态
+                    updateFilterButtonState();
+                    
                 } else {
                     ordersBody.innerHTML = `
                         <tr>
@@ -699,7 +1090,7 @@
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <h3>加载失败</h3>
                                 <p>${result.error || '无法加载订单数据，请稍后重试'}</p>
-                                <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                                <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px; padding: 8px 20px;">重新加载</button>
                             </td>
                         </tr>
                     `;
@@ -712,42 +1103,109 @@
                             <i class="fas fa-exclamation-triangle"></i>
                             <h3>网络错误</h3>
                             <p>无法连接到服务器，请检查网络连接</p>
-                            <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px;">重新加载</button>
+                            <button onclick="loadOrders()" class="action-btn" style="margin-top: 10px; padding: 8px 20px;">重新加载</button>
                         </td>
                     </tr>
                 `;
             }
         }
         
+        // 更新筛选按钮状态
+        function updateFilterButtonState() {
+            if (startDate || endDate) {
+                filterDateBtn.style.backgroundColor = '#27ae60';
+                clearDateBtn.style.display = 'flex';
+            } else {
+                filterDateBtn.style.backgroundColor = '#3498db';
+                clearDateBtn.style.display = 'flex';
+            }
+        }
+        
+        // 清除所有筛选条件
+        function clearAllFilters() {
+            searchInput.value = '';
+            startDateInput.value = '';
+            endDateInput.value = '';
+            startDate = '';
+            endDate = '';
+            currentPage = 1;
+            loadOrders();
+        }
+        
         // 创建订单行
-        function createOrderRow(order) {
+        function createOrderRow(order, elementItem) {
             const row = document.createElement('tr');
+            
+            // 添加状态类
             if (order.payment_status === 'pending') {
                 row.className = 'unpaid';
             }
-            row.classList.add('status-' + order.status)
+            
+            const statusClass = order.status || order.payment_status || 'unknown';
+            row.classList.add('status-' + statusClass);
+            
             // 格式化时间
-            const orderTime = new Date(order.created_at).toLocaleString('zh-CN');
+            let orderTime = '未知时间';
+            if (order.created_at) {
+                try {
+                    orderTime = new Date(order.created_at).toLocaleString('zh-CN');
+                } catch (e) {
+                    console.error('时间格式化错误', e);
+                }
+            }
             
             // 获取支付状态显示文本和样式
-            const paymentInfo = getPaymentInfo(order.status, order.customer_note);
+            const paymentInfo = getPaymentInfo(order.status || order.payment_status, order.customer_note);
             
-            // 获取商品名称（如果是多个商品，显示第一个+...）
-            let productName = order.first_product || '多款商品';
-            if (productName.length > 20) {
+            // 获取商品名称
+            let productName = (elementItem && elementItem.product_name) || order.first_product || '多款商品';
+            if (productName && productName.length > 20) {
                 productName = productName.substring(0, 20) + '...';
             }
             
-            // 检查是否有文件
-            const hasFiles = order.file_count > 0;
-            let fileTemp = ``
-            JSON.parse(order.files).forEach(element => {
-                fileTemp += `<a target="_blank" href="https://ht.bbbyg.vip/${element.file_path}">${element.original_name}</a>`
-            });
+            // 获取价格
+            let price = 0;
+            if (elementItem && elementItem.price) {
+                price = elementItem.price;
+            } else if (order.total_amount) {
+                price = order.total_amount;
+            }
+            
+            // 获取数量
+            let quantity = 1;
+            if (elementItem && elementItem.quantity) {
+                quantity = elementItem.quantity;
+            } else if (order.item_count) {
+                quantity = order.item_count;
+            }
+            
+            // 处理文件显示
+            let fileTemp = '';
+            if (order.files) {
+                try {
+                    const files = JSON.parse(order.files);
+                    if (Array.isArray(files)) {
+                        files.forEach(element => {
+                            if (element && element.file_path) {
+                                const fileName = element.original_name || '文件';
+                                const shortName = fileName.length > 10 ? fileName.substring(0, 10) + '...' : fileName;
+                                fileTemp += `<a target="_blank" href="https://ht.bbbyg.vip/${element.file_path}" class="file-link" title="${fileName}">${shortName}</a>`;
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('解析文件列表失败', e);
+                }
+            }
+            
+            // 如果没有任何文件链接
+            if (!fileTemp) {
+                fileTemp = '<span class="no-file">无文件</span>';
+            }
             
             row.innerHTML = `
                 <td>
-                    <div class="order-number">${order.order_number}</div>
+                    <div class="order-number">${order.order_number || '未知'}</div>
                 </td>
                 <td>
                     <div class="order-time">${orderTime}</div>
@@ -758,7 +1216,7 @@
                 <td>
                     <div class="order-price">¥${order.total_amount}</div>
                 </td>
-                <td>${order.item_count || 1}</td>
+                <td>${quantity}</td>
                 <td>
                     <span class="status-badge ${paymentInfo.class}">${paymentInfo.text}</span>
                 </td>
@@ -773,79 +1231,87 @@
             return row;
         }
         
+        // 申请售后
         function sqsh(id) {
-            // if (confirm("确定要申请售后吗？")) {
-            //     document.getElementById("item").remove();
-            // }
-            owo.tool.panel(`<h4>选择售后类型</h4><select id="shlx"><option value="补印">补印</option><option value="退款">退款</option></select><h4>售后说明</h4><textarea id="shyy"></textarea><div class="owo button" onclick="tjsh(${id})">提交售后</div>`, '请选择售后原因:', (val) => {console.log(val)})
+            if (typeof owo !== 'undefined' && owo.tool && owo.tool.panel) {
+                owo.tool.panel(`
+                    <div class="panel-content">
+                        <h4>选择售后类型</h4>
+                        <select id="shlx">
+                            <option value="补印">补印</option>
+                            <option value="退款">退款</option>
+                        </select>
+                        <h4>售后说明</h4>
+                        <textarea id="shyy" placeholder="请详细描述售后原因..."></textarea>
+                        <div class="owo button" onclick="tjsh(${id})">提交售后</div>
+                    </div>
+                `, '申请售后', (val) => {});
+            } else {
+                alert('请先完善售后表单');
+            }
         }
-
-        function tjsh (id) {
+        
+        // 提交售后
+        function tjsh(id) {
+            const shlx = document.getElementById('shlx');
+            const shyy = document.getElementById('shyy');
+            
+            if (!shlx || !shyy) {
+                alert('请填写完整的售后信息');
+                return;
+            }
+            
             fetch(`https://ht.bbbyg.vip/api/order/after-sale/${id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    customer_note: `[${window.shlx.value}] ${window.shyy.value}`
+                    customer_note: `[${shlx.value}] ${shyy.value}`
                 })
             })
-            setTimeout(() => {
-                location.reload()
-            }, 1000);
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('售后申请提交成功');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                } else {
+                    alert('提交失败：' + (data.error || '未知错误'));
+                }
+            })
+            .catch(error => {
+                console.error('提交售后错误:', error);
+                alert('网络错误，请稍后重试');
+            });
         }
-
+        
         // 获取支付状态信息
         function getPaymentInfo(paymentStatus, customer_note) {
             const paymentMap = {
                 'pending': { text: '待支付', class: 'status-pending' },
                 'paid': { text: '已支付', class: 'status-paid' },
-                'shipped': { text: '已发货', class: 'shipped' },
+                'shipped': { text: '已发货', class: 'status-shipped' },
+                'completed': { text: '已完成', class: 'status-paid' },
                 'refunded': { text: '已退款', class: 'status-pending' },
-                'after_sale': { text: '售后中', class: 'after_sale' },
-                'after_sale—_1': { text: '已退货', class: 'after_sale' },
-                'downloaded': { text: '处理中', class: 'downloaded' }
+                'after_sale': { text: '售后中', class: 'status-after_sale' },
+                'after_sale_1': { text: '已退货', class: 'status-after_sale' },
+                'downloaded': { text: '处理中', class: 'status-downloaded' }
             };
-            if (paymentMap[paymentStatus] && paymentMap[paymentStatus]['class'] == 'after_sale') {
+            
+            let result = paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
+            
+            // 处理售后状态中的同意/拒绝
+            if (paymentStatus === 'after_sale' && customer_note) {
                 if (customer_note.includes('[已同意]')) {
-                    paymentMap[paymentStatus]['text'] = `已同意售后`
-                }
-                if (customer_note.includes('[已拒绝]')) {
-                    paymentMap[paymentStatus]['text'] = `已拒绝售后`
+                    result.text = '已同意售后';
+                } else if (customer_note.includes('[已拒绝]')) {
+                    result.text = '已拒绝售后';
                 }
             }
             
-            return paymentMap[paymentStatus] || { text: '未知', class: 'status-pending' };
-        }
-
-        
-        // 支付订单
-        async function payOrder(orderNumber) {
-            if (!confirm(`确定要支付订单 ${orderNumber} 吗？`)) return;
-            
-            try {
-                const response = await fetch(`https://ht.bbbyg.vip/api/order/${orderNumber}/pay`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    alert(`订单 ${orderNumber} 支付成功！`);
-                    loadOrders(); // 重新加载订单数据
-                } else {
-                    alert(`支付失败：${result.error || '未知错误'}`);
-                }
-            } catch (error) {
-                alert('网络错误，支付失败');
-                console.error('支付错误:', error);
-            }
-        }
-        
-        // 下载文件
-        function downloadFiles(orderNumber) {
-            alert(`开始下载订单 ${orderNumber} 的文件\n实际开发中这里会打包下载所有文件`);
-            // window.location.href = `/api/order/${orderNumber}/download`;
+            return result;
         }
         
         // 清除搜索
@@ -854,60 +1320,95 @@
             currentPage = 1;
             loadOrders();
         }
-        // 保存CSV
-        function fake_click(obj) {
-            var ev = document.createEvent("MouseEvents");
-            ev.initMouseEvent(
-                "click", true, false, window, 0, 0, 0, 0, 0
-                , false, false, false, false, 0, null
-                );
-            obj.dispatchEvent(ev);
-        }
-        function download(name, data) {
-            var urlObject = window.URL || window.webkitURL || window;
-
-            var downloadData = new Blob([data]);
-
-            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-            save_link.href = urlObject.createObjectURL(downloadData);
-            save_link.download = name;
-            fake_click(save_link);
-        }
-
-        function saveCSV (name, data) {
-            let saveData = ''
-            data.forEach(element => {
-                if (element) {
-                saveData += element.join(',')
-                saveData += '\r\n'
+        
+        // 导出到Excel
+        function exportToExcel() {
+            let outPut = [];
+            
+            // 获取表头
+            const headerRow = [];
+            document.querySelectorAll('#ordersTable thead th').forEach(element => {
+                headerRow.push(element.innerText);
+            });
+            outPut.push(headerRow);
+            
+            // 获取数据行
+            document.querySelectorAll('#ordersTable tbody tr').forEach(row => {
+                if (!row.classList.contains('loading') && !row.classList.contains('no-orders')) {
+                    let temp = [];
+                    row.querySelectorAll('td').forEach(element => {
+                        // 清理HTML标签，只保留文本
+                        let text = element.innerText.replace(/\n/g, ' ').trim();
+                        temp.push(text);
+                    });
+                    if (temp.length > 0) {
+                        outPut.push(temp);
+                    }
                 }
             });
             
-            var urlObject = window.URL || window.webkitURL || window;
+            if (outPut.length <= 1) {
+                alert('没有数据可导出');
+                return;
+            }
             
-            var downloadData = new Blob(['\ufeff' + saveData], { type: 'text/csv,charset=UTF-8'});
-
-            var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a")
-            save_link.href = urlObject.createObjectURL(downloadData);
-            save_link.download = name;
-            fake_click(save_link);
+            // 生成CSV并下载
+            const fileName = `已完成订单_${formatDate(new Date())}.csv`;
+            saveCSV(fileName, outPut);
         }
-        // 导出到Excel
-        function exportToExcel() {
-            let outPut = []
-            document.querySelectorAll('table tr').forEach(element => {
-                let temp = []
-                element.querySelectorAll('th').forEach(element => {
-                    temp.push(element.innerText)
-                });
-                element.querySelectorAll('td').forEach(element => {
-                    temp.push(element.innerText)
-                    
-                });
-
-                outPut.push(temp)
+        
+        // 保存CSV文件
+        function saveCSV(name, data) {
+            let saveData = '';
+            data.forEach(row => {
+                if (row && row.length > 0) {
+                    // 处理CSV中的逗号和引号
+                    const processedRow = row.map(cell => {
+                        if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+                            return `"${cell.replace(/"/g, '""')}"`;
+                        }
+                        return cell;
+                    });
+                    saveData += processedRow.join(',') + '\r\n';
+                }
             });
-            saveCSV("导出数据.csv", outPut)
+            
+            // 添加BOM处理中文
+            const blob = new Blob(['\ufeff' + saveData], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', name);
+            link.style.display = 'none';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        // 支付订单（预留功能）
+        async function payOrder(orderNumber) {
+            alert('已完成订单无需支付');
+        }
+        
+        // 下载文件（预留功能）
+        function downloadFiles(orderNumber) {
+            alert('请在文件下载列中点击具体文件下载');
+        }
+        
+        // 退出登录函数
+        function tcdl() {
+            if (confirm('确定要退出登录吗？')) {
+                // 清除本地存储的用户信息
+                if (window.localStorage) {
+                    localStorage.removeItem('userInfo');
+                }
+                // 跳转到登录页
+                window.location.href = './login.html';
+            }
         }
     </script>
 </body>

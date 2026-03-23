@@ -186,6 +186,17 @@
             font-size: 14px;
         }
         
+        .batch-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .batch-actions .selected-info {
+            color: #409EFF;
+            font-size: 14px;
+        }
+        
         @media (max-width: 768px) {
             .search-form {
                 flex-direction: column;
@@ -217,6 +228,8 @@
                 <li id="xtsz" style="display: none;"><a href="./admin_config.html"><i class="fas fa-cog"></i> 系统设置</a></li>
                 <li><a href="./admin-points-mall.html"><i class="fas fa-cog"></i> 积分商城</a></li>
                 <li><a href="./admin-points-order.html" class="active"><i class="fas fa-clipboard-list"></i> 积分订单</a></li>
+                
+                <li><a href="./admin_fapiao.html"><i class="fas fa-clipboard-list"></i> 发票审核</a></li>
             </ul>
             
             <div class="admin-user-info">
@@ -315,7 +328,7 @@
                 <div class="search-actions">
                     <el-button type="primary" @click="handleSearch" icon="el-icon-search">搜索</el-button>
                     <el-button @click="handleReset" icon="el-icon-refresh">重置</el-button>
-                    <!-- <el-button @click="exportOrders" icon="el-icon-download" type="success">导出</el-button> -->
+                    <el-button @click="exportOrders" icon="el-icon-download" type="success">导出</el-button>
                 </div>
             </div>
         </div>
@@ -324,8 +337,27 @@
         <div class="orders-table">
             <div class="table-header">
                 <div class="table-title">订单列表</div>
-                <div>
-                    共 {{ total }} 条订单
+                <div class="batch-actions">
+                    <div v-if="selectedOrders.length > 0" class="selected-info">
+                        已选择 {{ selectedOrders.length }} 个订单
+                    </div>
+                    <el-button 
+                        v-if="selectedOrders.length > 0" 
+                        type="primary" 
+                        size="small" 
+                        @click="batchShipOrders"
+                        :loading="batchShipping"
+                    >
+                        批量发货 ({{ selectedOrders.length }})
+                    </el-button>
+                    <el-button 
+                        v-if="selectedOrders.length > 0" 
+                        size="small" 
+                        @click="clearSelection"
+                    >
+                        清空选择
+                    </el-button>
+                    <span style="margin-left: 10px;">共 {{ total }} 条订单</span>
                 </div>
             </div>
             
@@ -343,7 +375,19 @@
                 </div>
                 
                 <!-- 订单表格 -->
-                <el-table v-else :data="orders">
+                <el-table 
+                    v-else 
+                    :data="orders" 
+                    @selection-change="handleSelectionChange"
+                    ref="orderTable"
+                >
+                    <el-table-column
+                        type="selection"
+                        width="55"
+                        :selectable="checkSelectable"
+                    >
+                    </el-table-column>
+                    
                     <el-table-column prop="order_number" label="订单号" width="210">
                         <template slot-scope="scope">
                             <div style="font-weight: 500; color: #409EFF;">
@@ -356,10 +400,12 @@
                         <template slot-scope="scope">
                             <div class="order-info">
                                 <div style="font-weight: 500;">{{ scope.row.product_name }}</div>
-                                <div style="color: #666; font-size: 13px;">
-                                    数量：{{ scope.row.quantity }}
-                                </div>
                             </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="points_quantity" label="数量"  align="center">
+                        <template slot-scope="scope">
+                            <span class="points-badge">{{ scope.row.quantity }}</span>
                         </template>
                     </el-table-column>
                     
@@ -368,6 +414,7 @@
                             <span class="points-badge">{{ scope.row.points_used }}</span>
                         </template>
                     </el-table-column>
+
 
                     <el-table-column prop="points_used" label="金额" width="100" align="center">
                         <template slot-scope="scope">
@@ -396,7 +443,7 @@
                         </template>
                     </el-table-column>
                     
-                    <el-table-column label="操作" width="100" fixed="right" align="center">
+                    <el-table-column label="操作" width="160" fixed="right" align="center">
                         <template slot-scope="scope">
                             <el-button
                                 v-if="scope.row.status === 'pending' || scope.row.status === 'paid'"
@@ -407,6 +454,13 @@
                                 发货
                             </el-button>
                             <span v-else style="color: #999;">已发货</span>
+                            <el-button
+                                type="primary"
+                                size="small"
+                                @click="dadan(scope.row)"
+                            >
+                                打单
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -440,6 +494,10 @@
                     pageSize: 20,
                     total: 0,
                     
+                    // 选中的订单
+                    selectedOrders: [],
+                    batchShipping: false,
+                    
                     // 搜索参数
                     searchParams: {
                         order_number: '',
@@ -459,11 +517,22 @@
                 formatDateTime(date) {
                     if (!date) return '';
                     const d = new Date(date);
-                    const year = d.getFullYear();
-                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-                    const day = d.getDate().toString().padStart(2, '0');
-                    const hours = d.getHours().toString().padStart(2, '0');
-                    const minutes = d.getMinutes().toString().padStart(2, '0');
+                    
+                    // 获取当前时区偏移（分钟）
+                    const localOffset = d.getTimezoneOffset();
+                    // 东八区偏移是 -480 分钟（-8小时）
+                    const east8Offset = 480;
+                    
+                    // 计算东八区的时间戳
+                    const east8Time = d.getTime() + (localOffset + east8Offset) * 60000;
+                    const east8Date = new Date(east8Time);
+                    
+                    const year = east8Date.getUTCFullYear();
+                    const month = (east8Date.getUTCMonth() + 1).toString().padStart(2, '0');
+                    const day = east8Date.getUTCDate().toString().padStart(2, '0');
+                    const hours = east8Date.getUTCHours().toString().padStart(2, '0');
+                    const minutes = east8Date.getUTCMinutes().toString().padStart(2, '0');
+                    
                     return `${year}-${month}-${day} ${hours}:${minutes}`;
                 },
                 
@@ -477,6 +546,91 @@
                         'cancelled': '已取消'
                     };
                     return statusMap[status] || status;
+                },
+                
+                // 判断订单是否可选择（只有待发货和已支付状态才能选择）
+                checkSelectable(row) {
+                    return row.status === 'pending' || row.status === 'paid';
+                },
+                
+                // 处理选择变化
+                handleSelectionChange(val) {
+                    this.selectedOrders = val;
+                },
+                
+                // 清空选择
+                clearSelection() {
+                    this.$refs.orderTable.clearSelection();
+                    this.selectedOrders = [];
+                },
+                
+                // 批量发货
+                async batchShipOrders() {
+                    if (this.selectedOrders.length === 0) {
+                        this.$message.warning('请先选择要发货的订单');
+                        return;
+                    }
+                    
+                    // 只选择可发货的订单
+                    const shipableOrders = this.selectedOrders.filter(order => 
+                        order.status === 'pending' || order.status === 'paid'
+                    );
+                    
+                    if (shipableOrders.length === 0) {
+                        this.$message.warning('所选订单中没有可发货的订单');
+                        return;
+                    }
+                    
+                    const orderNumbers = shipableOrders.map(o => o.order_number).join('、');
+                    this.$confirm(`确定要将以下 ${shipableOrders.length} 个订单标记为已发货吗？\n\n${orderNumbers}`, '批量发货确认', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning',
+                        dangerouslyUseHTMLString: false
+                    }).then(async () => {
+                        this.batchShipping = true;
+                        let successCount = 0;
+                        let failCount = 0;
+                        const failedOrders = [];
+                        
+                        // 依次发货
+                        for (const order of shipableOrders) {
+                            try {
+                                const response = await axios.put(`https://ht.bbbyg.vip/api/admin/points/order/${order.id}/ship`);
+                                
+                                if (response.data.success) {
+                                    successCount++;
+                                    // 更新本地订单状态
+                                    const index = this.orders.findIndex(o => o.id === order.id);
+                                    if (index !== -1) {
+                                        this.orders[index].status = 'shipped';
+                                    }
+                                } else {
+                                    failCount++;
+                                    failedOrders.push(order.order_number);
+                                }
+                            } catch (error) {
+                                console.error(`发货失败 ${order.order_number}:`, error);
+                                failCount++;
+                                failedOrders.push(order.order_number);
+                            }
+                        }
+                        
+                        this.batchShipping = false;
+                        
+                        // 显示结果
+                        if (successCount > 0 && failCount === 0) {
+                            this.$message.success(`成功发货 ${successCount} 个订单`);
+                            this.clearSelection();
+                            this.loadOrders(); // 重新加载列表
+                        } else if (successCount > 0 && failCount > 0) {
+                            this.$message.warning(`成功发货 ${successCount} 个订单，失败 ${failCount} 个订单\n失败订单：${failedOrders.join('、')}`);
+                            this.clearSelection();
+                            this.loadOrders(); // 重新加载列表
+                        } else {
+                            this.$message.error(`发货失败：${failedOrders.join('、')}`);
+                        }
+                    }).catch(() => {});
                 },
                 
                 // 处理日期选择
@@ -523,6 +677,8 @@
                         if (response.data.success) {
                             this.orders = response.data.orders;
                             this.total = response.data.total;
+                            // 清空选择
+                            // this.clearSelection();
                         } else {
                             this.$message.error(response.data.error || '加载订单失败');
                         }
@@ -556,28 +712,22 @@
                 
                 // 导出订单
                 exportOrders() {
-                    const params = {
-                        ...this.searchParams,
-                        export: true
-                    };
-                    
-                    // 清理空参数
-                    Object.keys(params).forEach(key => {
-                        if (params[key] === '' || params[key] === null || params[key] === undefined) {
-                            delete params[key];
-                        }
-                    });
-                    
-                    // 构建查询字符串
-                    const queryString = Object.keys(params)
-                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-                        .join('&');
-                    
-                    // 创建导出URL
-                    const exportUrl = `https://ht.bbbyg.vip/api/admin/points/orders/export?${queryString}`;
-                    
-                    // 在新窗口打开导出链接
-                    window.open(exportUrl, '_blank');
+                    let outPut = []
+                    for (let index = 0; index < document.querySelectorAll('.table-container table tr').length / 2; index++) {
+                        const element = document.querySelectorAll('.table-container table tr')[index];
+                        let temp = []
+                        element.querySelectorAll('.el-table__header-wrapper th').forEach(element => {
+                            temp.push(element.innerText.replaceAll(',', ' '))
+                        });
+                        element.querySelectorAll('td').forEach(element => {
+                            temp.push(element.innerText.replaceAll(',', ' ').replaceAll('\\n', ' ').replaceAll('\\r', ' ').replaceAll(`
+`, ""))
+                        });
+
+                        outPut.push(temp)
+                    }
+
+                    saveCSV("导出数据.csv", outPut)
                 },
                 
                 // 分页大小改变
@@ -591,8 +741,11 @@
                     this.currentPage = val;
                     this.loadOrders();
                 },
-                
-                // 发货订单
+                dadan(order) {
+                    console.log(order)
+                    window.open(`./print_order2.html?phone=${order.shipping_phone}`)
+                },
+                // 发货订单（单个）
                 shipOrder(order) {
                     this.$confirm(`确定要将订单 ${order.order_number} 标记为已发货吗？`, '确认发货', {
                         confirmButtonText: '确定',
